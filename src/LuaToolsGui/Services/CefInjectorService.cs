@@ -55,7 +55,7 @@ public class CefInjectorService : IHostedService
     private bool IsAccountAllowed()
     {
         string allowed = _settings.AllowedSteamId;
-        if (string.IsNullOrWhiteSpace(allowed)) return true;
+        if (string.IsNullOrWhiteSpace(allowed)) return false;
         return _currentUser.IsCurrentUser(allowed);
     }
 

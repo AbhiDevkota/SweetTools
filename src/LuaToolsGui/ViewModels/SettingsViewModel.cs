@@ -23,7 +23,7 @@ public partial class SettingsViewModel : ObservableObject
     private readonly ToastService _toast;
 
     [ObservableProperty] private string _currentSteamId = "Not detected";
-    [ObservableProperty] private string _allowedSteamIdDisplay = "None (All accounts allowed)";
+    [ObservableProperty] private string _allowedSteamIdDisplay = "None (Plugins disabled — lock an account to enable)";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanPurge))]
@@ -287,7 +287,7 @@ public partial class SettingsViewModel : ObservableObject
         string? id = _currentSteamUser.GetCurrentSteamId();
         CurrentSteamId = string.IsNullOrWhiteSpace(id) ? "Not detected" : id;
         string? allowed = _settings.AllowedSteamId;
-        AllowedSteamIdDisplay = string.IsNullOrWhiteSpace(allowed) ? "None (All accounts allowed)" : allowed;
+        AllowedSteamIdDisplay = string.IsNullOrWhiteSpace(allowed) ? "None (Plugins disabled — lock an account to enable)" : allowed;
     }
 
     /// <summary>Locks plugin execution to the currently active Steam account.</summary>
@@ -299,21 +299,25 @@ public partial class SettingsViewModel : ObservableObject
         {
             _settings.AllowedSteamId = id;
             RefreshCurrentSteamId();
-            _toast.Show("LuaTools", $"Account locked to {id}");
+            _toast.Show("LuaTools", $"Plugins enabled and locked to account {id}");
         }
         else
         {
-            _toast.Show("LuaTools", "No active Steam account detected.", error: true);
+            _toast.Show("LuaTools", "No active Steam account detected. Please launch and log in to Steam first.", error: true);
         }
     }
 
-    /// <summary>Clears the Steam account restriction.</summary>
+    /// <summary>Clears the Steam account configuration, disabling plugins until an account is locked.</summary>
     [RelayCommand]
-    private void ClearRestriction()
+    private async Task ClearRestriction()
     {
         _settings.AllowedSteamId = "";
         RefreshCurrentSteamId();
-        _toast.Show("LuaTools", "Account restriction cleared");
+        _toast.Show("LuaTools", "Account configuration cleared. Plugins disabled until an account is locked.");
+        if (_pluginInstaller.HasSteamPluginFiles())
+        {
+            await _pluginInstaller.PurgeAllSteamModificationsAsync(restartSteam: true);
+        }
     }
 
     /// <summary>

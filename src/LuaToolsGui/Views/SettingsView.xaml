@@ -532,12 +532,12 @@
                             <TextBlock
                                 FontSize="13"
                                 FontWeight="Medium"
-                                Text="Account Restriction" />
+                                Text="Account Configuration &amp; Protection" />
                             <TextBlock
                                 Margin="0,4,0,0"
                                 FontSize="12"
                                 Foreground="#6b7280"
-                                Text="Locks plugin and unlocker execution to a single Steam account. On unallowed accounts, plugins are disabled and removed."
+                                Text="LuaTools only activates plugins when your explicitly selected Steam account is active. If no account is locked, plugins remain disabled and Steam stays 100% vanilla pure."
                                 TextWrapping="Wrap" />
                             <StackPanel Margin="0,6,0,0">
                                 <TextBlock
@@ -563,7 +563,7 @@
                             <ui:Button
                                 Margin="8,0,0,0"
                                 Command="{Binding ClearRestrictionCommand}"
-                                Content="Clear Restriction"
+                                Content="Clear Account Lock"
                                 Icon="{ui:SymbolIcon Dismiss24}" />
                         </StackPanel>
                     </Grid>

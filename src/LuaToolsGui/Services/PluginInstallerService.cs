@@ -304,13 +304,14 @@ public class PluginInstallerService(
 
     /// <summary>
     /// Checks whether plugin operations are allowed for the currently logged-in Steam account.
-    /// Returns true if no restriction is configured or if the current Steam account matches the allowed ID.
+    /// Returns true ONLY if an allowed account is explicitly configured and matches the currently active account.
+    /// Returns false if no account is configured (user must explicitly select an account) or if accounts mismatch.
     /// </summary>
     public bool IsAllowedForCurrentAccount()
     {
         string allowed = settings.AllowedSteamId;
         if (string.IsNullOrWhiteSpace(allowed))
-            return true;
+            return false;
 
         string? current = currentUser.GetCurrentSteamId();
         return string.Equals(allowed.Trim(), current?.Trim(), StringComparison.OrdinalIgnoreCase);
@@ -339,8 +340,12 @@ public class PluginInstallerService(
     {
         if (!IsAllowedForCurrentAccount())
         {
-            log?.LogWarning("Plugin install blocked: current Steam account is not allowed.");
-            return (false, "LuaTools is restricted to a different Steam account.");
+            string allowed = settings.AllowedSteamId;
+            string error = string.IsNullOrWhiteSpace(allowed)
+                ? "No Steam account configured. Please select and lock an account in Settings to enable plugins."
+                : "LuaTools is restricted to a different Steam account.";
+            log?.LogWarning("Plugin install blocked: {Reason}", error);
+            return (false, error);
         }
 
         if (SteamDir is not { } steamDir) return (false, Resources.Strings.Plugin_Err_SteamNotFound);

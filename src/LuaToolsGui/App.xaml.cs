@@ -493,18 +493,35 @@ public partial class App : Application
                 await pluginInstaller.CleanSteamPluginAsync();
             }
 
-            MessageBox.Show(
-                "LuaTools is restricted to a different Steam account. The plugin has been disabled and Steam has been cleaned. Please log in with your configured account.",
-                "LuaTools",
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning);
+            var settings = _host.Services.GetRequiredService<SettingsService>();
+            bool hasAllowedConfigured = !string.IsNullOrWhiteSpace(settings.AllowedSteamId);
+
+            if (hasAllowedConfigured)
+            {
+                MessageBox.Show(
+                    "LuaTools is restricted to a different Steam account. The plugin has been disabled and Steam has been cleaned. Please log in with your configured account.",
+                    "LuaTools",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+            }
+            else if (!silentStartup && !Program.SessionTrayLock)
+            {
+                toast.Show(
+                    "Account Configuration Required",
+                    "No Steam account is locked. Go to Settings and lock your account to enable plugins.",
+                    error: false);
+            }
 
             if (Program.SessionTrayLock || silentStartup)
             {
                 Shutdown();
                 return;
             }
-            return;
+
+            if (hasAllowedConfigured)
+            {
+                return;
+            }
         }
 
         // Background, non-blocking Steam-open update flow (app + plugin), but ONLY in the loader context

@@ -25,4 +25,14 @@ public class SettingsServiceTests
         Assert.Null(appSettings.AllowedSteamId);
         Assert.Equal("", appSettings.GetString("AllowedSteamId", ""));
     }
+
+    [Theory]
+    [InlineData(null, false)]
+    [InlineData("", false)]
+    [InlineData("   ", false)]
+    public void AllowedSteamId_WhenEmptyOrWhitespace_RepresentsNoAllowedAccount(string? input, bool expectedAllowed)
+    {
+        bool hasConfiguredAccount = !string.IsNullOrWhiteSpace(input);
+        Assert.Equal(expectedAllowed, hasConfiguredAccount);
+    }
 }

@@ -96,6 +96,7 @@ public partial class PluginViewModel : ObservableObject
         // only worth surfacing once we actually know install state, not on every offline check.
         StatusLine = st.Offline ? Resources.Strings.Plugin_Status_OfflineCheck
             : st.Port8080Busy ? Resources.Strings.Plugin_Status_Port8080Busy
+            : !_installer.IsAllowedForCurrentAccount() ? "Plugin disabled: no Steam account locked. Select an account in Settings."
             : null;
     }
 
