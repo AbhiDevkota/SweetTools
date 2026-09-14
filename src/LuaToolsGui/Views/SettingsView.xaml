@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="LuaToolsGui.Views.SettingsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -520,6 +520,40 @@
                             Margin="12,0,0,0"
                             VerticalAlignment="Center"
                             IsChecked="{Binding MinimizeToTray, Mode=TwoWay}" />
+                    </Grid>
+                    <Border Style="{StaticResource RowDivider}" />
+                    <!-- Account Restriction -->
+                    <Grid Margin="14,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock
+                                FontSize="13"
+                                FontWeight="Medium"
+                                Text="Account Restriction" />
+                            <TextBlock
+                                Margin="0,4,0,0"
+                                FontSize="12"
+                                Foreground="#6b7280"
+                                Text="{Binding CurrentSteamId, StringFormat='Current Account: {0}'}" />
+                        </StackPanel>
+                        <StackPanel
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center">
+                            <ui:Button
+                                Command="{Binding SetCurrentAccountCommand}"
+                                Content="Lock to Current Account"
+                                Icon="{ui:SymbolIcon LockClosed24}" />
+                            <ui:Button
+                                Margin="8,0,0,0"
+                                Command="{Binding ClearRestrictionCommand}"
+                                Content="Clear Restriction"
+                                Icon="{ui:SymbolIcon Dismiss24}" />
+                        </StackPanel>
                     </Grid>
                 </StackPanel>
             </Border>
