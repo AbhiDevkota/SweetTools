@@ -126,7 +126,7 @@
   <data name="Lang_Changed_Title" xml:space="preserve"><value>Dil değiştirildi</value></data>
   <data name="Lang_Changed_Body" xml:space="preserve"><value>Yeni dili uygulamak için uygulamayı yeniden başlatın.</value></data>
   <data name="Lang_Changed_Restart" xml:space="preserve"><value>Şimdi yeniden başlat</value></data>
-  <data name="Home_Welcome" xml:space="preserve"><value>LuaTools'a hoş geldiniz</value></data>
+  <data name="Home_Welcome" xml:space="preserve"><value>Sweet Tools'a hoş geldiniz</value></data>
   <data name="Home_LuasOnBoard" xml:space="preserve"><value>Eklenen Lua'lar</value></data>
   <data name="Home_LastAdded" xml:space="preserve"><value>SON EKLENEN</value></data>
   <data name="Home_PluginStatus" xml:space="preserve"><value>Eklenti durumu</value></data>
@@ -141,14 +141,14 @@
   <data name="Home_NoModeSelected" xml:space="preserve"><value>Hiçbir mod seçilmedi</value></data>
   <data name="Home_ModeIs" xml:space="preserve"><value>Mod · {0}</value></data>
   <data name="Mode_Title" xml:space="preserve"><value>Mod</value></data>
-  <data name="Mode_Subtitle" xml:space="preserve"><value>LuaTools ile eklenen oyunların kilidini açmak için kullanılan arka ucu değiştirin — aynı anda yalnızca biri etkin.</value></data>
+  <data name="Mode_Subtitle" xml:space="preserve"><value>Sweet Tools ile eklenen oyunların kilidini açmak için kullanılan arka ucu değiştirin — aynı anda yalnızca biri etkin.</value></data>
   <data name="Mode_CheckForUpdates" xml:space="preserve"><value>Güncellemeleri denetle</value></data>
   <data name="Mode_Active" xml:space="preserve"><value>ETKİN</value></data>
   <data name="Mode_Recommended" xml:space="preserve"><value>ÖNERİLEN</value></data>
   <data name="Mode_Confirm_Body" xml:space="preserve"><value>Dosyalarının değiştirilebilmesi için Steam kapatılacak, ardından otomatik olarak yeniden başlatılacaktır. Çalışan tüm oyunlar veya indirmeler duracaktır.</value></data>
   <data name="Mode_Cancel" xml:space="preserve"><value>İptal</value></data>
   <data name="Mode_CloseSteamContinue" xml:space="preserve"><value>Steam'i kapat ve devam et</value></data>
-  <data name="Mode_Desc_Bst" xml:space="preserve"><value>LuaTools ekibi tarafından aktif olarak geliştirilen açık kaynaklı bir OpenSteamTools fork'u. Düzeltmeler ve yeni özelliklerle!</value></data>
+  <data name="Mode_Desc_Bst" xml:space="preserve"><value>Sweet Tools ekibi tarafından aktif olarak geliştirilen açık kaynaklı bir OpenSteamTools fork'u. Düzeltmeler ve yeni özelliklerle!</value></data>
   <data name="Mode_CloudRedirect_Manage" xml:space="preserve"><value>Yönet</value></data>
   <data name="Mode_CloudRedirect_LaunchFailed" xml:space="preserve"><value>CloudRedirect indirilemedi veya başlatılamadı.</value></data>
   <data name="Mode_Desc_Ost" xml:space="preserve"><value>OpenSteamTools'un en son kaynaktan alınan gecelik derlemesi. En yeni düzeltmeler, ancak daha az kararlı olabilir.</value></data>
@@ -168,13 +168,13 @@
   <data name="Mode_CloudRedirect_Toast_Enabled" xml:space="preserve"><value>Etkinleştirildi — uygulamak için Steam'i yeniden başlatın.</value></data>
   <data name="Mode_CloudRedirect_Toast_Disabled" xml:space="preserve"><value>Devre dışı bırakıldı — uygulamak için Steam'i yeniden başlatın.</value></data>
   <data name="Mode_CloudRedirect_Toast_Updated" xml:space="preserve"><value>Güncellendi — uygulamak için Steam'i yeniden başlatın.</value></data>
-  <data name="Onboarding_Title" xml:space="preserve"><value>LuaTools uygulamasına hoş geldiniz!</value></data>
+  <data name="Onboarding_Title" xml:space="preserve"><value>Sweet Tools uygulamasına hoş geldiniz!</value></data>
   <data name="Onboarding_SignIn_Blurb" xml:space="preserve"><value>Oyun ve düzeltme eklemeyi açmak için giriş yapın.</value></data>
   <data name="Onboarding_SignedIn" xml:space="preserve"><value>Giriş yapıldı ✓</value></data>
   <data name="Onboarding_Recommended_Title" xml:space="preserve"><value>Önerilen ayarları uygula</value></data>
   <data name="Onboarding_Recommended_Detail" xml:space="preserve"><value>Mod: BetterSteamTools · FastFetch açık</value></data>
   <data name="Onboarding_Plugin_Title" xml:space="preserve"><value>Ünlü eklentimizi yükle</value></data>
-  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Steam mağaza sayfalarına "Add via LuaTools" düğmesini ekler.</value></data>
+  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Steam mağaza sayfalarına "Add via Sweet Tools" düğmesini ekler.</value></data>
   <data name="Onboarding_Yes" xml:space="preserve"><value>Evet, lütfen</value></data>
   <data name="Onboarding_No" xml:space="preserve"><value>Hayır, teşekkürler</value></data>
   <data name="Onboarding_Go" xml:space="preserve"><value>Hadi başlayalım!</value></data>
@@ -360,25 +360,25 @@ Bu, .lua dosyalarını Steam\config\stplug-in konumundan siler.</value></data>
   <data name="Confirm_Replace" xml:space="preserve"><value>Değiştir</value></data>
   <data name="Settings_Section_Startup" xml:space="preserve"><value>BAŞLANGIÇ</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Windows ile başlat</value></data>
-  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>Windows başladığında LuaTools'u otomatik olarak başlat.</value></data>
+  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>Windows başladığında Sweet Tools'u otomatik olarak başlat.</value></data>
   <data name="Settings_MinimizeToTray" xml:space="preserve"><value>Sistem tepsisine küçült</value></data>
-  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>Pencereyi kapattığınızda çıkmak yerine LuaTools'u sistem tepsisinde çalışır durumda tutun. Geri yüklemek için tepsi simgesine çift tıklayın.</value></data>
-  <data name="Tray_Open" xml:space="preserve"><value>LuaTools'u aç</value></data>
+  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>Pencereyi kapattığınızda çıkmak yerine Sweet Tools'u sistem tepsisinde çalışır durumda tutun. Geri yüklemek için tepsi simgesine çift tıklayın.</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>Sweet Tools'u aç</value></data>
   <data name="Tray_Exit" xml:space="preserve"><value>Çıkış</value></data>
 
   <data name="Add_FastFetch" xml:space="preserve"><value>FastFetch™️</value></data>
   <data name="Add_FastFetch_Hint" xml:space="preserve"><value>İlk kullanılabilir kaynaktan otomatik indir</value></data>
   <data name="Add_FastFetch_NoSource" xml:space="preserve"><value>Bu oyun için kullanılabilir kaynak bulunamadı</value></data>
   <data name="Add_FastFetch_Via" xml:space="preserve"><value>· {0} aracılığıyla</value></data>
-  <data name="Plugin_Title" xml:space="preserve"><value>LuaTools Eklentisi</value></data>
-  <data name="Plugin_Subtitle" xml:space="preserve"><value>LuaTools Steam eklentisi! — Artık Shittenium yerine LuaLoader kullanıyor</value></data>
+  <data name="Plugin_Title" xml:space="preserve"><value>Sweet Tools Eklentisi</value></data>
+  <data name="Plugin_Subtitle" xml:space="preserve"><value>Sweet Tools Steam eklentisi! — Artık Shittenium yerine LuaLoader kullanıyor</value></data>
   <data name="Plugin_CardTitle" xml:space="preserve"><value>Durum</value></data>
   <data name="Plugin_Badge_UpdateAvailable" xml:space="preserve"><value>Güncelleme mevcut</value></data>
   <data name="Plugin_Row_InstalledVersion" xml:space="preserve"><value>Kurulu sürüm</value></data>
   <data name="Plugin_Row_LatestVersion" xml:space="preserve"><value>En son sürüm</value></data>
   <data name="Plugin_Row_Frontend" xml:space="preserve"><value>Ön yüz</value></data>
   <data name="Plugin_Row_Loader" xml:space="preserve"><value>Yükleyici (winmm.dll)</value></data>
-  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Millennium algılandı — LuaTools onun yanında çalışır. Kurulum, yalnızca LuaLoader enjekte etsin diye bu eklentinin Millennium'a ait kopyasını devre dışı bırakır.</value></data>
+  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Millennium algılandı — Sweet Tools onun yanında çalışır. Kurulum, yalnızca LuaLoader enjekte etsin diye bu eklentinin Millennium'a ait kopyasını devre dışı bırakır.</value></data>
   <data name="Plugin_Footer" xml:space="preserve"><value>LuaLoader, Steam klasörünüze kurulur. Bu uygulama arka uç olarak çalışır — sistem tepsisinden kapatırsanız eklenti artık çalışmaz!</value></data>
   <data name="Plugin_Btn_Install" xml:space="preserve"><value>Kur</value></data>
   <data name="Plugin_Btn_Update" xml:space="preserve"><value>Güncelle</value></data>
@@ -409,7 +409,7 @@ Bu, .lua dosyalarını Steam\config\stplug-in konumundan siler.</value></data>
   <data name="Plugin_Err_VerifyFailed" xml:space="preserve"><value>{0} karma doğrulaması başarısız oldu.</value></data>
   <data name="Plugin_Err_NoLuatoolsJs" xml:space="preserve"><value>plugin.zip, public/luatools.js dosyasını içermiyordu.</value></data>
   <data name="Plugin_About_Header" xml:space="preserve"><value>Öne çıkan özellikler</value></data>
-  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>Steam mağaza sayfalarına bir “Add via LuaTools” düğmesi ekler</value></data>
+  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>Steam mağaza sayfalarına bir “Add via Sweet Tools” düğmesi ekler</value></data>
   <data name="Plugin_Feature_AutoUpdate" xml:space="preserve"><value>Kendini otomatik olarak günceller</value></data>
   <data name="Plugin_Feature_Millennium" xml:space="preserve"><value>Millennium olsun ya da olmasın çalışır</value></data>
   <data name="Drop_LinkHint" xml:space="preserve"><value>…ya da o oyunu eklemek için bir SteamDB / Steam mağaza bağlantısı sürükleyin.</value></data>
@@ -465,7 +465,7 @@ Bu, .lua dosyalarını Steam\config\stplug-in konumundan siler.</value></data>
   <data name="Launch_Title" xml:space="preserve"><value>Başlatma seçenekleri</value></data>
   <data name="Launch_Loading" xml:space="preserve"><value>Steam'in uygulama önbelleği okunuyor…</value></data>
   <data name="Launch_NotFound" xml:space="preserve"><value>Steam'de bu oyun için henüz önbelleğe alınmış bilgi yok. Steam'i bir kez açın, sonra tekrar deneyin.</value></data>
-  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>Steam'in uygulama önbelleği bu sürümün anlamadığı bir biçimde ({0}). LuaTools'u güncelleyin.</value></data>
+  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>Steam'in uygulama önbelleği bu sürümün anlamadığı bir biçimde ({0}). Sweet Tools'u güncelleyin.</value></data>
   <data name="Launch_ReadFailed" xml:space="preserve"><value>Steam'in uygulama önbelleği okunamadı. {0}</value></data>
   <data name="Launch_ExecutableRequired" xml:space="preserve"><value>Her başlatma seçeneği için bir çalıştırılabilir dosya gerekir.</value></data>
   <data name="Launch_Add" xml:space="preserve"><value>Ekle</value></data>
@@ -482,7 +482,7 @@ Bu, .lua dosyalarını Steam\config\stplug-in konumundan siler.</value></data>
   <data name="Launch_InstallPath" xml:space="preserve"><value>Kurulum yolu: {0}</value></data>
   <data name="Launch_SteamRestartNote" xml:space="preserve"><value>Değişiklikleri uygulamak Steam'i kapatıp yeniden açar.</value></data>
   <data name="Launch_Restore" xml:space="preserve"><value>Özgün hâline döndür</value></data>
-  <data name="Launch_Restore_Tip" xml:space="preserve"><value>LuaTools değiştirmeden önce Steam'in getirdiği başlatma seçeneklerini geri koyar.</value></data>
+  <data name="Launch_Restore_Tip" xml:space="preserve"><value>Sweet Tools değiştirmeden önce Steam'in getirdiği başlatma seçeneklerini geri koyar.</value></data>
   <data name="Launch_Restore_Title" xml:space="preserve"><value>Özgün başlatma seçenekleri geri yüklensin mi?</value></data>
   <data name="Launch_Restore_Body" xml:space="preserve"><value>Bu, başlatma seçeneklerini Steam'deki hâline döndürür ve değişikliklerinizi siler. Steam kapatılıp yeniden açılacak. Devam edilsin mi?</value></data>
   <data name="Launch_NothingToRestore" xml:space="preserve"><value>Bu oyun değiştirilmemiş, dolayısıyla geri yüklenecek bir şey yok.</value></data>

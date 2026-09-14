@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using LuaToolsGui.Services;
 using LuaToolsGui.ViewModels;
 using LuaToolsGui.Views;
@@ -34,7 +34,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
     // ── System tray ─────────────────────────────────────────────────
     private void InitializeTrayIcon()
     {
-        _trayIcon = new System.Windows.Forms.NotifyIcon { Text = "LuaTools", Visible = false };
+        _trayIcon = new System.Windows.Forms.NotifyIcon { Text = "Sweet Tools", Visible = false };
         try
         {
             using var stream = Application.GetResourceStream(new Uri("pack://application:,,,/icon.ico"))?.Stream;
@@ -110,7 +110,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         _trayIcon.Visible = true;
         _trayIcon.ShowBalloonTip(
             5000,
-            "LuaTools",
+            "Sweet Tools",
             message,
             error ? System.Windows.Forms.ToolTipIcon.Error : System.Windows.Forms.ToolTipIcon.Info);
     }

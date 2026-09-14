@@ -126,7 +126,7 @@
   <data name="Lang_Changed_Title" xml:space="preserve"><value>Nyelv megváltozott</value></data>
   <data name="Lang_Changed_Body" xml:space="preserve"><value>Indítsd újra az alkalmazást az új nyelv alkalmazásához.</value></data>
   <data name="Lang_Changed_Restart" xml:space="preserve"><value>Újraindítás most</value></data>
-  <data name="Home_Welcome" xml:space="preserve"><value>Üdvözöl a LuaTools</value></data>
+  <data name="Home_Welcome" xml:space="preserve"><value>Üdvözöl a Sweet Tools</value></data>
   <data name="Home_LuasOnBoard" xml:space="preserve"><value>Hozzáadott Luák</value></data>
   <data name="Home_LastAdded" xml:space="preserve"><value>UTOLJÁRA HOZZÁADVA</value></data>
   <data name="Home_PluginStatus" xml:space="preserve"><value>Bővítmény állapota</value></data>
@@ -141,14 +141,14 @@
   <data name="Home_NoModeSelected" xml:space="preserve"><value>Nincs kiválasztott mód</value></data>
   <data name="Home_ModeIs" xml:space="preserve"><value>Mód · {0}</value></data>
   <data name="Mode_Title" xml:space="preserve"><value>Mód</value></data>
-  <data name="Mode_Subtitle" xml:space="preserve"><value>Váltsd át a LuaTools-szal hozzáadott játékok feloldásához használt háttérrendszert — egyszerre csak egy aktív.</value></data>
+  <data name="Mode_Subtitle" xml:space="preserve"><value>Váltsd át a Sweet Tools-szal hozzáadott játékok feloldásához használt háttérrendszert — egyszerre csak egy aktív.</value></data>
   <data name="Mode_CheckForUpdates" xml:space="preserve"><value>Frissítések keresése</value></data>
   <data name="Mode_Active" xml:space="preserve"><value>AKTÍV</value></data>
   <data name="Mode_Recommended" xml:space="preserve"><value>AJÁNLOTT</value></data>
   <data name="Mode_Confirm_Body" xml:space="preserve"><value>A Steam bezárul, hogy a fájljai módosíthatók legyenek, majd automatikusan újraindul. Minden futó játék vagy letöltés leáll.</value></data>
   <data name="Mode_Cancel" xml:space="preserve"><value>Mégse</value></data>
   <data name="Mode_CloseSteamContinue" xml:space="preserve"><value>Steam bezárása és folytatás</value></data>
-  <data name="Mode_Desc_Bst" xml:space="preserve"><value>Az OpenSteamTools nyílt forráskódú forkja, amelyet a LuaTools csapata aktívan karbantart. Javításokkal és új funkciókkal!</value></data>
+  <data name="Mode_Desc_Bst" xml:space="preserve"><value>Az OpenSteamTools nyílt forráskódú forkja, amelyet a Sweet Tools csapata aktívan karbantart. Javításokkal és új funkciókkal!</value></data>
   <data name="Mode_CloudRedirect_Manage" xml:space="preserve"><value>Kezelés</value></data>
   <data name="Mode_CloudRedirect_LaunchFailed" xml:space="preserve"><value>A CloudRedirect letöltése vagy indítása nem sikerült.</value></data>
   <data name="Mode_Desc_Ost" xml:space="preserve"><value>A OpenSteamTools éjszakai buildje a legújabb forrásból. A legfrissebb javítások, de kevésbé lehet stabil.</value></data>
@@ -168,13 +168,13 @@
   <data name="Mode_CloudRedirect_Toast_Enabled" xml:space="preserve"><value>Bekapcsolva — indítsd újra a Steamet az alkalmazáshoz.</value></data>
   <data name="Mode_CloudRedirect_Toast_Disabled" xml:space="preserve"><value>Kikapcsolva — indítsd újra a Steamet az alkalmazáshoz.</value></data>
   <data name="Mode_CloudRedirect_Toast_Updated" xml:space="preserve"><value>Frissítve — indítsd újra a Steamet az alkalmazáshoz.</value></data>
-  <data name="Onboarding_Title" xml:space="preserve"><value>Üdvözlünk a LuaTools alkalmazásban!</value></data>
+  <data name="Onboarding_Title" xml:space="preserve"><value>Üdvözlünk a Sweet Tools alkalmazásban!</value></data>
   <data name="Onboarding_SignIn_Blurb" xml:space="preserve"><value>Jelentkezz be a játékok és javítások hozzáadásának feloldásához.</value></data>
   <data name="Onboarding_SignedIn" xml:space="preserve"><value>Bejelentkezve ✓</value></data>
   <data name="Onboarding_Recommended_Title" xml:space="preserve"><value>Ajánlott beállítások alkalmazása</value></data>
   <data name="Onboarding_Recommended_Detail" xml:space="preserve"><value>Mód: BetterSteamTools · FastFetch bekapcsolva</value></data>
   <data name="Onboarding_Plugin_Title" xml:space="preserve"><value>Híres bővítményünk telepítése</value></data>
-  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Hozzáadja az „Add via LuaTools” gombot a Steam áruház oldalaihoz.</value></data>
+  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Hozzáadja az „Add via Sweet Tools” gombot a Steam áruház oldalaihoz.</value></data>
   <data name="Onboarding_Yes" xml:space="preserve"><value>Igen, kérem</value></data>
   <data name="Onboarding_No" xml:space="preserve"><value>Nem, köszönöm</value></data>
   <data name="Onboarding_Go" xml:space="preserve"><value>Vágjunk bele!</value></data>
@@ -360,25 +360,25 @@ Ez törli a .lua fájlokat a Steam\config\stplug-in mappából.</value></data>
   <data name="Confirm_Replace" xml:space="preserve"><value>Csere</value></data>
   <data name="Settings_Section_Startup" xml:space="preserve"><value>INDÍTÁS</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Indítás a Windowsszal</value></data>
-  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>A LuaTools automatikus indítása a Windows indulásakor.</value></data>
+  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>A Sweet Tools automatikus indítása a Windows indulásakor.</value></data>
   <data name="Settings_MinimizeToTray" xml:space="preserve"><value>Kicsinyítés a tálcára</value></data>
-  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>Az ablak bezárásakor a LuaTools maradjon futva a tálca értesítési területén, kilépés helyett. A visszaállításhoz kattintson duplán az ikonra.</value></data>
-  <data name="Tray_Open" xml:space="preserve"><value>LuaTools megnyitása</value></data>
+  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>Az ablak bezárásakor a Sweet Tools maradjon futva a tálca értesítési területén, kilépés helyett. A visszaállításhoz kattintson duplán az ikonra.</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>Sweet Tools megnyitása</value></data>
   <data name="Tray_Exit" xml:space="preserve"><value>Kilépés</value></data>
 
   <data name="Add_FastFetch" xml:space="preserve"><value>FastFetch™️</value></data>
   <data name="Add_FastFetch_Hint" xml:space="preserve"><value>Automatikus letöltés az első elérhető forrásból</value></data>
   <data name="Add_FastFetch_NoSource" xml:space="preserve"><value>Nem található elérhető forrás ehhez a játékhoz</value></data>
   <data name="Add_FastFetch_Via" xml:space="preserve"><value>· innen: {0}</value></data>
-  <data name="Plugin_Title" xml:space="preserve"><value>LuaTools bővítmény</value></data>
-  <data name="Plugin_Subtitle" xml:space="preserve"><value>A LuaTools Steam bővítmény! — Mostantól LuaLoader a Shittenium helyett</value></data>
+  <data name="Plugin_Title" xml:space="preserve"><value>Sweet Tools bővítmény</value></data>
+  <data name="Plugin_Subtitle" xml:space="preserve"><value>A Sweet Tools Steam bővítmény! — Mostantól LuaLoader a Shittenium helyett</value></data>
   <data name="Plugin_CardTitle" xml:space="preserve"><value>Állapot</value></data>
   <data name="Plugin_Badge_UpdateAvailable" xml:space="preserve"><value>Frissítés érhető el</value></data>
   <data name="Plugin_Row_InstalledVersion" xml:space="preserve"><value>Telepített verzió</value></data>
   <data name="Plugin_Row_LatestVersion" xml:space="preserve"><value>Legújabb verzió</value></data>
   <data name="Plugin_Row_Frontend" xml:space="preserve"><value>Frontend</value></data>
   <data name="Plugin_Row_Loader" xml:space="preserve"><value>Betöltő (winmm.dll)</value></data>
-  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Millennium észlelve — a LuaTools mellette fut. A telepítés letiltja e bővítmény Millennium-féle másolatát, hogy csak a LuaLoader injektáljon.</value></data>
+  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Millennium észlelve — a Sweet Tools mellette fut. A telepítés letiltja e bővítmény Millennium-féle másolatát, hogy csak a LuaLoader injektáljon.</value></data>
   <data name="Plugin_Footer" xml:space="preserve"><value>A LuaLoader a Steam mappájába települ. Ez az alkalmazás háttérként működik — ha a tálcáról bezárod, a bővítmény többé nem működik!</value></data>
   <data name="Plugin_Btn_Install" xml:space="preserve"><value>Telepítés</value></data>
   <data name="Plugin_Btn_Update" xml:space="preserve"><value>Frissítés</value></data>
@@ -409,7 +409,7 @@ Ez törli a .lua fájlokat a Steam\config\stplug-in mappából.</value></data>
   <data name="Plugin_Err_VerifyFailed" xml:space="preserve"><value>A(z) {0} hash-ellenőrzése sikertelen.</value></data>
   <data name="Plugin_Err_NoLuatoolsJs" xml:space="preserve"><value>A plugin.zip nem tartalmazta a public/luatools.js fájlt.</value></data>
   <data name="Plugin_About_Header" xml:space="preserve"><value>Fő funkciók</value></data>
-  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>„Add via LuaTools” gombot ad a Steam áruház oldalaihoz</value></data>
+  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>„Add via Sweet Tools” gombot ad a Steam áruház oldalaihoz</value></data>
   <data name="Plugin_Feature_AutoUpdate" xml:space="preserve"><value>Automatikusan frissül</value></data>
   <data name="Plugin_Feature_Millennium" xml:space="preserve"><value>Millenniummal és anélkül is működik</value></data>
   <data name="Drop_LinkHint" xml:space="preserve"><value>…vagy húzz ide egy SteamDB / Steam áruház hivatkozást a játék hozzáadásához.</value></data>
@@ -465,7 +465,7 @@ Ez törli a .lua fájlokat a Steam\config\stplug-in mappából.</value></data>
   <data name="Launch_Title" xml:space="preserve"><value>Indítási beállítások</value></data>
   <data name="Launch_Loading" xml:space="preserve"><value>A Steam alkalmazás-gyorsítótárának olvasása…</value></data>
   <data name="Launch_NotFound" xml:space="preserve"><value>A Steamnek még nincsenek gyorsítótárazott adatai erről a játékról. Indítsd el egyszer a Steamet, majd próbáld újra.</value></data>
-  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>A Steam alkalmazás-gyorsítótára olyan formátumú, amelyet ez a verzió nem ismer ({0}). Frissítsd a LuaToolsot.</value></data>
+  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>A Steam alkalmazás-gyorsítótára olyan formátumú, amelyet ez a verzió nem ismer ({0}). Frissítsd a Sweet Toolsot.</value></data>
   <data name="Launch_ReadFailed" xml:space="preserve"><value>Nem sikerült olvasni a Steam alkalmazás-gyorsítótárát. {0}</value></data>
   <data name="Launch_ExecutableRequired" xml:space="preserve"><value>Minden indítási beállításhoz kell egy futtatható fájl.</value></data>
   <data name="Launch_Add" xml:space="preserve"><value>Hozzáadás</value></data>
@@ -482,7 +482,7 @@ Ez törli a .lua fájlokat a Steam\config\stplug-in mappából.</value></data>
   <data name="Launch_InstallPath" xml:space="preserve"><value>Telepítési útvonal: {0}</value></data>
   <data name="Launch_SteamRestartNote" xml:space="preserve"><value>A módosítások alkalmazása bezárja és újra megnyitja a Steamet.</value></data>
   <data name="Launch_Restore" xml:space="preserve"><value>Eredeti visszaállítása</value></data>
-  <data name="Launch_Restore_Tip" xml:space="preserve"><value>Visszaállítja azokat az indítási beállításokat, amelyekkel a Steam érkezett, mielőtt a LuaTools módosította volna őket.</value></data>
+  <data name="Launch_Restore_Tip" xml:space="preserve"><value>Visszaállítja azokat az indítási beállításokat, amelyekkel a Steam érkezett, mielőtt a Sweet Tools módosította volna őket.</value></data>
   <data name="Launch_Restore_Title" xml:space="preserve"><value>Visszaállítod az eredeti indítási beállításokat?</value></data>
   <data name="Launch_Restore_Body" xml:space="preserve"><value>Ez visszaállítja az indítási beállításokat úgy, ahogy a Steamben voltak, és elveti a módosításaidat. A Steam bezárul, majd újra megnyílik. Folytatod?</value></data>
   <data name="Launch_NothingToRestore" xml:space="preserve"><value>Ez a játék nem lett módosítva, így nincs mit visszaállítani.</value></data>

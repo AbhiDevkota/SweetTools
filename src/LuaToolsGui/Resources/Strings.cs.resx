@@ -126,7 +126,7 @@
   <data name="Lang_Changed_Title" xml:space="preserve"><value>Jazyk změněn</value></data>
   <data name="Lang_Changed_Body" xml:space="preserve"><value>Restartujte aplikaci, aby se nový jazyk použil.</value></data>
   <data name="Lang_Changed_Restart" xml:space="preserve"><value>Restartovat nyní</value></data>
-  <data name="Home_Welcome" xml:space="preserve"><value>Vítejte v LuaTools</value></data>
+  <data name="Home_Welcome" xml:space="preserve"><value>Vítejte v Sweet Tools</value></data>
   <data name="Home_LuasOnBoard" xml:space="preserve"><value>Lua na palubě</value></data>
   <data name="Home_LastAdded" xml:space="preserve"><value>NAPOSLEDY PŘIDÁNO</value></data>
   <data name="Home_PluginStatus" xml:space="preserve"><value>Stav pluginu</value></data>
@@ -141,14 +141,14 @@
   <data name="Home_NoModeSelected" xml:space="preserve"><value>Není vybrán žádný režim</value></data>
   <data name="Home_ModeIs" xml:space="preserve"><value>Režim · {0}</value></data>
   <data name="Mode_Title" xml:space="preserve"><value>Režim</value></data>
-  <data name="Mode_Subtitle" xml:space="preserve"><value>Přepněte backend používaný k odemykání her přidaných pomocí LuaTools — aktivní vždy jen jeden.</value></data>
+  <data name="Mode_Subtitle" xml:space="preserve"><value>Přepněte backend používaný k odemykání her přidaných pomocí Sweet Tools — aktivní vždy jen jeden.</value></data>
   <data name="Mode_CheckForUpdates" xml:space="preserve"><value>Zkontrolovat aktualizace</value></data>
   <data name="Mode_Active" xml:space="preserve"><value>AKTIVNÍ</value></data>
   <data name="Mode_Recommended" xml:space="preserve"><value>DOPORUČENO</value></data>
   <data name="Mode_Confirm_Body" xml:space="preserve"><value>Steam bude zavřen, aby bylo možné změnit jeho soubory, a poté se automaticky restartuje. Všechny spuštěné hry nebo stahování se zastaví.</value></data>
   <data name="Mode_Cancel" xml:space="preserve"><value>Zrušit</value></data>
   <data name="Mode_CloseSteamContinue" xml:space="preserve"><value>Zavřít Steam a pokračovat</value></data>
-  <data name="Mode_Desc_Bst" xml:space="preserve"><value>Open source fork OpenSteamTools, který aktivně udržuje tým LuaTools. Přináší opravy a nové funkce!</value></data>
+  <data name="Mode_Desc_Bst" xml:space="preserve"><value>Open source fork OpenSteamTools, který aktivně udržuje tým Sweet Tools. Přináší opravy a nové funkce!</value></data>
   <data name="Mode_CloudRedirect_Manage" xml:space="preserve"><value>Spravovat</value></data>
   <data name="Mode_CloudRedirect_LaunchFailed" xml:space="preserve"><value>Nepodařilo se stáhnout ani spustit CloudRedirect.</value></data>
   <data name="Mode_Desc_Ost" xml:space="preserve"><value>Noční sestavení OpenSteamTools z nejnovějšího zdroje. Nejnovější opravy, ale může být méně stabilní.</value></data>
@@ -168,13 +168,13 @@
   <data name="Mode_CloudRedirect_Toast_Enabled" xml:space="preserve"><value>Zapnuto — restartujte Steam pro použití.</value></data>
   <data name="Mode_CloudRedirect_Toast_Disabled" xml:space="preserve"><value>Vypnuto — restartujte Steam pro použití.</value></data>
   <data name="Mode_CloudRedirect_Toast_Updated" xml:space="preserve"><value>Aktualizováno — restartujte Steam pro použití.</value></data>
-  <data name="Onboarding_Title" xml:space="preserve"><value>Vítejte v aplikaci LuaTools!</value></data>
+  <data name="Onboarding_Title" xml:space="preserve"><value>Vítejte v aplikaci Sweet Tools!</value></data>
   <data name="Onboarding_SignIn_Blurb" xml:space="preserve"><value>Přihlaste se a odemkněte přidávání her a oprav.</value></data>
   <data name="Onboarding_SignedIn" xml:space="preserve"><value>Přihlášeno ✓</value></data>
   <data name="Onboarding_Recommended_Title" xml:space="preserve"><value>Použít doporučená nastavení</value></data>
   <data name="Onboarding_Recommended_Detail" xml:space="preserve"><value>Režim: BetterSteamTools · FastFetch zapnutý</value></data>
   <data name="Onboarding_Plugin_Title" xml:space="preserve"><value>Nainstalovat náš slavný plugin</value></data>
-  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Přidá tlačítko „Add via LuaTools“ na stránky obchodu Steam.</value></data>
+  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Přidá tlačítko „Add via Sweet Tools“ na stránky obchodu Steam.</value></data>
   <data name="Onboarding_Yes" xml:space="preserve"><value>Ano, prosím</value></data>
   <data name="Onboarding_No" xml:space="preserve"><value>Ne, děkuji</value></data>
   <data name="Onboarding_Go" xml:space="preserve"><value>Jdeme na to!</value></data>
@@ -360,25 +360,25 @@ Tím se smažou soubory .lua ze Steam\config\stplug-in.</value></data>
   <data name="Confirm_Replace" xml:space="preserve"><value>Nahradit</value></data>
   <data name="Settings_Section_Startup" xml:space="preserve"><value>SPUŠTĚNÍ</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Spustit se systémem Windows</value></data>
-  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>Automaticky spustit LuaTools při startu systému Windows.</value></data>
+  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>Automaticky spustit Sweet Tools při startu systému Windows.</value></data>
   <data name="Settings_MinimizeToTray" xml:space="preserve"><value>Minimalizovat do oznamovací oblasti</value></data>
-  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>Při zavření okna nechat LuaTools běžet v oznamovací oblasti místo ukončení. Dvojklikem na ikonu obnovíte okno.</value></data>
-  <data name="Tray_Open" xml:space="preserve"><value>Otevřít LuaTools</value></data>
+  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>Při zavření okna nechat Sweet Tools běžet v oznamovací oblasti místo ukončení. Dvojklikem na ikonu obnovíte okno.</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>Otevřít Sweet Tools</value></data>
   <data name="Tray_Exit" xml:space="preserve"><value>Ukončit</value></data>
 
   <data name="Add_FastFetch" xml:space="preserve"><value>FastFetch™️</value></data>
   <data name="Add_FastFetch_Hint" xml:space="preserve"><value>Automatické stažení z prvního dostupného zdroje</value></data>
   <data name="Add_FastFetch_NoSource" xml:space="preserve"><value>Pro tuto hru nebyly nalezeny žádné dostupné zdroje</value></data>
   <data name="Add_FastFetch_Via" xml:space="preserve"><value>· přes {0}</value></data>
-  <data name="Plugin_Title" xml:space="preserve"><value>Plugin LuaTools</value></data>
-  <data name="Plugin_Subtitle" xml:space="preserve"><value>Plugin LuaTools pro Steam! — Nyní používá LuaLoader místo Shittenium</value></data>
+  <data name="Plugin_Title" xml:space="preserve"><value>Plugin Sweet Tools</value></data>
+  <data name="Plugin_Subtitle" xml:space="preserve"><value>Plugin Sweet Tools pro Steam! — Nyní používá LuaLoader místo Shittenium</value></data>
   <data name="Plugin_CardTitle" xml:space="preserve"><value>Stav</value></data>
   <data name="Plugin_Badge_UpdateAvailable" xml:space="preserve"><value>Dostupná aktualizace</value></data>
   <data name="Plugin_Row_InstalledVersion" xml:space="preserve"><value>Nainstalovaná verze</value></data>
   <data name="Plugin_Row_LatestVersion" xml:space="preserve"><value>Nejnovější verze</value></data>
   <data name="Plugin_Row_Frontend" xml:space="preserve"><value>Frontend</value></data>
   <data name="Plugin_Row_Loader" xml:space="preserve"><value>Zavaděč (winmm.dll)</value></data>
-  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Zjištěn Millennium — LuaTools běží vedle něj. Instalace zakáže vlastní kopii tohoto pluginu v Millenniu, takže vkládá pouze LuaLoader.</value></data>
+  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Zjištěn Millennium — Sweet Tools běží vedle něj. Instalace zakáže vlastní kopii tohoto pluginu v Millenniu, takže vkládá pouze LuaLoader.</value></data>
   <data name="Plugin_Footer" xml:space="preserve"><value>LuaLoader se nainstaluje do složky Steam. Tato aplikace funguje jako backend — pokud ji zavřete z oznamovací oblasti, plugin přestane fungovat!</value></data>
   <data name="Plugin_Btn_Install" xml:space="preserve"><value>Instalovat</value></data>
   <data name="Plugin_Btn_Update" xml:space="preserve"><value>Aktualizovat</value></data>
@@ -409,7 +409,7 @@ Tím se smažou soubory .lua ze Steam\config\stplug-in.</value></data>
   <data name="Plugin_Err_VerifyFailed" xml:space="preserve"><value>Ověření hashe {0} selhalo.</value></data>
   <data name="Plugin_Err_NoLuatoolsJs" xml:space="preserve"><value>plugin.zip neobsahoval public/luatools.js.</value></data>
   <data name="Plugin_About_Header" xml:space="preserve"><value>Hlavní funkce</value></data>
-  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>Přidá tlačítko „Add via LuaTools“ na stránky obchodu Steam</value></data>
+  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>Přidá tlačítko „Add via Sweet Tools“ na stránky obchodu Steam</value></data>
   <data name="Plugin_Feature_AutoUpdate" xml:space="preserve"><value>Automaticky se aktualizuje</value></data>
   <data name="Plugin_Feature_Millennium" xml:space="preserve"><value>Funguje s Millennium i bez něj</value></data>
   <data name="Drop_LinkHint" xml:space="preserve"><value>…nebo sem přetáhněte odkaz ze SteamDB / obchodu Steam a hru tím přidejte.</value></data>
@@ -465,7 +465,7 @@ Tím se smažou soubory .lua ze Steam\config\stplug-in.</value></data>
   <data name="Launch_Title" xml:space="preserve"><value>Možnosti spuštění</value></data>
   <data name="Launch_Loading" xml:space="preserve"><value>Načítání mezipaměti aplikací Steamu…</value></data>
   <data name="Launch_NotFound" xml:space="preserve"><value>Steam zatím nemá o této hře uložené informace. Spusťte jednou Steam a zkuste to znovu.</value></data>
-  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>Mezipaměť aplikací Steamu je ve formátu, kterému tato verze nerozumí ({0}). Aktualizujte LuaTools.</value></data>
+  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>Mezipaměť aplikací Steamu je ve formátu, kterému tato verze nerozumí ({0}). Aktualizujte Sweet Tools.</value></data>
   <data name="Launch_ReadFailed" xml:space="preserve"><value>Nepodařilo se načíst mezipaměť aplikací Steamu. {0}</value></data>
   <data name="Launch_ExecutableRequired" xml:space="preserve"><value>Každá možnost spuštění potřebuje spustitelný soubor.</value></data>
   <data name="Launch_Add" xml:space="preserve"><value>Přidat</value></data>
@@ -482,7 +482,7 @@ Tím se smažou soubory .lua ze Steam\config\stplug-in.</value></data>
   <data name="Launch_InstallPath" xml:space="preserve"><value>Cesta instalace: {0}</value></data>
   <data name="Launch_SteamRestartNote" xml:space="preserve"><value>Použití změn zavře a znovu otevře Steam.</value></data>
   <data name="Launch_Restore" xml:space="preserve"><value>Obnovit původní</value></data>
-  <data name="Launch_Restore_Tip" xml:space="preserve"><value>Vrátí možnosti spuštění, se kterými Steam přišel, před jejich změnou v LuaTools.</value></data>
+  <data name="Launch_Restore_Tip" xml:space="preserve"><value>Vrátí možnosti spuštění, se kterými Steam přišel, před jejich změnou v Sweet Tools.</value></data>
   <data name="Launch_Restore_Title" xml:space="preserve"><value>Obnovit původní možnosti spuštění?</value></data>
   <data name="Launch_Restore_Body" xml:space="preserve"><value>Tím se možnosti spuštění vrátí do stavu, v jakém je měl Steam, a vaše změny se zahodí. Steam bude zavřen a znovu otevřen. Pokračovat?</value></data>
   <data name="Launch_NothingToRestore" xml:space="preserve"><value>Tato hra nebyla změněna, takže není co obnovovat.</value></data>

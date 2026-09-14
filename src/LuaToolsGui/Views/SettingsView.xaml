@@ -532,7 +532,7 @@
                             Margin="0,4,0,0"
                             FontSize="12"
                             Foreground="#6b7280"
-                            Text="LuaTools only activates plugins when your explicitly selected Steam account is active. If no account is locked, plugins remain disabled and Steam stays 100% vanilla pure."
+                            Text="Sweet Tools only activates plugins when your explicitly selected Steam account is active. If no account is locked, plugins remain disabled and Steam stays 100% vanilla pure."
                             TextWrapping="Wrap" />
 
                         <!-- Account Status Box (Wrap-safe, never clips Steam ID) -->
@@ -632,7 +632,7 @@
                                 Margin="0,4,0,0"
                                 FontSize="12"
                                 Foreground="#6b7280"
-                                Text="Completely purges all LuaTools plugin DLLs, unlockers, and modifications, restoring Steam to a pristine, unmodified state."
+                                Text="Completely purges all Sweet Tools plugin DLLs, unlockers, and modifications, restoring Steam to a pristine, unmodified state."
                                 TextWrapping="Wrap" />
                         </StackPanel>
                         <ui:Button

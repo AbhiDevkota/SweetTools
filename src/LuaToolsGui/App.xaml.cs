@@ -220,7 +220,7 @@ public partial class App : Application
                     if (!st.DllMatches)
                     {
                         var t = _host.Services.GetRequiredService<ToastService>();
-                        Dispatcher.Invoke(() => t.Show("LuaTools", "Updating plugin. Steam will restart."));
+                        Dispatcher.Invoke(() => t.Show("Sweet Tools", "Updating plugin. Steam will restart."));
                     }
                     await installer.InstallAsync(progress: null);
                 }
@@ -553,7 +553,7 @@ public partial class App : Application
             {
                 toast.ShowAction(
                     "Account Mismatch",
-                    $"LuaTools is restricted to Steam account {settings.AllowedSteamId}. Steam modifications have been cleaned for vanilla play.",
+                    $"Sweet Tools is restricted to Steam account {settings.AllowedSteamId}. Steam modifications have been cleaned for vanilla play.",
                     "Open Settings",
                     () => window.NavigateToSettings(),
                     error: true);
