@@ -84,10 +84,10 @@ public static class AppConfig
     // otherwise). This matches the LuaTools plugin's config.USER_AGENT.
     public const string DonateKeysUserAgent = "discord(dot)gg/luatools";
 
-    // ── Umami analytics (anonymous app-launch counting) ──────────────
-    public const string UmamiHost = "https://analytics.lua.tools";
-    public const string UmamiWebsiteId = "820d782c-a434-424f-9f90-dee83dc6032e";
-    public const string UmamiHostname = "desktop.lua.tools";
+    // ── Umami analytics (disabled: all telemetry removed) ──────────────
+    // public const string UmamiHost = "https://analytics.lua.tools";
+    // public const string UmamiWebsiteId = "820d782c-a434-424f-9f90-dee83dc6032e";
+    // public const string UmamiHostname = "desktop.lua.tools";
 
     /// <summary>
     /// Public GitHub repos hosting Velopack release assets, in priority order. The auto-updater reads its
@@ -99,14 +99,12 @@ public static class AppConfig
     /// </summary>
     public static readonly string[] GithubReleasesRepos =
     [
-        "https://github.com/madoiscool/LuaTools",   // primary
-        "https://github.com/mendy-tools/LuaTools",  // backup. Create this repo + re-upload the Velopack
-                                                    // assets ONLY if the primary goes down (404s harmlessly
-                                                    // until then; UpdateService just falls through past it).
+        // "https://github.com/madoiscool/LuaTools",   // primary (temporarily disabled pending new update URL)
+        // "https://github.com/mendy-tools/LuaTools",  // backup
     ];
 
     /// <summary>The primary releases repo (first in <see cref="GithubReleasesRepos"/>).</summary>
-    public static string GithubReleasesRepo => GithubReleasesRepos[0];
+    public static string GithubReleasesRepo => GithubReleasesRepos.Length > 0 ? GithubReleasesRepos[0] : "";
 
     // ── Plugin releases (the store-page plugin manager fetches these) ──────────────
     // Separate from the app's own Velopack self-update repo above. Each release of this repo carries
