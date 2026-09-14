@@ -483,6 +483,14 @@ if(real&&typeof real.callServerMethod==='function'){
   if (window.__LuaToolsDirectAddInjected) return;
   window.__LuaToolsDirectAddInjected = true;
 
+  // Hide any legacy/sidebar 'Add via LuaTools' buttons so only 'Add to Library' appears
+  if (!document.getElementById('luatools-clean-styles')) {
+    var cleanStyle = document.createElement('style');
+    cleanStyle.id = 'luatools-clean-styles';
+    cleanStyle.textContent = '.apphub_OtherSiteInfo .luatools-button, .steamdb-buttons .luatools-button, [data-steamdb-buttons] .luatools-button { display: none !important; }';
+    document.head.appendChild(cleanStyle);
+  }
+
   var lastCheckTime = 0;
   function initDirectAdd() {
     var now = Date.now();
@@ -525,91 +533,69 @@ if(real&&typeof real.callServerMethod==='function'){
 
     var block = document.createElement('div');
     block.className = 'game_area_purchase_game';
-    block.style.background = 'linear-gradient(135deg, rgba(24, 40, 56, 0.95) 0%, rgba(16, 26, 38, 0.95) 100%)';
-    block.style.border = '1px solid rgba(102, 192, 244, 0.4)';
-    block.style.borderRadius = '4px';
-    block.style.padding = '16px';
     block.style.position = 'relative';
+    block.style.minHeight = '48px';
+    block.style.padding = '16px 200px 16px 16px';
+    block.style.background = 'linear-gradient(135deg, rgba(24, 40, 56, 0.95) 0%, rgba(16, 26, 38, 0.95) 100%)';
+    block.style.border = '1px solid rgba(102, 192, 244, 0.35)';
+    block.style.borderRadius = '4px';
     block.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.5)';
 
     var platform = document.createElement('div');
     platform.className = 'game_area_purchase_platform';
+    platform.style.marginBottom = '4px';
     platform.innerHTML = '<span class=""platform_img win""></span>';
     block.appendChild(platform);
 
     var h1 = document.createElement('h1');
     h1.style.display = 'flex';
     h1.style.alignItems = 'center';
-    h1.style.gap = '10px';
+    h1.style.gap = '8px';
     h1.style.fontSize = '21px';
     h1.style.color = '#ffffff';
     h1.style.fontWeight = 'normal';
-    h1.style.margin = '0 0 4px 0';
-
-    var iconImg = document.createElement('img');
-    iconImg.style.width = '22px';
-    iconImg.style.height = '22px';
-    iconImg.style.verticalAlign = 'middle';
-    iconImg.src = 'LuaTools/luatools-icon.png';
-    iconImg.onerror = function () { iconImg.style.display = 'none'; };
-
-    if (window.Millennium && typeof window.Millennium.callServerMethod === 'function') {
-      window.Millennium.callServerMethod('luatools', 'GetIconDataUrl', {})
-        .then(function (res) {
-          var payload = typeof res === 'string' ? JSON.parse(res) : res;
-          if (payload && payload.success && payload.dataUrl) {
-            iconImg.src = payload.dataUrl;
-            iconImg.style.display = 'inline-block';
-          }
-        }).catch(function () {});
-    }
+    h1.style.margin = '0';
+    h1.style.lineHeight = '28px';
 
     var titleText = document.createElement('span');
     titleText.textContent = 'Add ' + gameName + ' to Library';
-    h1.appendChild(iconImg);
     h1.appendChild(titleText);
     block.appendChild(h1);
 
-    var desc = document.createElement('p');
-    desc.style.color = '#66c0f4';
-    desc.style.fontSize = '12px';
-    desc.style.margin = '0 0 12px 0';
-    desc.textContent = 'LuaTools Direct • One-click library installation with unlocker & manifests';
-    block.appendChild(desc);
-
     var action = document.createElement('div');
     action.className = 'game_purchase_action';
+    action.style.position = 'absolute';
+    action.style.right = '16px';
+    action.style.top = '50%';
+    action.style.transform = 'translateY(-50%)';
+    action.style.zIndex = '5';
+    action.style.margin = '0';
 
     var actionBg = document.createElement('div');
     actionBg.className = 'game_purchase_action_bg';
     actionBg.style.background = '#000000';
     actionBg.style.borderRadius = '2px';
+    actionBg.style.padding = '0';
     actionBg.style.display = 'flex';
     actionBg.style.alignItems = 'center';
 
-    var priceTag = document.createElement('div');
-    priceTag.className = 'game_purchase_price price luatools-direct-price';
-    priceTag.style.color = '#a4d007';
-    priceTag.style.fontWeight = 'bold';
-    priceTag.style.fontSize = '13px';
-    priceTag.style.lineHeight = '32px';
-    priceTag.style.padding = '0 14px';
-    priceTag.textContent = 'Free via LuaTools';
-    actionBg.appendChild(priceTag);
-
     var btnContainer = document.createElement('div');
     btnContainer.className = 'btn_addtocart';
+    btnContainer.style.margin = '0';
 
     var addBtn = document.createElement('a');
     addBtn.href = '#';
     addBtn.className = 'btn_green_steamui btn_medium luatools-button luatools-direct-add-btn Focusable';
-    addBtn.style.padding = '0 16px';
+    addBtn.style.padding = '0 18px';
+    addBtn.style.lineHeight = '32px';
+    addBtn.style.height = '32px';
+    addBtn.style.fontSize = '15px';
     addBtn.style.cursor = 'pointer';
     addBtn.style.display = 'inline-block';
     addBtn.style.textDecoration = 'none';
 
     var btnSpan = document.createElement('span');
-    btnSpan.textContent = '+ Add to Library';
+    btnSpan.textContent = 'Add to Library';
     addBtn.appendChild(btnSpan);
     btnContainer.appendChild(addBtn);
     actionBg.appendChild(btnContainer);
@@ -618,30 +604,19 @@ if(real&&typeof real.callServerMethod==='function'){
 
     wrapper.appendChild(block);
 
-    // Insert right at the top of the purchase area (on top of Buy <Game> and Add to Cart)
+    // Insert right at the top of the purchase area (on top of Buy <Game>)
     purchaseArea.prepend(wrapper);
 
     function updateInstalledState() {
-      priceTag.textContent = 'In Library';
-      priceTag.style.color = '#66c0f4';
-      btnSpan.textContent = '✓ Added (Restart Steam to play)';
+      btnSpan.textContent = 'In Library';
       addBtn.className = 'btn_blue_steamui btn_medium Focusable';
+      addBtn.title = 'In Library (Click to Restart Steam)';
       addBtn.onclick = function (e) {
         e.preventDefault();
         if (window.Millennium && typeof window.Millennium.callServerMethod === 'function') {
           window.Millennium.callServerMethod('luatools', 'RestartSteam', {});
         }
       };
-      if (inlineBtn) {
-        inlineBtn.className = 'btn_blue_steamui btn_medium Focusable';
-        inlineBtn.innerHTML = '<span>✓ In Library</span>';
-        inlineBtn.onclick = function (e) {
-          e.preventDefault();
-          if (window.Millennium && typeof window.Millennium.callServerMethod === 'function') {
-            window.Millennium.callServerMethod('luatools', 'RestartSteam', {});
-          }
-        };
-      }
     }
 
     addBtn.addEventListener('click', function (e) {
@@ -671,25 +646,6 @@ if(real&&typeof real.callServerMethod==='function'){
         if (pollCount > 60) clearInterval(pollInt);
       }, 1000);
     });
-
-    var inlineBtn = null;
-    var firstCartBtn = purchaseArea.querySelector('.btn_addtocart:not(.luatools-cart-injected)');
-    if (firstCartBtn && firstCartBtn.parentElement && !firstCartBtn.parentElement.querySelector('.luatools-inline-btn')) {
-      var inlineWrapper = document.createElement('div');
-      inlineWrapper.className = 'btn_addtocart luatools-cart-injected';
-      inlineWrapper.style.marginRight = '6px';
-      inlineBtn = document.createElement('a');
-      inlineBtn.href = '#';
-      inlineBtn.className = 'btn_blue_steamui btn_medium luatools-button luatools-inline-btn Focusable';
-      inlineBtn.title = 'Add to Library via LuaTools';
-      inlineBtn.innerHTML = '<span>+ Add via LuaTools</span>';
-      inlineBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-        addBtn.click();
-      });
-      inlineWrapper.appendChild(inlineBtn);
-      firstCartBtn.parentElement.insertBefore(inlineWrapper, firstCartBtn);
-    }
 
     // Check if already in library
     if (window.Millennium && typeof window.Millennium.callServerMethod === 'function') {
