@@ -337,8 +337,7 @@ public partial class App : Application
         var currentUser = _host.Services.GetRequiredService<CurrentSteamUserService>();
         currentUser.ActiveAccountChanged += async newSteamId =>
         {
-            if (!await _accountSwitchGate.WaitAsync(0))
-                return;
+            await _accountSwitchGate.WaitAsync();
 
             try
             {

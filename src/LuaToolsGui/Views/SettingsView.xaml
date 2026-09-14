@@ -608,6 +608,12 @@
                                 Command="{Binding ClearRestrictionCommand}"
                                 Content="Clear Account Lock"
                                 Icon="{ui:SymbolIcon Dismiss24}" />
+                            <ui:Button
+                                Margin="8,0,0,0"
+                                Appearance="Secondary"
+                                Command="{Binding RefreshCurrentAccountCommand}"
+                                Content="Refresh"
+                                Icon="{ui:SymbolIcon ArrowSync24}" />
                         </StackPanel>
                     </StackPanel>
                     <Border Style="{StaticResource RowDivider}" />

@@ -100,6 +100,30 @@ public class CurrentSteamUserServiceTests
     }
 
     [Fact]
+    public void ParseCurrentSteamId_PrefersHighestTimestamp_OverStaleAutoLogin()
+    {
+        const string vdf = """"
+"users"
+{
+	"76561198000000010"
+	{
+		"AccountName"		"stale_autologin_user"
+		"AutoLogin"		"1"
+		"Timestamp"		"1700000000"
+	}
+	"76561198000000020"
+	{
+		"AccountName"		"currently_active_user"
+		"AutoLogin"		"0"
+		"Timestamp"		"1750000000"
+	}
+}
+"""";
+        string? current = CurrentSteamUserService.ParseCurrentSteamId(vdf);
+        Assert.Equal("76561198000000020", current);
+    }
+
+    [Fact]
     public void CurrentSteamUserService_TracksLastKnownSteamId_AndChecksCurrentUser()
     {
         string tempDir = Path.Combine(Path.GetTempPath(), "luatools_test_steam_" + Guid.NewGuid().ToString("N"));

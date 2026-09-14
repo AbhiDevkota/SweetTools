@@ -329,6 +329,13 @@ public partial class SettingsViewModel : ObservableObject
         }
     }
 
+    /// <summary>Explicitly refreshes the detected active Steam account from Steam's running process and login files.</summary>
+    [RelayCommand]
+    private void RefreshCurrentAccount()
+    {
+        RefreshCurrentSteamId();
+    }
+
     /// <summary>
     /// Completely purges all plugin DLLs, unlockers, and modifications from Steam, restoring Steam to a 100% vanilla pure state.
     /// </summary>
@@ -460,6 +467,7 @@ public partial class SettingsViewModel : ObservableObject
     /// <summary>Called by the View when loaded. Auto-refreshes stats if a key is saved.</summary>
     public void OnViewLoaded()
     {
+        RefreshCurrentSteamId();
         if (HubcapIsKeyConfigured)
             RefreshHubcapStatsCommand.Execute(null);
         // Re-sync FastFetch in case the Add screen's toggle changed it this session (both are singletons

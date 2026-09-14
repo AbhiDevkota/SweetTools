@@ -1,13 +1,14 @@
 using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Win32;
 
 namespace LuaToolsGui.Services;
 
 /// <summary>
-/// Detects the currently logged-in Steam account by reading and parsing Steam's config/loginusers.vdf.
+/// Detects the currently logged-in Steam account by reading Steam's ActiveProcess registry and config/loginusers.vdf.
 /// </summary>
-public class CurrentSteamUserService
+public class CurrentSteamUserService : IDisposable
 {
     private readonly SteamService _steam;
     private readonly ILogger<CurrentSteamUserService>? _log;
@@ -54,6 +55,8 @@ public class CurrentSteamUserService
         }
     }
 
+    private readonly System.Timers.Timer _pollTimer;
+
     /// <summary>
     /// Initializes a new instance of <see cref="CurrentSteamUserService"/>.
     /// </summary>
@@ -65,6 +68,34 @@ public class CurrentSteamUserService
         _log = log;
         _lastKnownSteamId = GetCurrentSteamId();
         InitWatcher();
+
+        // 1-second active polling monitor ensures account changes are detected promptly even if filesystem events lag
+        _pollTimer = new System.Timers.Timer(1000) { AutoReset = true };
+        _pollTimer.Elapsed += (_, _) => CheckForAccountChange();
+        _pollTimer.Start();
+    }
+
+    private void CheckForAccountChange()
+    {
+        string? newId = GetCurrentSteamId();
+        if (string.IsNullOrWhiteSpace(newId))
+            return;
+
+        bool changed = false;
+        lock (_accountLock)
+        {
+            if (!string.Equals(newId, _lastKnownSteamId, StringComparison.OrdinalIgnoreCase))
+            {
+                _lastKnownSteamId = newId;
+                changed = true;
+            }
+        }
+
+        if (changed)
+        {
+            _log?.LogInformation("Active Steam account changed to {SteamId}", newId);
+            ActiveAccountChanged?.Invoke(newId);
+        }
     }
 
     private void InitWatcher()
@@ -76,35 +107,15 @@ public class CurrentSteamUserService
             string? dir = Path.GetDirectoryName(path);
             if (dir is null || !Directory.Exists(dir)) return;
 
-            _watcher = new FileSystemWatcher(dir, "loginusers.vdf")
+            _watcher = new FileSystemWatcher(dir)
             {
-                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.Size,
+                Filter = "*loginusers*",
+                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.Size | NotifyFilters.CreationTime,
                 EnableRaisingEvents = true
             };
 
-            var debounceTimer = new System.Timers.Timer(600) { AutoReset = false };
-            debounceTimer.Elapsed += (_, _) =>
-            {
-                string? newId = GetCurrentSteamId();
-                if (string.IsNullOrWhiteSpace(newId))
-                    return;
-
-                bool changed = false;
-                lock (_accountLock)
-                {
-                    if (!string.Equals(newId, _lastKnownSteamId, StringComparison.OrdinalIgnoreCase))
-                    {
-                        _lastKnownSteamId = newId;
-                        changed = true;
-                    }
-                }
-
-                if (changed)
-                {
-                    _log?.LogInformation("Active Steam account changed to {SteamId}", newId);
-                    ActiveAccountChanged?.Invoke(newId);
-                }
-            };
+            var debounceTimer = new System.Timers.Timer(300) { AutoReset = false };
+            debounceTimer.Elapsed += (_, _) => CheckForAccountChange();
 
             void OnFileChanged(object sender, FileSystemEventArgs e)
             {
@@ -115,6 +126,15 @@ public class CurrentSteamUserService
             _watcher.Changed += OnFileChanged;
             _watcher.Created += OnFileChanged;
             _watcher.Renamed += OnFileChanged;
+            _watcher.Error += (_, _) =>
+            {
+                try
+                {
+                    _watcher.EnableRaisingEvents = false;
+                    _watcher.EnableRaisingEvents = true;
+                }
+                catch { }
+            };
         }
         catch (Exception ex)
         {
@@ -134,12 +154,49 @@ public class CurrentSteamUserService
     public string? CurrentSteamId => GetCurrentSteamId();
 
     /// <summary>
+    /// Gets the SteamID64 of the actively running Steam user from the registry, or null if Steam is not running or no active user.
+    /// If <paramref name="expectedSteamPath"/> is specified, only returns the ID if the running Steam process matches that folder.
+    /// </summary>
+    public static string? GetActiveProcessSteamId(string? expectedSteamPath = null)
+    {
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(expectedSteamPath))
+            {
+                using var steamKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Valve\Steam");
+                if (steamKey?.GetValue("SteamPath") is string regPath && !string.IsNullOrWhiteSpace(regPath))
+                {
+                    string normExpected = Path.GetFullPath(expectedSteamPath.Trim().Replace('/', '\\'));
+                    string normReg = Path.GetFullPath(regPath.Trim().Replace('/', '\\'));
+                    if (!string.Equals(normExpected, normReg, StringComparison.OrdinalIgnoreCase))
+                        return null; // The running Steam process is from a different folder
+                }
+            }
+
+            using var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Valve\Steam\ActiveProcess");
+            if (key?.GetValue("ActiveUser") is int activeUser32 && activeUser32 > 0)
+            {
+                ulong steamId64 = 76561197960265728UL + (ulong)(uint)activeUser32;
+                return steamId64.ToString();
+            }
+        }
+        catch { }
+        return null;
+    }
+
+    /// <summary>
     /// Reads Steam's config/loginusers.vdf and returns the SteamID64 of the current user.
     /// Returns null if the file is missing, unreadable, or no current user can be determined.
     /// </summary>
     /// <returns>The SteamID64 string, or null on failure.</returns>
     public string? GetCurrentSteamId()
     {
+        // 1. If Steam is actively running for this Steam directory, ActiveProcess is 100% authoritative and instantaneous
+        string? activeProcessId = GetActiveProcessSteamId(_steam.EffectivePath);
+        if (!string.IsNullOrWhiteSpace(activeProcessId))
+            return activeProcessId;
+
+        // 2. Fall back to parsing loginusers.vdf (when Steam is closed or transitioning)
         for (int attempt = 0; attempt < 3; attempt++)
         {
             try
@@ -189,8 +246,8 @@ public class CurrentSteamUserService
 
     /// <summary>
     /// Parses the SteamID64 of the active user from the raw text content of loginusers.vdf.
-    /// Prefers the account marked with "MostRecent" = "1", falling back to "AutoLogin" = "1",
-    /// highest timestamp, or the first account entry if no specific markers are present.
+    /// Prefers the account marked with "MostRecent" = "1", falling back to the highest timestamp,
+    /// "AutoLogin" = "1", or the first account entry if no specific markers are present.
     /// </summary>
     /// <param name="vdfContent">The text content of loginusers.vdf.</param>
     /// <returns>The extracted SteamID64 string, or null if no valid account entry was found.</returns>
@@ -240,11 +297,17 @@ public class CurrentSteamUserService
                 }
             }
 
-            return mostRecentId ?? autoLoginId ?? highestTimestampId ?? firstId;
+            return mostRecentId ?? highestTimestampId ?? autoLoginId ?? firstId;
         }
         catch
         {
             return null;
         }
+    }
+
+    public void Dispose()
+    {
+        _pollTimer.Dispose();
+        _watcher?.Dispose();
     }
 }
