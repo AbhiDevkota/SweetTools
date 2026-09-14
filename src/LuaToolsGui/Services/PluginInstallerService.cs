@@ -348,7 +348,6 @@ public class PluginInstallerService(
         if (CdpMarkerPath is { } m && (File.Exists(m) || Directory.Exists(m))) return true;
         if (Directory.Exists(Path.Combine(s, "opensteamtool"))) return true;
         if (Directory.Exists(Path.Combine(s, "config", "stplug-in"))) return true;
-        if (File.Exists(LuatoolsJsPath)) return true;
 
         return false;
     }
@@ -514,12 +513,29 @@ public class PluginInstallerService(
 
     private static void TryDeleteFile(string path)
     {
+        for (int i = 0; i < 5; i++)
+        {
+            try
+            {
+                if (!File.Exists(path)) return;
+                File.SetAttributes(path, FileAttributes.Normal);
+                File.Delete(path);
+                return;
+            }
+            catch
+            {
+                Thread.Sleep(150);
+            }
+        }
+
+        // Fallback: If still locked by a closing process, rename it out of the way so Steam cannot load it
         try
         {
             if (File.Exists(path))
             {
-                File.SetAttributes(path, FileAttributes.Normal);
-                File.Delete(path);
+                string tempName = path + ".deleted_" + Guid.NewGuid().ToString("N");
+                File.Move(path, tempName, overwrite: true);
+                try { File.Delete(tempName); } catch { }
             }
         }
         catch { /* best effort */ }
@@ -543,8 +559,17 @@ public class PluginInstallerService(
                 bool wasRunning = Process.GetProcessesByName("steam").Length > 0;
                 if (wasRunning)
                 {
-                    steam.StopSteam();
-                    await Task.Delay(1200, ct);
+                    // Give Steam a brief moment to exit cleanly if it is already in the middle of closing/switching accounts
+                    for (int i = 0; i < 20 && Process.GetProcessesByName("steam").Length > 0; i++)
+                    {
+                        await Task.Delay(100, ct);
+                    }
+
+                    if (Process.GetProcessesByName("steam").Length > 0)
+                    {
+                        steam.StopSteam();
+                        await Task.Delay(1200, ct);
+                    }
                 }
 
                 try { Directory.CreateDirectory(BackupDir); } catch { }
@@ -664,8 +689,17 @@ public class PluginInstallerService(
                 bool wasRunning = Process.GetProcessesByName("steam").Length > 0;
                 if (wasRunning)
                 {
-                    steam.StopSteam();
-                    await Task.Delay(1200, ct);
+                    // Give Steam a brief moment to exit cleanly if it is already in the middle of closing/switching accounts
+                    for (int i = 0; i < 20 && Process.GetProcessesByName("steam").Length > 0; i++)
+                    {
+                        await Task.Delay(100, ct);
+                    }
+
+                    if (Process.GetProcessesByName("steam").Length > 0)
+                    {
+                        steam.StopSteam();
+                        await Task.Delay(1200, ct);
+                    }
                 }
 
                 // 1. Restore stplug-in from stplug-in.disabled

@@ -16,6 +16,7 @@ public partial class App : Application
     // True when the app was cold-started solely to run a silent install AND MinimizeToTray is off,
     // which means we auto-exit after the balloon so we don't leave a ghost tray icon behind.
     private bool _exitAfterSilentInstall;
+    private readonly SemaphoreSlim _accountSwitchGate = new(1, 1);
 
     public App()
     {
@@ -334,22 +335,59 @@ public partial class App : Application
         toast.Attach(window.RootSnackbar); // wire the presenter before anything can raise a toast
 
         var currentUser = _host.Services.GetRequiredService<CurrentSteamUserService>();
-        currentUser.ActiveAccountChanged += newSteamId =>
+        currentUser.ActiveAccountChanged += async newSteamId =>
         {
-            var installer = _host.Services.GetRequiredService<PluginInstallerService>();
-            if (!installer.IsAllowedForCurrentAccount())
+            if (!await _accountSwitchGate.WaitAsync(0))
+                return;
+
+            try
             {
-                if (installer.HasSteamPluginFiles())
+                var installer = _host.Services.GetRequiredService<PluginInstallerService>();
+                var settings = _host.Services.GetRequiredService<SettingsService>();
+
+                if (!installer.IsAllowedForCurrentAccount())
                 {
-                    _ = installer.PurgeAllSteamModificationsAsync(restartSteam: true);
+                    if (installer.HasSteamPluginFiles())
+                    {
+                        await installer.PurgeAllSteamModificationsAsync(restartSteam: true);
+                    }
+
+                    bool hasAllowed = !string.IsNullOrWhiteSpace(settings.AllowedSteamId);
+                    if (hasAllowed)
+                    {
+                        toast.ShowAction(
+                            "Account Mismatch",
+                            $"Switched to Steam account {newSteamId}. LuaTools is restricted to account {settings.AllowedSteamId}. Steam modifications have been cleaned for vanilla play.",
+                            "Open Settings",
+                            () => Dispatcher.Invoke(window.NavigateToSettings),
+                            error: true);
+                    }
+                    else
+                    {
+                        toast.ShowAction(
+                            "Account Configuration Required",
+                            "No Steam account is locked. Go to Settings and lock an account to enable plugins.",
+                            "Open Settings",
+                            () => Dispatcher.Invoke(window.NavigateToSettings),
+                            error: false);
+                    }
+                }
+                else
+                {
+                    if (!installer.HasSteamPluginFiles())
+                    {
+                        await installer.RestoreAllSteamModificationsAsync(restartSteam: true);
+                    }
+
+                    toast.Show(
+                        "Allowed Account Active",
+                        $"Switched to allowed Steam account {newSteamId}. Steam modifications have been restored.",
+                        error: false);
                 }
             }
-            else
+            finally
             {
-                if (!installer.HasSteamPluginFiles())
-                {
-                    _ = installer.RestoreAllSteamModificationsAsync(restartSteam: true);
-                }
+                _accountSwitchGate.Release();
             }
         };
 
@@ -506,22 +544,6 @@ public partial class App : Application
             var settings = _host.Services.GetRequiredService<SettingsService>();
             bool hasAllowedConfigured = !string.IsNullOrWhiteSpace(settings.AllowedSteamId);
 
-            if (hasAllowedConfigured)
-            {
-                MessageBox.Show(
-                    "LuaTools is restricted to a different Steam account. The plugin has been disabled and Steam has been cleaned. Please log in with your configured account.",
-                    "LuaTools",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-            }
-            else if (!silentStartup && !Program.SessionTrayLock)
-            {
-                toast.Show(
-                    "Account Configuration Required",
-                    "No Steam account is locked. Go to Settings and lock your account to enable plugins.",
-                    error: false);
-            }
-
             if (Program.SessionTrayLock || silentStartup)
             {
                 Shutdown();
@@ -530,7 +552,22 @@ public partial class App : Application
 
             if (hasAllowedConfigured)
             {
+                toast.ShowAction(
+                    "Account Mismatch",
+                    $"LuaTools is restricted to Steam account {settings.AllowedSteamId}. Steam modifications have been cleaned for vanilla play.",
+                    "Open Settings",
+                    () => window.NavigateToSettings(),
+                    error: true);
                 return;
+            }
+            else
+            {
+                toast.ShowAction(
+                    "Account Configuration Required",
+                    "No Steam account is locked. Go to Settings and select an account to enable plugins.",
+                    "Open Settings",
+                    () => window.NavigateToSettings(),
+                    error: false);
             }
         }
 

@@ -34,12 +34,25 @@ public class CurrentSteamUserService
     private static Regex autoLoginRegex => AutoLoginRegex;
     private static Regex timestampRegex => TimestampRegex;
 
+    private readonly object _accountLock = new();
+    private string? _lastKnownSteamId;
     private FileSystemWatcher? _watcher;
 
     /// <summary>
     /// Raised whenever Steam's config/loginusers.vdf changes on disk and a new active account is detected.
     /// </summary>
     public event Action<string?>? ActiveAccountChanged;
+
+    /// <summary>
+    /// The last detected active Steam account ID.
+    /// </summary>
+    public string? LastKnownSteamId
+    {
+        get
+        {
+            lock (_accountLock) return _lastKnownSteamId;
+        }
+    }
 
     /// <summary>
     /// Initializes a new instance of <see cref="CurrentSteamUserService"/>.
@@ -50,6 +63,7 @@ public class CurrentSteamUserService
     {
         _steam = steam;
         _log = log;
+        _lastKnownSteamId = GetCurrentSteamId();
         InitWatcher();
     }
 
@@ -68,18 +82,39 @@ public class CurrentSteamUserService
                 EnableRaisingEvents = true
             };
 
-            var debounceTimer = new System.Timers.Timer(500) { AutoReset = false };
+            var debounceTimer = new System.Timers.Timer(600) { AutoReset = false };
             debounceTimer.Elapsed += (_, _) =>
             {
                 string? newId = GetCurrentSteamId();
-                ActiveAccountChanged?.Invoke(newId);
+                if (string.IsNullOrWhiteSpace(newId))
+                    return;
+
+                bool changed = false;
+                lock (_accountLock)
+                {
+                    if (!string.Equals(newId, _lastKnownSteamId, StringComparison.OrdinalIgnoreCase))
+                    {
+                        _lastKnownSteamId = newId;
+                        changed = true;
+                    }
+                }
+
+                if (changed)
+                {
+                    _log?.LogInformation("Active Steam account changed to {SteamId}", newId);
+                    ActiveAccountChanged?.Invoke(newId);
+                }
             };
 
-            _watcher.Changed += (_, _) =>
+            void OnFileChanged(object sender, FileSystemEventArgs e)
             {
                 debounceTimer.Stop();
                 debounceTimer.Start();
-            };
+            }
+
+            _watcher.Changed += OnFileChanged;
+            _watcher.Created += OnFileChanged;
+            _watcher.Renamed += OnFileChanged;
         }
         catch (Exception ex)
         {
@@ -105,28 +140,37 @@ public class CurrentSteamUserService
     /// <returns>The SteamID64 string, or null on failure.</returns>
     public string? GetCurrentSteamId()
     {
-        try
+        for (int attempt = 0; attempt < 3; attempt++)
         {
-            string? path = LoginUsersPath;
-            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+            try
             {
-                _log?.LogWarning("Steam loginusers.vdf not found at {Path}", path ?? "null");
-                return null;
-            }
+                string? path = LoginUsersPath;
+                if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+                {
+                    _log?.LogWarning("Steam loginusers.vdf not found at {Path}", path ?? "null");
+                    return null;
+                }
 
-            string content = File.ReadAllText(path);
-            string? steamId = ParseCurrentSteamId(content);
-            if (steamId is null)
-            {
+                using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+                using var reader = new StreamReader(fs);
+                string content = reader.ReadToEnd();
+
+                string? steamId = ParseCurrentSteamId(content);
+                if (steamId is not null)
+                    return steamId;
+
                 _log?.LogWarning("Failed to extract current Steam account ID from {Path}", path);
             }
-            return steamId;
+            catch (Exception ex)
+            {
+                _log?.LogDebug(ex, "Attempt {Attempt} reading loginusers.vdf failed", attempt + 1);
+            }
+
+            if (attempt < 2)
+                Thread.Sleep(100);
         }
-        catch (Exception ex)
-        {
-            _log?.LogWarning(ex, "Error reading Steam loginusers.vdf");
-            return null;
-        }
+
+        return null;
     }
 
     /// <summary>

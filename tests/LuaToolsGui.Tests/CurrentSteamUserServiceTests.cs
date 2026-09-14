@@ -1,3 +1,4 @@
+using System.IO;
 using LuaToolsGui.Services;
 using Xunit;
 
@@ -96,5 +97,30 @@ public class CurrentSteamUserServiceTests
 """";
         string? current = CurrentSteamUserService.ParseCurrentSteamId(vdf);
         Assert.Equal("76561198000000020", current);
+    }
+
+    [Fact]
+    public void CurrentSteamUserService_TracksLastKnownSteamId_AndChecksCurrentUser()
+    {
+        string tempDir = Path.Combine(Path.GetTempPath(), "luatools_test_steam_" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            string configDir = Path.Combine(tempDir, "config");
+            Directory.CreateDirectory(configDir);
+            File.WriteAllText(Path.Combine(configDir, "loginusers.vdf"), SampleLoginUsersVdf);
+
+            var settings = new SettingsService { SteamPathOverride = tempDir };
+            var steam = new SteamService(settings);
+            var service = new CurrentSteamUserService(steam);
+
+            Assert.Equal("76561198000000002", service.LastKnownSteamId);
+            Assert.True(service.IsCurrentUser("76561198000000002"));
+            Assert.False(service.IsCurrentUser("76561198000000001"));
+            Assert.False(service.IsCurrentUser(""));
+        }
+        finally
+        {
+            try { Directory.Delete(tempDir, recursive: true); } catch { }
+        }
     }
 }
