@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -18,6 +18,10 @@ public partial class SettingsViewModel : ObservableObject
     private readonly AuthService _auth;
     private readonly SteamService _steam;
     private readonly HubcapService _hubcap;
+    private readonly CurrentSteamUserService _currentSteamUser;
+    private readonly ToastService _toast;
+
+    [ObservableProperty] private string _currentSteamId = "Not configured";
 
     [ObservableProperty] private string? _displayName;
     [ObservableProperty] private string? _email;
@@ -222,15 +226,18 @@ public partial class SettingsViewModel : ObservableObject
     public Action? RequestRestartPrompt { get; set; }
 
     public SettingsViewModel(SettingsService settings, AuthService auth, SteamService steam,
-        HubcapService hubcap)
+        HubcapService hubcap, CurrentSteamUserService currentSteamUser, ToastService toast)
     {
         _settings = settings;
         _auth = auth;
         _steam = steam;
         _hubcap = hubcap;
+        _currentSteamUser = currentSteamUser;
+        _toast = toast;
         _auth.AuthStateChanged += RefreshAccount;
         RefreshAccount();
         RefreshSteam();
+        RefreshCurrentSteamId();
         _autoUpdateApps = settings.AutoUpdateApps; // init from saved value (default ON) without triggering Save
         _fastFetch = settings.FastFetch;
         _donateKeys = settings.DonateKeys;
@@ -253,6 +260,37 @@ public partial class SettingsViewModel : ObservableObject
             : path is null ? Resources.Strings.Settings_SteamSource_NotFound
             : Resources.Strings.Settings_SteamSource_Auto;
         SteamWarning = path is not null && !_steam.IsValid ? Resources.Strings.Settings_SteamWarning_NoExe : null;
+    }
+
+    private void RefreshCurrentSteamId()
+    {
+        string? id = _currentSteamUser.GetCurrentSteamId();
+        CurrentSteamId = string.IsNullOrWhiteSpace(id) ? "Not configured" : id;
+    }
+
+    /// <summary>Locks plugin execution to the currently active Steam account.</summary>
+    [RelayCommand]
+    private void SetCurrentAccount()
+    {
+        string? id = _currentSteamUser.GetCurrentSteamId();
+        if (!string.IsNullOrWhiteSpace(id))
+        {
+            _settings.AllowedSteamId = id;
+            CurrentSteamId = id;
+            _toast.Show("LuaTools", $"Account locked to {id}");
+        }
+        else
+        {
+            _toast.Show("LuaTools", "No active Steam account detected.", error: true);
+        }
+    }
+
+    /// <summary>Clears the Steam account restriction.</summary>
+    [RelayCommand]
+    private void ClearRestriction()
+    {
+        _settings.AllowedSteamId = "";
+        _toast.Show("LuaTools", "Account restriction cleared");
     }
 
     public void RefreshAccount()
