@@ -52,6 +52,42 @@ public class AppSettings
     // When true, FastFetch auto-picks the first available source and downloads immediately.
     // Nullable so "never set" (→ default OFF) is distinguishable from an explicit choice.
     public bool? FastFetch { get; set; }
+
+    // The allowed SteamID64 for account restriction. Null = no restriction.
+    public string? AllowedSteamId { get; set; }
+
+    public string GetString(string key, string defaultValue = "") => key switch
+    {
+        nameof(AllowedSteamId) => AllowedSteamId ?? defaultValue,
+        nameof(SteamPathOverride) => SteamPathOverride ?? defaultValue,
+        nameof(SelectedMode) => SelectedMode ?? defaultValue,
+        nameof(Language) => Language ?? defaultValue,
+        nameof(HubcapApiKey) => HubcapApiKey ?? defaultValue,
+        _ => defaultValue,
+    };
+
+    public void SetString(string key, string? value)
+    {
+        string? val = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+        switch (key)
+        {
+            case nameof(AllowedSteamId):
+                AllowedSteamId = val;
+                break;
+            case nameof(SteamPathOverride):
+                SteamPathOverride = val;
+                break;
+            case nameof(SelectedMode):
+                SelectedMode = val;
+                break;
+            case nameof(Language):
+                Language = val;
+                break;
+            case nameof(HubcapApiKey):
+                HubcapApiKey = val;
+                break;
+        }
+    }
 }
 
 public class SettingsService
@@ -153,6 +189,27 @@ public class SettingsService
         set { _settings.FastFetch = value; Save(); }
     }
 
+    /// <summary>The allowed SteamID64 for plugin execution, or empty if unrestricted.</summary>
+    public string AllowedSteamId
+    {
+        get => _settings.GetString(nameof(AllowedSteamId), "");
+        set
+        {
+            _settings.SetString(nameof(AllowedSteamId), value);
+            Save();
+        }
+    }
+
+    /// <summary>Gets a string setting by key, or returns defaultValue if not set.</summary>
+    public string GetString(string key, string defaultValue = "") => _settings.GetString(key, defaultValue);
+
+    /// <summary>Sets a string setting by key and persists it.</summary>
+    public void SetString(string key, string? value)
+    {
+        _settings.SetString(key, value);
+        Save();
+    }
+
     private static readonly string TmpPath = FilePath + ".tmp";
     private static readonly string BakPath = FilePath + ".bak";
 
@@ -211,7 +268,8 @@ public class SettingsService
             && _settings.HubcapApiKey is null
             && _settings.StartWithWindows is null
             && _settings.MinimizeToTray is null
-            && _settings.FastFetch is null;
+            && _settings.FastFetch is null
+            && _settings.AllowedSteamId is null;
         if (empty)
         {
             foreach (var p in new[] { FilePath, BakPath, TmpPath })
