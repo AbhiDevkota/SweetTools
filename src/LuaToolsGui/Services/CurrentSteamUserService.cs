@@ -28,6 +28,12 @@ public class CurrentSteamUserService
         @"""Timestamp""\s*""(\d+)""",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+    // Aliases to support camelCase identifiers in IDE editors and refactorings
+    private static Regex userBlockRegex => UserBlockRegex;
+    private static Regex mostRecentRegex => MostRecentRegex;
+    private static Regex autoLoginRegex => AutoLoginRegex;
+    private static Regex timestampRegex => TimestampRegex;
+
     private FileSystemWatcher? _watcher;
 
     /// <summary>
