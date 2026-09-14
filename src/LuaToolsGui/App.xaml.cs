@@ -337,9 +337,19 @@ public partial class App : Application
         currentUser.ActiveAccountChanged += newSteamId =>
         {
             var installer = _host.Services.GetRequiredService<PluginInstallerService>();
-            if (!installer.IsAllowedForCurrentAccount() && installer.HasSteamPluginFiles())
+            if (!installer.IsAllowedForCurrentAccount())
             {
-                _ = installer.PurgeAllSteamModificationsAsync();
+                if (installer.HasSteamPluginFiles())
+                {
+                    _ = installer.PurgeAllSteamModificationsAsync(restartSteam: true);
+                }
+            }
+            else
+            {
+                if (!installer.HasSteamPluginFiles())
+                {
+                    _ = installer.RestoreAllSteamModificationsAsync(restartSteam: true);
+                }
             }
         };
 

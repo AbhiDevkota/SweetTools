@@ -290,16 +290,25 @@ public partial class SettingsViewModel : ObservableObject
         AllowedSteamIdDisplay = string.IsNullOrWhiteSpace(allowed) ? "None (Plugins disabled — lock an account to enable)" : allowed;
     }
 
-    /// <summary>Locks plugin execution to the currently active Steam account.</summary>
+    /// <summary>Locks plugin execution to the currently active Steam account and restores plugin modifications.</summary>
     [RelayCommand]
-    private void SetCurrentAccount()
+    private async Task SetCurrentAccount()
     {
         string? id = _currentSteamUser.GetCurrentSteamId();
         if (!string.IsNullOrWhiteSpace(id))
         {
             _settings.AllowedSteamId = id;
             RefreshCurrentSteamId();
-            _toast.Show("LuaTools", $"Plugins enabled and locked to account {id}");
+
+            var (ok, err) = await _pluginInstaller.RestoreAllSteamModificationsAsync(restartSteam: true);
+            if (ok)
+            {
+                _toast.Show("LuaTools", $"Plugins enabled and locked to account {id}. Steam refreshed.");
+            }
+            else
+            {
+                _toast.Show("LuaTools", $"Account locked to {id}, but restore encountered an issue: {err}", error: true);
+            }
         }
         else
         {

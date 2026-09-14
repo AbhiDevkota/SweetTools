@@ -45,6 +45,7 @@ public class PluginInstallerService(
     CefInjectorService injector,
     CurrentSteamUserService currentUser,
     SettingsService settings,
+    UnlockerService? unlocker = null,
     ILogger<PluginInstallerService>? log = null)
 {
     private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNameCaseInsensitive = true };
@@ -185,8 +186,25 @@ public class PluginInstallerService(
 
     private static string FrontendDir => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "LuaToolsGui", "plugin");
+    private static string BackupDir => Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "LuaToolsGui", "steam_mods_backup");
     private static string LuatoolsJsPath => Path.Combine(FrontendDir, "public", "luatools.js");
     private static string ManifestPath => Path.Combine(FrontendDir, "installed.json");
+
+    private static void CopyDirectory(string sourceDir, string targetDir)
+    {
+        Directory.CreateDirectory(targetDir);
+        foreach (var file in Directory.GetFiles(sourceDir))
+        {
+            string dest = Path.Combine(targetDir, Path.GetFileName(file));
+            File.Copy(file, dest, overwrite: true);
+        }
+        foreach (var dir in Directory.GetDirectories(sourceDir))
+        {
+            string dest = Path.Combine(targetDir, Path.GetFileName(dir));
+            CopyDirectory(dir, dest);
+        }
+    }
 
     private string? SteamDir => steam.EffectivePath;
     private string? SlotPath(LoaderSlot slot) => SteamDir is { } s ? Path.Combine(s, slot.DllAsset) : null;
@@ -509,7 +527,8 @@ public class PluginInstallerService(
 
     /// <summary>
     /// Purges all LuaTools modifications from Steam: loader DLLs (winmm, dwmapi, xinput, OpenSteamTool),
-    /// legacy DLLs, the CDP remote-debugging junction, opensteamtool folder, stplug-in luas, and frontend files.
+    /// legacy DLLs, the CDP remote-debugging junction, opensteamtool folder, and disables stplug-in luas.
+    /// Safely backs up active mods before removal so they can be restored when the account is re-selected.
     /// Restores Steam to a 100% pure vanilla state.
     /// </summary>
     public Task<(bool ok, string? error)> PurgeAllSteamModificationsAsync(bool restartSteam = true, CancellationToken ct = default)
@@ -528,27 +547,56 @@ public class PluginInstallerService(
                     await Task.Delay(1200, ct);
                 }
 
-                // 1. Delete LuaTools loader DLLs
+                try { Directory.CreateDirectory(BackupDir); } catch { }
+
+                // 1. Backup & Delete LuaTools loader DLLs
                 foreach (var slot in Slots)
                 {
-                    if (SlotPath(slot) is { } bp) TryDeleteFile(bp);
-                    if (SlotRealPath(slot) is { } br) TryDeleteFile(br);
+                    if (SlotPath(slot) is { } bp)
+                    {
+                        if (File.Exists(bp))
+                        {
+                            try { File.Copy(bp, Path.Combine(BackupDir, Path.GetFileName(bp)), overwrite: true); } catch { }
+                        }
+                        TryDeleteFile(bp);
+                    }
+                    if (SlotRealPath(slot) is { } br)
+                    {
+                        if (File.Exists(br))
+                        {
+                            try { File.Copy(br, Path.Combine(BackupDir, Path.GetFileName(br)), overwrite: true); } catch { }
+                        }
+                        TryDeleteFile(br);
+                    }
                 }
 
                 // 2. Delete legacy loader DLLs
                 foreach (var legacy in LegacyDllPaths)
                     TryDeleteFile(legacy);
 
-                // 3. Delete unlocker DLLs (OST / BST)
+                // 3. Backup & Delete unlocker DLLs (OST / BST)
                 string[] unlockerDlls = ["dwmapi.dll", "xinput1_4.dll", "OpenSteamTool.dll"];
                 foreach (var dll in unlockerDlls)
-                    TryDeleteFile(Path.Combine(steamDir, dll));
+                {
+                    string p = Path.Combine(steamDir, dll);
+                    if (File.Exists(p))
+                    {
+                        try { File.Copy(p, Path.Combine(BackupDir, dll), overwrite: true); } catch { }
+                    }
+                    TryDeleteFile(p);
+                }
 
-                // 4. Delete opensteamtool directory
+                // 4. Backup & Delete opensteamtool directory
                 string ostDir = Path.Combine(steamDir, "opensteamtool");
                 if (Directory.Exists(ostDir))
                 {
-                    try { Directory.Delete(ostDir, recursive: true); } catch { }
+                    try
+                    {
+                        string backupOst = Path.Combine(BackupDir, "opensteamtool");
+                        CopyDirectory(ostDir, backupOst);
+                        Directory.Delete(ostDir, recursive: true);
+                    }
+                    catch { }
                 }
 
                 // 5. Remove CDP remote-debugging junction/file
@@ -573,17 +621,13 @@ public class PluginInstallerService(
                     catch { }
                 }
 
-                // 7. Delete frontend plugin directory
-                if (Directory.Exists(FrontendDir))
-                {
-                    try { Directory.Delete(FrontendDir, recursive: true); } catch { }
-                }
+                // Note: FrontendDir (%AppData%\LuaToolsGui\plugin) is preserved so local plugin cache stays intact.
 
-                // 8. Restore Millennium config
+                // 7. Restore Millennium config
                 if (MillenniumPresent)
                     SetMillenniumLuatoolsEnabled(enable: true, restore: manifest?.DisabledMillenniumEntries);
 
-                // 9. Clear in-memory injector so nothing can inject
+                // 8. Clear in-memory injector so nothing can inject
                 await injector.ReloadPluginFilesAsync();
 
                 if (wasRunning && restartSteam)
@@ -594,6 +638,139 @@ public class PluginInstallerService(
             catch (Exception ex)
             {
                 log?.LogWarning(ex, "Failed to purge Steam modifications");
+                return (false, (string?)ex.Message);
+            }
+        }, ct);
+    }
+
+    /// <summary>
+    /// Restores all purged LuaTools modifications into Steam: loader DLLs, unlocker DLLs,
+    /// opensteamtool folder, stplug-in lua directory, and CDP remote debugging marker.
+    /// Also reloads the in-memory injector.
+    /// Restarts Steam if requested and Steam was running.
+    /// </summary>
+    public Task<(bool ok, string? error)> RestoreAllSteamModificationsAsync(bool restartSteam = true, CancellationToken ct = default)
+    {
+        return Task.Run(async () =>
+        {
+            try
+            {
+                if (!IsAllowedForCurrentAccount())
+                    return (false, "Current account is not allowed.");
+
+                if (SteamDir is not { } steamDir)
+                    return (false, "Steam directory not found.");
+
+                bool wasRunning = Process.GetProcessesByName("steam").Length > 0;
+                if (wasRunning)
+                {
+                    steam.StopSteam();
+                    await Task.Delay(1200, ct);
+                }
+
+                // 1. Restore stplug-in from stplug-in.disabled
+                string stPlugin = Path.Combine(steamDir, "config", "stplug-in");
+                string stPluginDisabled = Path.Combine(steamDir, "config", "stplug-in.disabled");
+                if (Directory.Exists(stPluginDisabled))
+                {
+                    try
+                    {
+                        if (!Directory.Exists(stPlugin))
+                        {
+                            Directory.Move(stPluginDisabled, stPlugin);
+                        }
+                        else
+                        {
+                            foreach (var file in Directory.GetFiles(stPluginDisabled))
+                            {
+                                string dest = Path.Combine(stPlugin, Path.GetFileName(file));
+                                File.Copy(file, dest, overwrite: true);
+                            }
+                            Directory.Delete(stPluginDisabled, recursive: true);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        log?.LogWarning(ex, "Failed to restore stplug-in directory");
+                    }
+                }
+
+                // 2. Restore loader DLLs and unlocker DLLs from BackupDir
+                if (Directory.Exists(BackupDir))
+                {
+                    foreach (var file in Directory.GetFiles(BackupDir))
+                    {
+                        try
+                        {
+                            string dest = Path.Combine(steamDir, Path.GetFileName(file));
+                            File.Copy(file, dest, overwrite: true);
+                        }
+                        catch (Exception ex)
+                        {
+                            log?.LogWarning(ex, "Failed to restore file {File}", file);
+                        }
+                    }
+
+                    string backupOstDir = Path.Combine(BackupDir, "opensteamtool");
+                    if (Directory.Exists(backupOstDir))
+                    {
+                        string targetOstDir = Path.Combine(steamDir, "opensteamtool");
+                        try
+                        {
+                            Directory.CreateDirectory(targetOstDir);
+                            CopyDirectory(backupOstDir, targetOstDir);
+                        }
+                        catch (Exception ex)
+                        {
+                            log?.LogWarning(ex, "Failed to restore opensteamtool directory");
+                        }
+                    }
+                }
+
+                // 3. Ensure the CDP remote-debugging marker junction exists
+                if (CdpMarkerPath is { } markerPath)
+                {
+                    CreateCdpMarkerJunction(markerPath);
+                }
+
+                // 4. If loader DLLs or frontend are missing, install them
+                bool needsFullInstall = !File.Exists(LuatoolsJsPath) || Slots.Any(s => SlotPath(s) is { } p && !File.Exists(p));
+                if (needsFullInstall)
+                {
+                    var (installOk, installErr) = await InstallAsync(progress: null, ct);
+                    if (!installOk)
+                    {
+                        log?.LogWarning("Auto-install during restore failed: {Error}", installErr);
+                    }
+                }
+                else
+                {
+                    // Reload in-memory injector
+                    await injector.ReloadPluginFilesAsync();
+                }
+
+                // 5. If unlocker was configured and DLLs are missing, restore unlocker
+                if (unlocker?.SelectedMode is { } mode && mode is (UnlockerMode.Ost or UnlockerMode.Bst))
+                {
+                    string dwmPath = Path.Combine(steamDir, "dwmapi.dll");
+                    if (!File.Exists(dwmPath))
+                    {
+                        await unlocker.InstallAsync(mode, ct: ct);
+                    }
+                    unlocker.EnsureLuaPathRegistered();
+                }
+
+                // 6. Restart Steam if requested and was running
+                if (wasRunning && restartSteam)
+                {
+                    steam.StartSteam();
+                }
+
+                return (true, (string?)null);
+            }
+            catch (Exception ex)
+            {
+                log?.LogWarning(ex, "Failed to restore Steam modifications");
                 return (false, (string?)ex.Message);
             }
         }, ct);

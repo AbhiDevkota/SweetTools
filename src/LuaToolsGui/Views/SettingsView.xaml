@@ -522,51 +522,94 @@
                             IsChecked="{Binding MinimizeToTray, Mode=TwoWay}" />
                     </Grid>
                     <Border Style="{StaticResource RowDivider}" />
-                    <!-- Account Restriction -->
-                    <Grid Margin="14,12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel VerticalAlignment="Center">
-                            <TextBlock
-                                FontSize="13"
-                                FontWeight="Medium"
-                                Text="Account Configuration &amp; Protection" />
-                            <TextBlock
-                                Margin="0,4,0,0"
-                                FontSize="12"
-                                Foreground="#6b7280"
-                                Text="LuaTools only activates plugins when your explicitly selected Steam account is active. If no account is locked, plugins remain disabled and Steam stays 100% vanilla pure."
-                                TextWrapping="Wrap" />
-                            <StackPanel Margin="0,6,0,0">
+                    <!-- Account Configuration & Protection -->
+                    <StackPanel Margin="14,12">
+                        <TextBlock
+                            FontSize="13"
+                            FontWeight="Medium"
+                            Text="Account Configuration &amp; Protection" />
+                        <TextBlock
+                            Margin="0,4,0,0"
+                            FontSize="12"
+                            Foreground="#6b7280"
+                            Text="LuaTools only activates plugins when your explicitly selected Steam account is active. If no account is locked, plugins remain disabled and Steam stays 100% vanilla pure."
+                            TextWrapping="Wrap" />
+
+                        <!-- Account Status Box (Wrap-safe, never clips Steam ID) -->
+                        <Border
+                            Margin="0,10,0,0"
+                            Padding="12,10"
+                            Background="#0Dffffff"
+                            BorderBrush="#1Affffff"
+                            BorderThickness="1"
+                            CornerRadius="6">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Row 0: Active Steam Account -->
                                 <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="0"
                                     FontSize="12"
+                                    FontWeight="SemiBold"
                                     Foreground="#9ca3af"
-                                    Text="{Binding CurrentSteamId, StringFormat='Active Steam Account: {0}'}" />
+                                    Text="Active Steam Account:" />
                                 <TextBlock
-                                    Margin="0,2,0,0"
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Margin="10,0,0,0"
                                     FontSize="12"
+                                    FontWeight="Medium"
+                                    Foreground="#e5e7eb"
+                                    Text="{Binding CurrentSteamId}"
+                                    TextWrapping="Wrap" />
+
+                                <!-- Row 1: Configured Allowed Account -->
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Margin="0,6,0,0"
+                                    FontSize="12"
+                                    FontWeight="SemiBold"
                                     Foreground="#9ca3af"
-                                    Text="{Binding AllowedSteamIdDisplay, StringFormat='Configured Allowed Account: {0}'}" />
-                            </StackPanel>
-                        </StackPanel>
+                                    Text="Configured Account:" />
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Margin="10,6,0,0"
+                                    FontSize="12"
+                                    FontWeight="Medium"
+                                    Foreground="#60a5fa"
+                                    Text="{Binding AllowedSteamIdDisplay}"
+                                    TextWrapping="Wrap" />
+                            </Grid>
+                        </Border>
+
+                        <!-- Action Buttons -->
                         <StackPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
+                            Margin="0,12,0,0"
                             Orientation="Horizontal"
-                            VerticalAlignment="Center">
+                            HorizontalAlignment="Left">
                             <ui:Button
+                                Appearance="Primary"
                                 Command="{Binding SetCurrentAccountCommand}"
                                 Content="Lock to Current Account"
                                 Icon="{ui:SymbolIcon LockClosed24}" />
                             <ui:Button
                                 Margin="8,0,0,0"
+                                Appearance="Secondary"
                                 Command="{Binding ClearRestrictionCommand}"
                                 Content="Clear Account Lock"
                                 Icon="{ui:SymbolIcon Dismiss24}" />
                         </StackPanel>
-                    </Grid>
+                    </StackPanel>
                     <Border Style="{StaticResource RowDivider}" />
                     <!-- Pure Steam Purge -->
                     <Grid Margin="14,12">
