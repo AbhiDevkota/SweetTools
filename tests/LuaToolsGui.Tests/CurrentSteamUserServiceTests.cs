@@ -75,4 +75,26 @@ public class CurrentSteamUserServiceTests
         string? current = CurrentSteamUserService.ParseCurrentSteamId(input);
         Assert.Null(current);
     }
+
+    [Fact]
+    public void ParseCurrentSteamId_FallsBackToHighestTimestamp_WhenNoMostRecentOrAutoLogin()
+    {
+        const string vdf = """"
+"users"
+{
+	"76561198000000010"
+	{
+		"AccountName"		"older"
+		"Timestamp"		"1700000000"
+	}
+	"76561198000000020"
+	{
+		"AccountName"		"newer"
+		"Timestamp"		"1750000000"
+	}
+}
+"""";
+        string? current = CurrentSteamUserService.ParseCurrentSteamId(vdf);
+        Assert.Equal("76561198000000020", current);
+    }
 }

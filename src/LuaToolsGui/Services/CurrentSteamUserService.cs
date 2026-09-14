@@ -28,6 +28,13 @@ public class CurrentSteamUserService
         @"""Timestamp""\s*""(\d+)""",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+    private FileSystemWatcher? _watcher;
+
+    /// <summary>
+    /// Raised whenever Steam's config/loginusers.vdf changes on disk and a new active account is detected.
+    /// </summary>
+    public event Action<string?>? ActiveAccountChanged;
+
     /// <summary>
     /// Initializes a new instance of <see cref="CurrentSteamUserService"/>.
     /// </summary>
@@ -37,6 +44,41 @@ public class CurrentSteamUserService
     {
         _steam = steam;
         _log = log;
+        InitWatcher();
+    }
+
+    private void InitWatcher()
+    {
+        try
+        {
+            string? path = LoginUsersPath;
+            if (path is null) return;
+            string? dir = Path.GetDirectoryName(path);
+            if (dir is null || !Directory.Exists(dir)) return;
+
+            _watcher = new FileSystemWatcher(dir, "loginusers.vdf")
+            {
+                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.Size,
+                EnableRaisingEvents = true
+            };
+
+            var debounceTimer = new System.Timers.Timer(500) { AutoReset = false };
+            debounceTimer.Elapsed += (_, _) =>
+            {
+                string? newId = GetCurrentSteamId();
+                ActiveAccountChanged?.Invoke(newId);
+            };
+
+            _watcher.Changed += (_, _) =>
+            {
+                debounceTimer.Stop();
+                debounceTimer.Start();
+            };
+        }
+        catch (Exception ex)
+        {
+            _log?.LogWarning(ex, "Failed to initialize loginusers.vdf watcher");
+        }
     }
 
     /// <summary>

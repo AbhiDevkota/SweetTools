@@ -317,15 +317,21 @@ public class PluginInstallerService(
     }
 
     /// <summary>
-    /// Checks whether any Steam plugin loader DLLs, legacy DLLs, CDP markers, or frontend files are present on disk.
+    /// Checks whether any Steam plugin loader DLLs, unlocker DLLs, legacy DLLs, CDP markers, or plugin files are present on disk.
     /// </summary>
     public bool HasSteamPluginFiles()
     {
-        bool slotPresent = Slots.Any(s => SlotPath(s) is { } p && File.Exists(p));
-        bool legacyPresent = LegacyDllPaths.Any(File.Exists);
-        bool markerPresent = CdpMarkerPath is { } m && (File.Exists(m) || Directory.Exists(m));
-        bool frontendPresent = File.Exists(LuatoolsJsPath);
-        return slotPresent || legacyPresent || markerPresent || frontendPresent;
+        if (SteamDir is not { } s) return false;
+
+        string[] dlls = ["winmm.dll", "winmm_real.dll", "dwmapi.dll", "xinput1_4.dll", "OpenSteamTool.dll"];
+        if (dlls.Any(d => File.Exists(Path.Combine(s, d)))) return true;
+        if (LegacyDllPaths.Any(File.Exists)) return true;
+        if (CdpMarkerPath is { } m && (File.Exists(m) || Directory.Exists(m))) return true;
+        if (Directory.Exists(Path.Combine(s, "opensteamtool"))) return true;
+        if (Directory.Exists(Path.Combine(s, "config", "stplug-in"))) return true;
+        if (File.Exists(LuatoolsJsPath)) return true;
+
+        return false;
     }
 
     // ── Install / update ──
@@ -483,20 +489,33 @@ public class PluginInstallerService(
     /// <summary>Updates the plugin if allowed for the current account.</summary>
     public Task<bool> UpdateAsync(CancellationToken ct = default) => AutoUpdateAsync(ct);
 
+    private static void TryDeleteFile(string path)
+    {
+        try
+        {
+            if (File.Exists(path))
+            {
+                File.SetAttributes(path, FileAttributes.Normal);
+                File.Delete(path);
+            }
+        }
+        catch { /* best effort */ }
+    }
+
     /// <summary>
-    /// Completely removes the loader DLLs, legacy DLLs, and CDP junction from Steam to ensure
-    /// Steam is 100% clean when an unallowed account is active or when uninstalled.
+    /// Purges all LuaTools modifications from Steam: loader DLLs (winmm, dwmapi, xinput, OpenSteamTool),
+    /// legacy DLLs, the CDP remote-debugging junction, opensteamtool folder, stplug-in luas, and frontend files.
+    /// Restores Steam to a 100% pure vanilla state.
     /// </summary>
-    public Task<(bool ok, string? error)> CleanSteamPluginAsync(CancellationToken ct = default)
+    public Task<(bool ok, string? error)> PurgeAllSteamModificationsAsync(bool restartSteam = true, CancellationToken ct = default)
     {
         return Task.Run(async () =>
         {
             try
             {
-                // Read the manifest BEFORE the FrontendDir delete below wipes it. It holds the exact
-                // enabledPlugins entries we stripped from Millennium's config at install time.
-                var manifest = ReadManifest();
+                if (SteamDir is not { } steamDir) return (false, "Steam directory not found.");
 
+                var manifest = ReadManifest();
                 bool wasRunning = Process.GetProcessesByName("steam").Length > 0;
                 if (wasRunning)
                 {
@@ -504,42 +523,87 @@ public class PluginInstallerService(
                     await Task.Delay(1200, ct);
                 }
 
+                // 1. Delete LuaTools loader DLLs
                 foreach (var slot in Slots)
                 {
-                    if (SlotPath(slot) is { } bp && File.Exists(bp)) File.Delete(bp);
-                    if (SlotRealPath(slot) is { } br && File.Exists(br)) File.Delete(br);
+                    if (SlotPath(slot) is { } bp) TryDeleteFile(bp);
+                    if (SlotRealPath(slot) is { } br) TryDeleteFile(br);
                 }
+
+                // 2. Delete legacy loader DLLs
                 foreach (var legacy in LegacyDllPaths)
-                    if (File.Exists(legacy)) File.Delete(legacy);
+                    TryDeleteFile(legacy);
+
+                // 3. Delete unlocker DLLs (OST / BST)
+                string[] unlockerDlls = ["dwmapi.dll", "xinput1_4.dll", "OpenSteamTool.dll"];
+                foreach (var dll in unlockerDlls)
+                    TryDeleteFile(Path.Combine(steamDir, dll));
+
+                // 4. Delete opensteamtool directory
+                string ostDir = Path.Combine(steamDir, "opensteamtool");
+                if (Directory.Exists(ostDir))
+                {
+                    try { Directory.Delete(ostDir, recursive: true); } catch { }
+                }
+
+                // 5. Remove CDP remote-debugging junction/file
                 if (CdpMarkerPath is { } markerPath)
                 {
                     RemoveCdpMarkerJunction(markerPath);
                     try { if (File.Exists(markerPath)) File.Delete(markerPath); } catch { }
+                    try { if (Directory.Exists(markerPath)) Directory.Delete(markerPath, recursive: true); } catch { }
                 }
-                if (Directory.Exists(FrontendDir)) Directory.Delete(FrontendDir, recursive: true);
 
-                // Give Millennium its luatools plugin back: we're the ones who disabled it. Steam is
-                // stopped here, so the edit sticks and applies on the restart below.
+                // 6. Disable stplug-in lua directory (rename to stplug-in.disabled)
+                string stPlugin = Path.Combine(steamDir, "config", "stplug-in");
+                string stPluginDisabled = Path.Combine(steamDir, "config", "stplug-in.disabled");
+                if (Directory.Exists(stPlugin))
+                {
+                    try
+                    {
+                        if (Directory.Exists(stPluginDisabled))
+                            Directory.Delete(stPluginDisabled, recursive: true);
+                        Directory.Move(stPlugin, stPluginDisabled);
+                    }
+                    catch { }
+                }
+
+                // 7. Delete frontend plugin directory
+                if (Directory.Exists(FrontendDir))
+                {
+                    try { Directory.Delete(FrontendDir, recursive: true); } catch { }
+                }
+
+                // 8. Restore Millennium config
                 if (MillenniumPresent)
                     SetMillenniumLuatoolsEnabled(enable: true, restore: manifest?.DisabledMillenniumEntries);
 
-                // Stop injecting the now-deleted content immediately, same reasoning as InstallAsync.
+                // 9. Clear in-memory injector so nothing can inject
                 await injector.ReloadPluginFilesAsync();
 
-                if (wasRunning) steam.StartSteam();
+                if (wasRunning && restartSteam)
+                    steam.StartSteam();
+
                 return (true, (string?)null);
             }
             catch (Exception ex)
             {
-                log?.LogWarning(ex, "Failed to clean Steam plugin files");
+                log?.LogWarning(ex, "Failed to purge Steam modifications");
                 return (false, (string?)ex.Message);
             }
         }, ct);
     }
 
+    /// <summary>
+    /// Completely removes the loader DLLs, legacy DLLs, and CDP junction from Steam to ensure
+    /// Steam is 100% clean when an unallowed account is active or when uninstalled.
+    /// </summary>
+    public Task<(bool ok, string? error)> CleanSteamPluginAsync(CancellationToken ct = default) =>
+        PurgeAllSteamModificationsAsync(restartSteam: true, ct);
+
     // ── Uninstall ──
     public Task<(bool ok, string? error)> UninstallAsync(CancellationToken ct = default) =>
-        CleanSteamPluginAsync(ct);
+        PurgeAllSteamModificationsAsync(restartSteam: true, ct);
 
     // ── Millennium coexistence: disable its luatools plugin via config (reversible), not folder-rename ──
 

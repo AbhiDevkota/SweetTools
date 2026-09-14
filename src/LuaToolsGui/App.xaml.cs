@@ -333,6 +333,16 @@ public partial class App : Application
         var toast = _host.Services.GetRequiredService<ToastService>();
         toast.Attach(window.RootSnackbar); // wire the presenter before anything can raise a toast
 
+        var currentUser = _host.Services.GetRequiredService<CurrentSteamUserService>();
+        currentUser.ActiveAccountChanged += newSteamId =>
+        {
+            var installer = _host.Services.GetRequiredService<PluginInstallerService>();
+            if (!installer.IsAllowedForCurrentAccount() && installer.HasSteamPluginFiles())
+            {
+                _ = installer.PurgeAllSteamModificationsAsync();
+            }
+        };
+
         // Language changed → persistent toast offering an immediate relaunch.
         settingsVm.RequestRestartPrompt = () => Dispatcher.Invoke(() =>
             toast.ShowAction(

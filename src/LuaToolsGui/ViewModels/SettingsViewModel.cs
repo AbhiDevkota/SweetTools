@@ -19,9 +19,17 @@ public partial class SettingsViewModel : ObservableObject
     private readonly SteamService _steam;
     private readonly HubcapService _hubcap;
     private readonly CurrentSteamUserService _currentSteamUser;
+    private readonly PluginInstallerService _pluginInstaller;
     private readonly ToastService _toast;
 
-    [ObservableProperty] private string _currentSteamId = "Not configured";
+    [ObservableProperty] private string _currentSteamId = "Not detected";
+    [ObservableProperty] private string _allowedSteamIdDisplay = "None (All accounts allowed)";
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanPurge))]
+    private bool _isPurging;
+
+    public bool CanPurge => !IsPurging;
 
     [ObservableProperty] private string? _displayName;
     [ObservableProperty] private string? _email;
@@ -226,18 +234,30 @@ public partial class SettingsViewModel : ObservableObject
     public Action? RequestRestartPrompt { get; set; }
 
     public SettingsViewModel(SettingsService settings, AuthService auth, SteamService steam,
-        HubcapService hubcap, CurrentSteamUserService currentSteamUser, ToastService toast)
+        HubcapService hubcap, CurrentSteamUserService currentSteamUser, PluginInstallerService pluginInstaller, ToastService toast)
     {
         _settings = settings;
         _auth = auth;
         _steam = steam;
         _hubcap = hubcap;
         _currentSteamUser = currentSteamUser;
+        _pluginInstaller = pluginInstaller;
         _toast = toast;
         _auth.AuthStateChanged += RefreshAccount;
         RefreshAccount();
         RefreshSteam();
         RefreshCurrentSteamId();
+        _currentSteamUser.ActiveAccountChanged += _ =>
+        {
+            if (System.Windows.Application.Current?.Dispatcher is { } dispatcher)
+            {
+                dispatcher.Invoke(RefreshCurrentSteamId);
+            }
+            else
+            {
+                RefreshCurrentSteamId();
+            }
+        };
         _autoUpdateApps = settings.AutoUpdateApps; // init from saved value (default ON) without triggering Save
         _fastFetch = settings.FastFetch;
         _donateKeys = settings.DonateKeys;
@@ -265,7 +285,9 @@ public partial class SettingsViewModel : ObservableObject
     private void RefreshCurrentSteamId()
     {
         string? id = _currentSteamUser.GetCurrentSteamId();
-        CurrentSteamId = string.IsNullOrWhiteSpace(id) ? "Not configured" : id;
+        CurrentSteamId = string.IsNullOrWhiteSpace(id) ? "Not detected" : id;
+        string? allowed = _settings.AllowedSteamId;
+        AllowedSteamIdDisplay = string.IsNullOrWhiteSpace(allowed) ? "None (All accounts allowed)" : allowed;
     }
 
     /// <summary>Locks plugin execution to the currently active Steam account.</summary>
@@ -276,7 +298,7 @@ public partial class SettingsViewModel : ObservableObject
         if (!string.IsNullOrWhiteSpace(id))
         {
             _settings.AllowedSteamId = id;
-            CurrentSteamId = id;
+            RefreshCurrentSteamId();
             _toast.Show("LuaTools", $"Account locked to {id}");
         }
         else
@@ -290,7 +312,34 @@ public partial class SettingsViewModel : ObservableObject
     private void ClearRestriction()
     {
         _settings.AllowedSteamId = "";
+        RefreshCurrentSteamId();
         _toast.Show("LuaTools", "Account restriction cleared");
+    }
+
+    /// <summary>
+    /// Completely purges all plugin DLLs, unlockers, and modifications from Steam, restoring Steam to a 100% vanilla pure state.
+    /// </summary>
+    [RelayCommand]
+    private async Task PurgeAllSteamModificationsAsync()
+    {
+        if (IsPurging) return;
+        IsPurging = true;
+        try
+        {
+            var (ok, error) = await _pluginInstaller.PurgeAllSteamModificationsAsync(restartSteam: true);
+            if (ok)
+            {
+                _toast.Show("LuaTools", "Steam restored to 100% pure vanilla state.");
+            }
+            else
+            {
+                _toast.Show("LuaTools", $"Purge failed: {error}", error: true);
+            }
+        }
+        finally
+        {
+            IsPurging = false;
+        }
     }
 
     public void RefreshAccount()
