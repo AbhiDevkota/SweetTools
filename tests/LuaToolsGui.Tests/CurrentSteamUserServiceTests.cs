@@ -124,6 +124,28 @@ public class CurrentSteamUserServiceTests
     }
 
     [Fact]
+    public void ParseCurrentSteamId_PrefersMatchingAccountName_WhenMostRecentMissing()
+    {
+        const string vdf = """"
+"users"
+{
+	"76561198000000010"
+	{
+		"AccountName"		"user_alpha"
+		"Timestamp"		"1700000000"
+	}
+	"76561198000000020"
+	{
+		"AccountName"		"user_beta"
+		"Timestamp"		"1600000000"
+	}
+}
+"""";
+        string? current = CurrentSteamUserService.ParseCurrentSteamId(vdf, preferredAccountName: "user_beta");
+        Assert.Equal("76561198000000020", current);
+    }
+
+    [Fact]
     public void CurrentSteamUserService_TracksLastKnownSteamId_AndChecksCurrentUser()
     {
         string tempDir = Path.Combine(Path.GetTempPath(), "luatools_test_steam_" + Guid.NewGuid().ToString("N"));
@@ -133,7 +155,7 @@ public class CurrentSteamUserServiceTests
             Directory.CreateDirectory(configDir);
             File.WriteAllText(Path.Combine(configDir, "loginusers.vdf"), SampleLoginUsersVdf);
 
-            var settings = new SettingsService { SteamPathOverride = tempDir };
+            var settings = SettingsService.CreateInMemory(new AppSettings { SteamPathOverride = tempDir });
             var steam = new SteamService(settings);
             var service = new CurrentSteamUserService(steam);
 

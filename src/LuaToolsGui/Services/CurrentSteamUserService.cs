@@ -29,11 +29,16 @@ public class CurrentSteamUserService : IDisposable
         @"""Timestamp""\s*""(\d+)""",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+    private static readonly Regex AccountNameRegex = new(
+        @"""AccountName""\s*""([^""]+)""",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
     // Aliases to support camelCase identifiers in IDE editors and refactorings
     private static Regex userBlockRegex => UserBlockRegex;
     private static Regex mostRecentRegex => MostRecentRegex;
     private static Regex autoLoginRegex => AutoLoginRegex;
     private static Regex timestampRegex => TimestampRegex;
+    private static Regex accountNameRegex => AccountNameRegex;
 
     private readonly object _accountLock = new();
     private string? _lastKnownSteamId;
@@ -155,26 +160,27 @@ public class CurrentSteamUserService : IDisposable
 
     /// <summary>
     /// Gets the SteamID64 of the actively running Steam user from the registry, or null if Steam is not running or no active user.
-    /// If <paramref name="expectedSteamPath"/> is specified, only returns the ID if the running Steam process matches that folder.
+    /// If <paramref name="expectedSteamPath"/> is specified and exists, only returns the ID if the running Steam process matches that folder.
     /// </summary>
     public static string? GetActiveProcessSteamId(string? expectedSteamPath = null)
     {
         try
         {
-            if (!string.IsNullOrWhiteSpace(expectedSteamPath))
+            if (!string.IsNullOrWhiteSpace(expectedSteamPath) && Directory.Exists(expectedSteamPath))
             {
                 using var steamKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Valve\Steam");
                 if (steamKey?.GetValue("SteamPath") is string regPath && !string.IsNullOrWhiteSpace(regPath))
                 {
-                    string normExpected = Path.GetFullPath(expectedSteamPath.Trim().Replace('/', '\\'));
-                    string normReg = Path.GetFullPath(regPath.Trim().Replace('/', '\\'));
+                    string normExpected = Path.GetFullPath(expectedSteamPath.Trim().Replace('/', '\\')).TrimEnd('\\', '/');
+                    string normReg = Path.GetFullPath(regPath.Trim().Replace('/', '\\')).TrimEnd('\\', '/');
                     if (!string.Equals(normExpected, normReg, StringComparison.OrdinalIgnoreCase))
                         return null; // The running Steam process is from a different folder
                 }
             }
 
             using var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Valve\Steam\ActiveProcess");
-            if (key?.GetValue("ActiveUser") is int activeUser32 && activeUser32 > 0)
+            object? val = key?.GetValue("ActiveUser");
+            if (val is not null && long.TryParse(val.ToString(), out long activeUser32) && activeUser32 > 0)
             {
                 ulong steamId64 = 76561197960265728UL + (ulong)(uint)activeUser32;
                 return steamId64.ToString();
@@ -182,6 +188,22 @@ public class CurrentSteamUserService : IDisposable
         }
         catch { }
         return null;
+    }
+
+    /// <summary>
+    /// Gets the AutoLoginUser account name saved in Steam's registry, or null if unreadable.
+    /// </summary>
+    public static string? GetRegistryAutoLoginUser()
+    {
+        try
+        {
+            using var key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Valve\Steam");
+            return key?.GetValue("AutoLoginUser") as string;
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     /// <summary>
@@ -197,22 +219,39 @@ public class CurrentSteamUserService : IDisposable
             return activeProcessId;
 
         // 2. Fall back to parsing loginusers.vdf (when Steam is closed or transitioning)
+        string? path = LoginUsersPath;
+        if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+        {
+            try
+            {
+                using var steamKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Valve\Steam");
+                if (steamKey?.GetValue("SteamPath") is string regPath && !string.IsNullOrWhiteSpace(regPath))
+                {
+                    string candidate = Path.Combine(regPath.Trim().Replace('/', '\\'), "config", "loginusers.vdf");
+                    if (File.Exists(candidate))
+                        path = candidate;
+                }
+            }
+            catch { }
+        }
+
+        if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+        {
+            _log?.LogWarning("Steam loginusers.vdf not found at {Path}", path ?? "null");
+            return null;
+        }
+
+        string? regAutoLoginUser = GetRegistryAutoLoginUser();
+
         for (int attempt = 0; attempt < 3; attempt++)
         {
             try
             {
-                string? path = LoginUsersPath;
-                if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
-                {
-                    _log?.LogWarning("Steam loginusers.vdf not found at {Path}", path ?? "null");
-                    return null;
-                }
-
                 using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
                 using var reader = new StreamReader(fs);
                 string content = reader.ReadToEnd();
 
-                string? steamId = ParseCurrentSteamId(content);
+                string? steamId = ParseCurrentSteamId(content, regAutoLoginUser);
                 if (steamId is not null)
                     return steamId;
 
@@ -246,12 +285,14 @@ public class CurrentSteamUserService : IDisposable
 
     /// <summary>
     /// Parses the SteamID64 of the active user from the raw text content of loginusers.vdf.
-    /// Prefers the account marked with "MostRecent" = "1", falling back to the highest timestamp,
+    /// Prefers the account marked with "MostRecent" = "1", falling back to the account matching
+    /// <paramref name="preferredAccountName"/> (e.g. from registry AutoLoginUser), the highest timestamp,
     /// "AutoLogin" = "1", or the first account entry if no specific markers are present.
     /// </summary>
     /// <param name="vdfContent">The text content of loginusers.vdf.</param>
+    /// <param name="preferredAccountName">Optional account name (e.g. from registry AutoLoginUser) to match against.</param>
     /// <returns>The extracted SteamID64 string, or null if no valid account entry was found.</returns>
-    public static string? ParseCurrentSteamId(string vdfContent)
+    public static string? ParseCurrentSteamId(string vdfContent, string? preferredAccountName = null)
     {
         if (string.IsNullOrWhiteSpace(vdfContent))
             return null;
@@ -263,6 +304,7 @@ public class CurrentSteamUserService : IDisposable
                 return null;
 
             string? mostRecentId = null;
+            string? matchedAccountNameId = null;
             string? autoLoginId = null;
             string? highestTimestampId = null;
             long maxTimestamp = -1;
@@ -281,6 +323,15 @@ public class CurrentSteamUserService : IDisposable
                     break; // Primary target matched!
                 }
 
+                if (!string.IsNullOrWhiteSpace(preferredAccountName))
+                {
+                    var accMatch = AccountNameRegex.Match(block);
+                    if (accMatch.Success && string.Equals(accMatch.Groups[1].Value, preferredAccountName.Trim(), StringComparison.OrdinalIgnoreCase))
+                    {
+                        matchedAccountNameId = id;
+                    }
+                }
+
                 if (AutoLoginRegex.IsMatch(block))
                 {
                     autoLoginId = id;
@@ -297,7 +348,7 @@ public class CurrentSteamUserService : IDisposable
                 }
             }
 
-            return mostRecentId ?? highestTimestampId ?? autoLoginId ?? firstId;
+            return mostRecentId ?? matchedAccountNameId ?? highestTimestampId ?? autoLoginId ?? firstId;
         }
         catch
         {
