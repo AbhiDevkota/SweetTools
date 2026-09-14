@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Threading;
 using LuaToolsGui.Models;
 using LuaToolsGui.Services;
@@ -25,6 +25,7 @@ public partial class App : Application
                 services.AddSingleton<SettingsService>();
                 services.AddSingleton<CacheService>();
                 services.AddSingleton<SteamService>();
+                services.AddSingleton<CurrentSteamUserService>();
                 services.AddSingleton<SteamAppListCache>();
                 services.AddSingleton<SteamAppInfoCache>();
                 services.AddSingleton<CoverCache>();
@@ -466,6 +467,17 @@ public partial class App : Application
 
         if (url is not null)
             HandleProtocolUrl(url);
+
+        var pluginInstaller = _host.Services.GetRequiredService<PluginInstallerService>();
+        if (!pluginInstaller.IsAllowedForCurrentAccount())
+        {
+            MessageBox.Show(
+                "LuaTools is restricted to a different Steam account. Please log in with your configured account.",
+                "LuaTools",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            return;
+        }
 
         // Background, non-blocking Steam-open update flow (app + plugin), but ONLY in the loader context
         // (--tray-locked). A manual / protocol / silent-install launch skips it, so the app never
