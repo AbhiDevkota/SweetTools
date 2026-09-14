@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -998,7 +998,7 @@ public partial class BuildsViewModel : PagedListViewModel<LuaTileViewModel>
 
         // Seed the destination (and with it the free-space read) before the bar first renders.
         string defaultRoot = Path.Combine(
-            DownloadsFolder(), "LuaTools Depots", game.AppId.ToString());
+            DownloadsFolder(), "Sweet Tools Depots", game.AppId.ToString());
         try { Directory.CreateDirectory(defaultRoot); } catch { /* the Change picker still opens */ }
         DepotOutDir = defaultRoot;
 

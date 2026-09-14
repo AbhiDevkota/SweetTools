@@ -360,7 +360,7 @@ public class PluginInstallerService(
             string allowed = settings.AllowedSteamId;
             string error = string.IsNullOrWhiteSpace(allowed)
                 ? "No Steam account configured. Please select and lock an account in Settings to enable plugins."
-                : "LuaTools is restricted to a different Steam account.";
+                : "Sweet Tools is restricted to a different Steam account.";
             log?.LogWarning("Plugin install blocked: {Reason}", error);
             return (false, error);
         }

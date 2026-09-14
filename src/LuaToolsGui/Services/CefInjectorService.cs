@@ -15,6 +15,7 @@ public class CefInjectorService : IHostedService
     private CancellationTokenSource? _cts;
     private string _luatoolsJs = "";
     private string _polyfillJs = "";
+    private string _directAddJs = "";
     private readonly HttpClient _http = new() { Timeout = TimeSpan.FromSeconds(30) };
 
     // Persistent CDP WebSocket per tab (keyed by tab id), reused across calls so the fast RPC-drain
@@ -82,6 +83,7 @@ public class CefInjectorService : IHostedService
         {
             _luatoolsJs = "";
             _polyfillJs = "";
+            _directAddJs = "";
             _log.LogInformation("CEF injector disabled: active Steam account is not allowed");
             return;
         }
@@ -109,6 +111,8 @@ public class CefInjectorService : IHostedService
         {
             _polyfillJs = BuildInlinePolyfill();
         }
+
+        _directAddJs = BuildDirectAddJs();
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
@@ -159,7 +163,7 @@ public class CefInjectorService : IHostedService
                         // injected by tab ID" is the wrong signal. Check liveness in the CURRENT context every
                         // cycle instead (window.__LuaToolsReady, set as the last statement of luatools.js's
                         // main IIFE) and re-inject whenever it's gone.
-                        var script = _polyfillJs + "\n" + _luatoolsJs;
+                        var script = _polyfillJs + "\n" + _luatoolsJs + "\n" + _directAddJs;
                         var live = new List<(string, string)>();
                         var seen = new HashSet<string>();
                         foreach (var tab in tabs)
@@ -463,6 +467,218 @@ if(real&&typeof real.callServerMethod==='function'){
 }else{
   window.Millennium={_pending:pending,_readyResponses:ready,callServerMethod:function(p,m,a){return ltCall(p,m,a)}};
 }
+})();
+";
+    }
+
+    /// <summary>
+    /// Generates the direct add injection script. Injects a native Steam-styled purchase block
+    /// directly on top of the "Buy <Game>" area (#game_area_purchase) on Steam game store pages,
+    /// and an inline "+ Add via LuaTools" button next to "Add to Cart".
+    /// </summary>
+    private string BuildDirectAddJs()
+    {
+        return @"
+(function () {
+  if (window.__LuaToolsDirectAddInjected) return;
+  window.__LuaToolsDirectAddInjected = true;
+
+  // Hide any legacy/sidebar 'Add via LuaTools' buttons so only 'Add to Library' appears
+  if (!document.getElementById('luatools-clean-styles')) {
+    var cleanStyle = document.createElement('style');
+    cleanStyle.id = 'luatools-clean-styles';
+    cleanStyle.textContent = '.apphub_OtherSiteInfo .luatools-button, .steamdb-buttons .luatools-button, [data-steamdb-buttons] .luatools-button { display: none !important; }';
+    document.head.appendChild(cleanStyle);
+  }
+
+  var lastCheckTime = 0;
+  function initDirectAdd() {
+    var now = Date.now();
+    if (now - lastCheckTime < 250) return;
+    lastCheckTime = now;
+
+    var url = window.location.href;
+    var match = url.match(/https:\/\/store\.steampowered\.com\/app\/(\d+)/i);
+    if (!match) return;
+
+    var appid = parseInt(match[1], 10);
+    if (isNaN(appid)) return;
+
+    var purchaseArea = document.querySelector('#game_area_purchase') || document.querySelector('.game_area_purchase');
+    if (!purchaseArea) return;
+
+    var existing = document.getElementById('luatools-direct-purchase-block');
+    if (existing && existing.getAttribute('data-appid') === String(appid)) {
+      return;
+    }
+    if (existing) {
+      existing.remove();
+    }
+
+    var gameName = '';
+    var nameEl = document.querySelector('.apphub_AppName, #appHubAppName');
+    if (nameEl && nameEl.textContent) {
+      gameName = nameEl.textContent.trim();
+    }
+    if (!gameName) {
+      gameName = (document.title || '').replace(/\s+on Steam\s*$/i, '').trim();
+    }
+    if (!gameName) gameName = 'this game';
+
+    var wrapper = document.createElement('div');
+    wrapper.id = 'luatools-direct-purchase-block';
+    wrapper.className = 'game_area_purchase_game_wrapper luatools-direct-wrapper';
+    wrapper.setAttribute('data-appid', String(appid));
+    wrapper.style.marginBottom = '16px';
+
+    var block = document.createElement('div');
+    block.className = 'game_area_purchase_game';
+    block.style.position = 'relative';
+    block.style.minHeight = '48px';
+    block.style.padding = '16px 200px 16px 16px';
+    block.style.background = 'linear-gradient(135deg, rgba(24, 40, 56, 0.95) 0%, rgba(16, 26, 38, 0.95) 100%)';
+    block.style.border = '1px solid rgba(102, 192, 244, 0.35)';
+    block.style.borderRadius = '4px';
+    block.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.5)';
+
+    var platform = document.createElement('div');
+    platform.className = 'game_area_purchase_platform';
+    platform.style.marginBottom = '4px';
+    platform.innerHTML = '<span class=""platform_img win""></span>';
+    block.appendChild(platform);
+
+    var h1 = document.createElement('h1');
+    h1.style.display = 'flex';
+    h1.style.alignItems = 'center';
+    h1.style.gap = '8px';
+    h1.style.fontSize = '21px';
+    h1.style.color = '#ffffff';
+    h1.style.fontWeight = 'normal';
+    h1.style.margin = '0';
+    h1.style.lineHeight = '28px';
+
+    var titleText = document.createElement('span');
+    titleText.textContent = 'Add ' + gameName + ' to Library';
+    h1.appendChild(titleText);
+    block.appendChild(h1);
+
+    var action = document.createElement('div');
+    action.className = 'game_purchase_action';
+    action.style.position = 'absolute';
+    action.style.right = '16px';
+    action.style.top = '50%';
+    action.style.transform = 'translateY(-50%)';
+    action.style.zIndex = '5';
+    action.style.margin = '0';
+
+    var actionBg = document.createElement('div');
+    actionBg.className = 'game_purchase_action_bg';
+    actionBg.style.background = '#000000';
+    actionBg.style.borderRadius = '2px';
+    actionBg.style.padding = '0';
+    actionBg.style.display = 'flex';
+    actionBg.style.alignItems = 'center';
+
+    var btnContainer = document.createElement('div');
+    btnContainer.className = 'btn_addtocart';
+    btnContainer.style.margin = '0';
+
+    var addBtn = document.createElement('a');
+    addBtn.href = '#';
+    addBtn.className = 'btn_green_steamui btn_medium luatools-button luatools-direct-add-btn Focusable';
+    addBtn.style.padding = '0 18px';
+    addBtn.style.lineHeight = '32px';
+    addBtn.style.height = '32px';
+    addBtn.style.fontSize = '15px';
+    addBtn.style.cursor = 'pointer';
+    addBtn.style.display = 'inline-block';
+    addBtn.style.textDecoration = 'none';
+
+    var btnSpan = document.createElement('span');
+    btnSpan.textContent = 'Add to Library';
+    addBtn.appendChild(btnSpan);
+    btnContainer.appendChild(addBtn);
+    actionBg.appendChild(btnContainer);
+    action.appendChild(actionBg);
+    block.appendChild(action);
+
+    wrapper.appendChild(block);
+
+    // Insert right at the top of the purchase area (on top of Buy <Game>)
+    purchaseArea.prepend(wrapper);
+
+    function updateInstalledState() {
+      btnSpan.textContent = 'In Library';
+      addBtn.className = 'btn_blue_steamui btn_medium Focusable';
+      addBtn.title = 'In Library (Click to Restart Steam)';
+      addBtn.onclick = function (e) {
+        e.preventDefault();
+        if (window.Millennium && typeof window.Millennium.callServerMethod === 'function') {
+          window.Millennium.callServerMethod('luatools', 'RestartSteam', {});
+        }
+      };
+    }
+
+    addBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (typeof window.startLuaToolsAdd === 'function') {
+        window.startLuaToolsAdd(appid, addBtn);
+      } else if (window.Millennium && typeof window.Millennium.callServerMethod === 'function') {
+        btnSpan.textContent = 'Adding...';
+        window.Millennium.callServerMethod('luatools', 'StartLuaToolsAdd', {
+          appid: appid,
+          name: gameName
+        }).catch(function () {});
+      }
+      var pollCount = 0;
+      var pollInt = setInterval(function () {
+        pollCount++;
+        if (window.Millennium && typeof window.Millennium.callServerMethod === 'function') {
+          window.Millennium.callServerMethod('luatools', 'HasLuaToolsForApp', { appid: appid })
+            .then(function (res) {
+              var p = typeof res === 'string' ? JSON.parse(res) : res;
+              if (p && p.success && p.exists === true) {
+                clearInterval(pollInt);
+                updateInstalledState();
+              }
+            }).catch(function () {});
+        }
+        if (pollCount > 60) clearInterval(pollInt);
+      }, 1000);
+    });
+
+    // Check if already in library
+    if (window.Millennium && typeof window.Millennium.callServerMethod === 'function') {
+      window.Millennium.callServerMethod('luatools', 'HasLuaToolsForApp', { appid: appid })
+        .then(function (res) {
+          var payload = typeof res === 'string' ? JSON.parse(res) : res;
+          if (payload && payload.success && payload.exists === true) {
+            updateInstalledState();
+          }
+        }).catch(function () {});
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDirectAdd);
+  } else {
+    initDirectAdd();
+  }
+
+  try {
+    var observer = new MutationObserver(function () {
+      initDirectAdd();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  } catch (_) {}
+
+  var curUrl = window.location.href;
+  setInterval(function () {
+    if (window.location.href !== curUrl) {
+      curUrl = window.location.href;
+      initDirectAdd();
+    }
+  }, 1000);
 })();
 ";
     }

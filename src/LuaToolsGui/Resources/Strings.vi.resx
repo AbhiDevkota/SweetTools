@@ -126,7 +126,7 @@
   <data name="Lang_Changed_Title" xml:space="preserve"><value>Đã thay đổi ngôn ngữ</value></data>
   <data name="Lang_Changed_Body" xml:space="preserve"><value>Khởi động lại ứng dụng để áp dụng ngôn ngữ mới.</value></data>
   <data name="Lang_Changed_Restart" xml:space="preserve"><value>Khởi động lại ngay</value></data>
-  <data name="Home_Welcome" xml:space="preserve"><value>Chào mừng đến với LuaTools</value></data>
+  <data name="Home_Welcome" xml:space="preserve"><value>Chào mừng đến với Sweet Tools</value></data>
   <data name="Home_LuasOnBoard" xml:space="preserve"><value>Lua đã có</value></data>
   <data name="Home_LastAdded" xml:space="preserve"><value>THÊM GẦN NHẤT</value></data>
   <data name="Home_PluginStatus" xml:space="preserve"><value>Trạng thái plugin</value></data>
@@ -141,14 +141,14 @@
   <data name="Home_NoModeSelected" xml:space="preserve"><value>Chưa chọn chế độ</value></data>
   <data name="Home_ModeIs" xml:space="preserve"><value>Chế độ · {0}</value></data>
   <data name="Mode_Title" xml:space="preserve"><value>Chế độ</value></data>
-  <data name="Mode_Subtitle" xml:space="preserve"><value>Chuyển đổi backend dùng để mở khóa các trò chơi được thêm bằng LuaTools — chỉ một cái hoạt động tại một thời điểm.</value></data>
+  <data name="Mode_Subtitle" xml:space="preserve"><value>Chuyển đổi backend dùng để mở khóa các trò chơi được thêm bằng Sweet Tools — chỉ một cái hoạt động tại một thời điểm.</value></data>
   <data name="Mode_CheckForUpdates" xml:space="preserve"><value>Kiểm tra cập nhật</value></data>
   <data name="Mode_Active" xml:space="preserve"><value>ĐANG HOẠT ĐỘNG</value></data>
   <data name="Mode_Recommended" xml:space="preserve"><value>ĐỀ XUẤT</value></data>
   <data name="Mode_Confirm_Body" xml:space="preserve"><value>Steam sẽ được đóng để có thể thay đổi các tệp của nó, sau đó tự động khởi động lại. Mọi trò chơi hoặc lượt tải đang chạy sẽ dừng lại.</value></data>
   <data name="Mode_Cancel" xml:space="preserve"><value>Hủy</value></data>
   <data name="Mode_CloseSteamContinue" xml:space="preserve"><value>Đóng Steam và tiếp tục</value></data>
-  <data name="Mode_Desc_Bst" xml:space="preserve"><value>Một bản fork mã nguồn mở của OpenSteamTools, được nhóm LuaTools duy trì tích cực. Mang đến các bản sửa lỗi và tính năng mới!</value></data>
+  <data name="Mode_Desc_Bst" xml:space="preserve"><value>Một bản fork mã nguồn mở của OpenSteamTools, được nhóm Sweet Tools duy trì tích cực. Mang đến các bản sửa lỗi và tính năng mới!</value></data>
   <data name="Mode_CloudRedirect_Manage" xml:space="preserve"><value>Quản lý</value></data>
   <data name="Mode_CloudRedirect_LaunchFailed" xml:space="preserve"><value>Không thể tải xuống hoặc khởi chạy CloudRedirect.</value></data>
   <data name="Mode_Desc_Ost" xml:space="preserve"><value>Bản dựng nightly của OpenSteamTools từ mã nguồn mới nhất. Các bản sửa lỗi mới nhất, nhưng có thể kém ổn định hơn.</value></data>
@@ -168,13 +168,13 @@
   <data name="Mode_CloudRedirect_Toast_Enabled" xml:space="preserve"><value>Đã bật — khởi động lại Steam để áp dụng.</value></data>
   <data name="Mode_CloudRedirect_Toast_Disabled" xml:space="preserve"><value>Đã tắt — khởi động lại Steam để áp dụng.</value></data>
   <data name="Mode_CloudRedirect_Toast_Updated" xml:space="preserve"><value>Đã cập nhật — khởi động lại Steam để áp dụng.</value></data>
-  <data name="Onboarding_Title" xml:space="preserve"><value>Chào mừng đến với ứng dụng LuaTools!</value></data>
+  <data name="Onboarding_Title" xml:space="preserve"><value>Chào mừng đến với ứng dụng Sweet Tools!</value></data>
   <data name="Onboarding_SignIn_Blurb" xml:space="preserve"><value>Đăng nhập để mở khóa thêm trò chơi và bản sửa lỗi.</value></data>
   <data name="Onboarding_SignedIn" xml:space="preserve"><value>Đã đăng nhập ✓</value></data>
   <data name="Onboarding_Recommended_Title" xml:space="preserve"><value>Áp dụng cài đặt được đề xuất</value></data>
   <data name="Onboarding_Recommended_Detail" xml:space="preserve"><value>Chế độ: BetterSteamTools · Bật FastFetch</value></data>
   <data name="Onboarding_Plugin_Title" xml:space="preserve"><value>Cài đặt plugin nổi tiếng của chúng tôi</value></data>
-  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Thêm nút "Add via LuaTools" vào các trang cửa hàng Steam.</value></data>
+  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Thêm nút "Add via Sweet Tools" vào các trang cửa hàng Steam.</value></data>
   <data name="Onboarding_Yes" xml:space="preserve"><value>Vâng</value></data>
   <data name="Onboarding_No" xml:space="preserve"><value>Không, cảm ơn</value></data>
   <data name="Onboarding_Go" xml:space="preserve"><value>Bắt đầu thôi!</value></data>
@@ -360,25 +360,25 @@ Thao tác này xóa các tệp .lua khỏi Steam\config\stplug-in.</value></data
   <data name="Confirm_Replace" xml:space="preserve"><value>Thay thế</value></data>
   <data name="Settings_Section_Startup" xml:space="preserve"><value>KHỞI ĐỘNG</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Khởi động cùng Windows</value></data>
-  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>Tự động khởi chạy LuaTools khi Windows khởi động.</value></data>
+  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>Tự động khởi chạy Sweet Tools khi Windows khởi động.</value></data>
   <data name="Settings_MinimizeToTray" xml:space="preserve"><value>Thu nhỏ vào khay hệ thống</value></data>
-  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>Khi bạn đóng cửa sổ, giữ LuaTools chạy trong khay hệ thống thay vì thoát. Nhấp đúp vào biểu tượng khay để khôi phục.</value></data>
-  <data name="Tray_Open" xml:space="preserve"><value>Mở LuaTools</value></data>
+  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>Khi bạn đóng cửa sổ, giữ Sweet Tools chạy trong khay hệ thống thay vì thoát. Nhấp đúp vào biểu tượng khay để khôi phục.</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>Mở Sweet Tools</value></data>
   <data name="Tray_Exit" xml:space="preserve"><value>Thoát</value></data>
 
   <data name="Add_FastFetch" xml:space="preserve"><value>FastFetch™️</value></data>
   <data name="Add_FastFetch_Hint" xml:space="preserve"><value>Tự động tải xuống từ nguồn có sẵn đầu tiên</value></data>
   <data name="Add_FastFetch_NoSource" xml:space="preserve"><value>Không tìm thấy nguồn khả dụng cho trò chơi này</value></data>
   <data name="Add_FastFetch_Via" xml:space="preserve"><value>· qua {0}</value></data>
-  <data name="Plugin_Title" xml:space="preserve"><value>Plugin LuaTools</value></data>
-  <data name="Plugin_Subtitle" xml:space="preserve"><value>Plugin LuaTools cho Steam! — Giờ đây dùng LuaLoader thay cho Shittenium</value></data>
+  <data name="Plugin_Title" xml:space="preserve"><value>Plugin Sweet Tools</value></data>
+  <data name="Plugin_Subtitle" xml:space="preserve"><value>Plugin Sweet Tools cho Steam! — Giờ đây dùng LuaLoader thay cho Shittenium</value></data>
   <data name="Plugin_CardTitle" xml:space="preserve"><value>Trạng thái</value></data>
   <data name="Plugin_Badge_UpdateAvailable" xml:space="preserve"><value>Có bản cập nhật</value></data>
   <data name="Plugin_Row_InstalledVersion" xml:space="preserve"><value>Phiên bản đã cài</value></data>
   <data name="Plugin_Row_LatestVersion" xml:space="preserve"><value>Phiên bản mới nhất</value></data>
   <data name="Plugin_Row_Frontend" xml:space="preserve"><value>Frontend</value></data>
   <data name="Plugin_Row_Loader" xml:space="preserve"><value>Trình tải (winmm.dll)</value></data>
-  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Đã phát hiện Millennium — LuaTools chạy song song với nó. Việc cài đặt sẽ tắt bản sao plugin này của Millennium để chỉ LuaLoader chèn.</value></data>
+  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Đã phát hiện Millennium — Sweet Tools chạy song song với nó. Việc cài đặt sẽ tắt bản sao plugin này của Millennium để chỉ LuaLoader chèn.</value></data>
   <data name="Plugin_Footer" xml:space="preserve"><value>LuaLoader được cài vào thư mục Steam của bạn. Ứng dụng này hoạt động như backend — nếu bạn đóng nó từ khay hệ thống, plugin sẽ ngừng hoạt động!</value></data>
   <data name="Plugin_Btn_Install" xml:space="preserve"><value>Cài đặt</value></data>
   <data name="Plugin_Btn_Update" xml:space="preserve"><value>Cập nhật</value></data>
@@ -409,7 +409,7 @@ Thao tác này xóa các tệp .lua khỏi Steam\config\stplug-in.</value></data
   <data name="Plugin_Err_VerifyFailed" xml:space="preserve"><value>Xác minh hash của {0} thất bại.</value></data>
   <data name="Plugin_Err_NoLuatoolsJs" xml:space="preserve"><value>plugin.zip không chứa public/luatools.js.</value></data>
   <data name="Plugin_About_Header" xml:space="preserve"><value>Tính năng nổi bật</value></data>
-  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>Thêm nút “Add via LuaTools” vào các trang cửa hàng Steam</value></data>
+  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>Thêm nút “Add via Sweet Tools” vào các trang cửa hàng Steam</value></data>
   <data name="Plugin_Feature_AutoUpdate" xml:space="preserve"><value>Tự động cập nhật</value></data>
   <data name="Plugin_Feature_Millennium" xml:space="preserve"><value>Hoạt động dù có hay không có Millennium</value></data>
   <data name="Drop_LinkHint" xml:space="preserve"><value>…hoặc kéo vào một liên kết SteamDB / cửa hàng Steam để thêm trò chơi đó.</value></data>
@@ -465,7 +465,7 @@ Thao tác này xóa các tệp .lua khỏi Steam\config\stplug-in.</value></data
   <data name="Launch_Title" xml:space="preserve"><value>Tùy chọn khởi chạy</value></data>
   <data name="Launch_Loading" xml:space="preserve"><value>Đang đọc bộ nhớ đệm ứng dụng của Steam…</value></data>
   <data name="Launch_NotFound" xml:space="preserve"><value>Steam chưa có thông tin trong bộ nhớ đệm cho trò chơi này. Hãy mở Steam một lần rồi thử lại.</value></data>
-  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>Bộ nhớ đệm ứng dụng của Steam ở định dạng mà phiên bản này không hiểu ({0}). Hãy cập nhật LuaTools.</value></data>
+  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>Bộ nhớ đệm ứng dụng của Steam ở định dạng mà phiên bản này không hiểu ({0}). Hãy cập nhật Sweet Tools.</value></data>
   <data name="Launch_ReadFailed" xml:space="preserve"><value>Không thể đọc bộ nhớ đệm ứng dụng của Steam. {0}</value></data>
   <data name="Launch_ExecutableRequired" xml:space="preserve"><value>Mọi tùy chọn khởi chạy đều cần một tệp thực thi.</value></data>
   <data name="Launch_Add" xml:space="preserve"><value>Thêm</value></data>
@@ -482,7 +482,7 @@ Thao tác này xóa các tệp .lua khỏi Steam\config\stplug-in.</value></data
   <data name="Launch_InstallPath" xml:space="preserve"><value>Đường dẫn cài đặt: {0}</value></data>
   <data name="Launch_SteamRestartNote" xml:space="preserve"><value>Áp dụng thay đổi sẽ đóng và mở lại Steam.</value></data>
   <data name="Launch_Restore" xml:space="preserve"><value>Khôi phục bản gốc</value></data>
-  <data name="Launch_Restore_Tip" xml:space="preserve"><value>Đưa lại các tùy chọn khởi chạy mà Steam có sẵn, trước khi LuaTools thay đổi chúng.</value></data>
+  <data name="Launch_Restore_Tip" xml:space="preserve"><value>Đưa lại các tùy chọn khởi chạy mà Steam có sẵn, trước khi Sweet Tools thay đổi chúng.</value></data>
   <data name="Launch_Restore_Title" xml:space="preserve"><value>Khôi phục các tùy chọn khởi chạy gốc?</value></data>
   <data name="Launch_Restore_Body" xml:space="preserve"><value>Thao tác này đưa các tùy chọn khởi chạy về đúng như Steam có và bỏ các thay đổi của bạn. Steam sẽ được đóng và mở lại. Tiếp tục?</value></data>
   <data name="Launch_NothingToRestore" xml:space="preserve"><value>Trò chơi này chưa bị thay đổi, nên không có gì để khôi phục.</value></data>

@@ -132,7 +132,7 @@
   <data name="Lang_Changed_Restart" xml:space="preserve"><value>أعد التشغيل الآن</value></data>
 
   <!-- ── Home ── -->
-  <data name="Home_Welcome" xml:space="preserve"><value>مرحبًا بك في LuaTools</value></data>
+  <data name="Home_Welcome" xml:space="preserve"><value>مرحبًا بك في Sweet Tools</value></data>
   <data name="Home_LuasOnBoard" xml:space="preserve"><value>ملفات Lua المتوفرة</value></data>
   <data name="Home_LastAdded" xml:space="preserve"><value>آخر ما أُضيف</value></data>
   <data name="Home_PluginStatus" xml:space="preserve"><value>حالة الإضافة</value></data>
@@ -149,7 +149,7 @@
 
   <!-- ── Mode ── -->
   <data name="Mode_Title" xml:space="preserve"><value>الوضع</value></data>
-  <data name="Mode_Subtitle" xml:space="preserve"><value>بدّل الواجهة الخلفية المستخدمة لفتح الألعاب المُضافة عبر LuaTools — وضع واحد نشط في كل مرة.</value></data>
+  <data name="Mode_Subtitle" xml:space="preserve"><value>بدّل الواجهة الخلفية المستخدمة لفتح الألعاب المُضافة عبر Sweet Tools — وضع واحد نشط في كل مرة.</value></data>
   <data name="Mode_CheckForUpdates" xml:space="preserve"><value>التحقق من التحديثات</value></data>
   <data name="Mode_Active" xml:space="preserve"><value>نشط</value></data>
   <data name="Mode_Recommended" xml:space="preserve"><value>موصى به</value></data>
@@ -157,7 +157,7 @@
   <data name="Mode_Cancel" xml:space="preserve"><value>إلغاء</value></data>
   <data name="Mode_CloseSteamContinue" xml:space="preserve"><value>إغلاق Steam والمتابعة</value></data>
   <!-- Mode descriptions + C# strings -->
-  <data name="Mode_Desc_Bst" xml:space="preserve"><value>نسخة مفتوحة المصدر من OpenSteamTools يطوّرها فريق LuaTools باستمرار. مع إصلاحات وميزات جديدة!</value></data>
+  <data name="Mode_Desc_Bst" xml:space="preserve"><value>نسخة مفتوحة المصدر من OpenSteamTools يطوّرها فريق Sweet Tools باستمرار. مع إصلاحات وميزات جديدة!</value></data>
   <data name="Mode_CloudRedirect_Manage" xml:space="preserve"><value>إدارة</value></data>
   <data name="Mode_CloudRedirect_LaunchFailed" xml:space="preserve"><value>تعذّر تنزيل CloudRedirect أو تشغيله.</value></data>
   <data name="Mode_Desc_Ost" xml:space="preserve"><value>إصدار ليلي من OpenSteamTools مبني من أحدث المصادر. أحدث الإصلاحات، لكنه قد يكون أقل استقرارًا.</value></data>
@@ -177,13 +177,13 @@
   <data name="Mode_CloudRedirect_Toast_Enabled" xml:space="preserve"><value>تم التفعيل — أعد تشغيل Steam للتطبيق.</value></data>
   <data name="Mode_CloudRedirect_Toast_Disabled" xml:space="preserve"><value>تم التعطيل — أعد تشغيل Steam للتطبيق.</value></data>
   <data name="Mode_CloudRedirect_Toast_Updated" xml:space="preserve"><value>تم التحديث — أعد تشغيل Steam للتطبيق.</value></data>
-  <data name="Onboarding_Title" xml:space="preserve"><value>مرحبًا بك في تطبيق LuaTools!</value></data>
+  <data name="Onboarding_Title" xml:space="preserve"><value>مرحبًا بك في تطبيق Sweet Tools!</value></data>
   <data name="Onboarding_SignIn_Blurb" xml:space="preserve"><value>سجّل الدخول لفتح إضافة الألعاب والإصلاحات.</value></data>
   <data name="Onboarding_SignedIn" xml:space="preserve"><value>تم تسجيل الدخول ✓</value></data>
   <data name="Onboarding_Recommended_Title" xml:space="preserve"><value>تطبيق الإعدادات الموصى بها</value></data>
   <data name="Onboarding_Recommended_Detail" xml:space="preserve"><value>الوضع: BetterSteamTools · تشغيل FastFetch</value></data>
   <data name="Onboarding_Plugin_Title" xml:space="preserve"><value>تثبيت إضافتنا الشهيرة</value></data>
-  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>يضيف زر "Add via LuaTools" إلى صفحات متجر Steam.</value></data>
+  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>يضيف زر "Add via Sweet Tools" إلى صفحات متجر Steam.</value></data>
   <data name="Onboarding_Yes" xml:space="preserve"><value>نعم من فضلك</value></data>
   <data name="Onboarding_No" xml:space="preserve"><value>لا شكرًا</value></data>
   <data name="Onboarding_Go" xml:space="preserve"><value>هيا بنا!</value></data>
@@ -386,25 +386,25 @@
   <data name="Confirm_Replace" xml:space="preserve"><value>استبدال</value></data>
   <data name="Settings_Section_Startup" xml:space="preserve"><value>بدء التشغيل</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>التشغيل مع بدء Windows</value></data>
-  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>تشغيل LuaTools تلقائيًا عند بدء تشغيل Windows.</value></data>
+  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>تشغيل Sweet Tools تلقائيًا عند بدء تشغيل Windows.</value></data>
   <data name="Settings_MinimizeToTray" xml:space="preserve"><value>التصغير إلى علبة النظام</value></data>
-  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>عند إغلاق النافذة، أبقِ LuaTools قيد التشغيل في علبة النظام بدلاً من الخروج. انقر نقرًا مزدوجًا على الأيقونة للاستعادة.</value></data>
-  <data name="Tray_Open" xml:space="preserve"><value>فتح LuaTools</value></data>
+  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>عند إغلاق النافذة، أبقِ Sweet Tools قيد التشغيل في علبة النظام بدلاً من الخروج. انقر نقرًا مزدوجًا على الأيقونة للاستعادة.</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>فتح Sweet Tools</value></data>
   <data name="Tray_Exit" xml:space="preserve"><value>خروج</value></data>
 
   <data name="Add_FastFetch" xml:space="preserve"><value>FastFetch™️</value></data>
   <data name="Add_FastFetch_Hint" xml:space="preserve"><value>التنزيل التلقائي من أول مصدر متاح</value></data>
   <data name="Add_FastFetch_NoSource" xml:space="preserve"><value>لم يتم العثور على مصادر متاحة لهذه اللعبة</value></data>
   <data name="Add_FastFetch_Via" xml:space="preserve"><value>· عبر {0}</value></data>
-  <data name="Plugin_Title" xml:space="preserve"><value>إضافة LuaTools</value></data>
-  <data name="Plugin_Subtitle" xml:space="preserve"><value>إضافة LuaTools لمتجر Steam! — تستخدم الآن LuaLoader بدلًا من Shittenium</value></data>
+  <data name="Plugin_Title" xml:space="preserve"><value>إضافة Sweet Tools</value></data>
+  <data name="Plugin_Subtitle" xml:space="preserve"><value>إضافة Sweet Tools لمتجر Steam! — تستخدم الآن LuaLoader بدلًا من Shittenium</value></data>
   <data name="Plugin_CardTitle" xml:space="preserve"><value>الحالة</value></data>
   <data name="Plugin_Badge_UpdateAvailable" xml:space="preserve"><value>تحديث متاح</value></data>
   <data name="Plugin_Row_InstalledVersion" xml:space="preserve"><value>الإصدار المثبَّت</value></data>
   <data name="Plugin_Row_LatestVersion" xml:space="preserve"><value>أحدث إصدار</value></data>
   <data name="Plugin_Row_Frontend" xml:space="preserve"><value>الواجهة</value></data>
   <data name="Plugin_Row_Loader" xml:space="preserve"><value>المُحمِّل (winmm.dll)</value></data>
-  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>تم اكتشاف Millennium — يعمل LuaTools جنبًا إلى جنب معه. سيؤدي التثبيت إلى تعطيل نسخة Millennium من هذه الإضافة حتى يقوم LuaLoader وحده بالحقن.</value></data>
+  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>تم اكتشاف Millennium — يعمل Sweet Tools جنبًا إلى جنب معه. سيؤدي التثبيت إلى تعطيل نسخة Millennium من هذه الإضافة حتى يقوم LuaLoader وحده بالحقن.</value></data>
   <data name="Plugin_Footer" xml:space="preserve"><value>يُثبَّت LuaLoader في مجلد Steam. يعمل هذا التطبيق كخلفية — إذا أغلقته من شريط النظام، فلن تعمل الإضافة بعد الآن!</value></data>
   <data name="Plugin_Btn_Install" xml:space="preserve"><value>تثبيت</value></data>
   <data name="Plugin_Btn_Update" xml:space="preserve"><value>تحديث</value></data>
@@ -435,7 +435,7 @@
   <data name="Plugin_Err_VerifyFailed" xml:space="preserve"><value>فشل التحقق من تجزئة {0}.</value></data>
   <data name="Plugin_Err_NoLuatoolsJs" xml:space="preserve"><value>لا يحتوي plugin.zip على public/luatools.js.</value></data>
   <data name="Plugin_About_Header" xml:space="preserve"><value>الميزات البارزة</value></data>
-  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>يضيف زر «Add via LuaTools» إلى صفحات متجر Steam</value></data>
+  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>يضيف زر «Add via Sweet Tools» إلى صفحات متجر Steam</value></data>
   <data name="Plugin_Feature_AutoUpdate" xml:space="preserve"><value>يُحدِّث نفسه تلقائيًا</value></data>
   <data name="Plugin_Feature_Millennium" xml:space="preserve"><value>يعمل مع Millennium أو بدونه</value></data>
   <data name="Drop_LinkHint" xml:space="preserve"><value>…أو اسحب رابط SteamDB / متجر Steam لإضافة تلك اللعبة.</value></data>
@@ -491,7 +491,7 @@
   <data name="Launch_Title" xml:space="preserve"><value>خيارات التشغيل</value></data>
   <data name="Launch_Loading" xml:space="preserve"><value>جارٍ قراءة ذاكرة تطبيقات Steam المؤقتة…</value></data>
   <data name="Launch_NotFound" xml:space="preserve"><value>لا توجد لدى Steam معلومات مخزَّنة عن هذه اللعبة بعد. شغّل Steam مرة واحدة ثم أعد المحاولة.</value></data>
-  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>ذاكرة تطبيقات Steam المؤقتة بتنسيق لا تفهمه هذه النسخة ({0}). حدّث LuaTools.</value></data>
+  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>ذاكرة تطبيقات Steam المؤقتة بتنسيق لا تفهمه هذه النسخة ({0}). حدّث Sweet Tools.</value></data>
   <data name="Launch_ReadFailed" xml:space="preserve"><value>تعذّرت قراءة ذاكرة تطبيقات Steam المؤقتة. {0}</value></data>
   <data name="Launch_ExecutableRequired" xml:space="preserve"><value>كل خيار تشغيل يحتاج إلى ملف تنفيذي.</value></data>
   <data name="Launch_Add" xml:space="preserve"><value>إضافة</value></data>
@@ -508,7 +508,7 @@
   <data name="Launch_InstallPath" xml:space="preserve"><value>مسار التثبيت: {0}</value></data>
   <data name="Launch_SteamRestartNote" xml:space="preserve"><value>تطبيق التغييرات يُغلق Steam ثم يعيد فتحه.</value></data>
   <data name="Launch_Restore" xml:space="preserve"><value>استعادة الأصلي</value></data>
-  <data name="Launch_Restore_Tip" xml:space="preserve"><value>يعيد خيارات التشغيل التي جاء بها Steam، قبل أن يغيّرها LuaTools.</value></data>
+  <data name="Launch_Restore_Tip" xml:space="preserve"><value>يعيد خيارات التشغيل التي جاء بها Steam، قبل أن يغيّرها Sweet Tools.</value></data>
   <data name="Launch_Restore_Title" xml:space="preserve"><value>استعادة خيارات التشغيل الأصلية؟</value></data>
   <data name="Launch_Restore_Body" xml:space="preserve"><value>سيؤدي هذا إلى إعادة خيارات التشغيل كما كانت في Steam وتجاهل تغييراتك. سيتم إغلاق Steam وإعادة فتحه. هل تريد المتابعة؟</value></data>
   <data name="Launch_NothingToRestore" xml:space="preserve"><value>لم يتم تغيير هذه اللعبة، لذا لا يوجد ما يمكن استعادته.</value></data>

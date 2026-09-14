@@ -126,7 +126,7 @@
   <data name="Lang_Changed_Title" xml:space="preserve"><value>Bahasa diubah</value></data>
   <data name="Lang_Changed_Body" xml:space="preserve"><value>Mulai ulang aplikasi untuk menerapkan bahasa baru.</value></data>
   <data name="Lang_Changed_Restart" xml:space="preserve"><value>Mulai ulang sekarang</value></data>
-  <data name="Home_Welcome" xml:space="preserve"><value>Selamat datang di LuaTools</value></data>
+  <data name="Home_Welcome" xml:space="preserve"><value>Selamat datang di Sweet Tools</value></data>
   <data name="Home_LuasOnBoard" xml:space="preserve"><value>Lua yang ada</value></data>
   <data name="Home_LastAdded" xml:space="preserve"><value>TERAKHIR DITAMBAHKAN</value></data>
   <data name="Home_PluginStatus" xml:space="preserve"><value>Status plugin</value></data>
@@ -141,14 +141,14 @@
   <data name="Home_NoModeSelected" xml:space="preserve"><value>Tidak ada mode yang dipilih</value></data>
   <data name="Home_ModeIs" xml:space="preserve"><value>Mode · {0}</value></data>
   <data name="Mode_Title" xml:space="preserve"><value>Mode</value></data>
-  <data name="Mode_Subtitle" xml:space="preserve"><value>Alihkan backend yang digunakan untuk membuka kunci gim yang ditambahkan dengan LuaTools — hanya satu yang aktif pada satu waktu.</value></data>
+  <data name="Mode_Subtitle" xml:space="preserve"><value>Alihkan backend yang digunakan untuk membuka kunci gim yang ditambahkan dengan Sweet Tools — hanya satu yang aktif pada satu waktu.</value></data>
   <data name="Mode_CheckForUpdates" xml:space="preserve"><value>Periksa pembaruan</value></data>
   <data name="Mode_Active" xml:space="preserve"><value>AKTIF</value></data>
   <data name="Mode_Recommended" xml:space="preserve"><value>DIREKOMENDASIKAN</value></data>
   <data name="Mode_Confirm_Body" xml:space="preserve"><value>Steam akan ditutup agar file-nya dapat diubah, lalu dimulai ulang secara otomatis. Semua gim atau unduhan yang berjalan akan berhenti.</value></data>
   <data name="Mode_Cancel" xml:space="preserve"><value>Batal</value></data>
   <data name="Mode_CloseSteamContinue" xml:space="preserve"><value>Tutup Steam dan lanjutkan</value></data>
-  <data name="Mode_Desc_Bst" xml:space="preserve"><value>Fork sumber terbuka dari OpenSteamTools yang dikelola secara aktif oleh tim LuaTools. Menghadirkan perbaikan dan fitur baru!</value></data>
+  <data name="Mode_Desc_Bst" xml:space="preserve"><value>Fork sumber terbuka dari OpenSteamTools yang dikelola secara aktif oleh tim Sweet Tools. Menghadirkan perbaikan dan fitur baru!</value></data>
   <data name="Mode_CloudRedirect_Manage" xml:space="preserve"><value>Kelola</value></data>
   <data name="Mode_CloudRedirect_LaunchFailed" xml:space="preserve"><value>Tidak dapat mengunduh atau menjalankan CloudRedirect.</value></data>
   <data name="Mode_Desc_Ost" xml:space="preserve"><value>Build nightly OpenSteamTools dari sumber terbaru. Perbaikan terbaru, tetapi mungkin kurang stabil.</value></data>
@@ -168,13 +168,13 @@
   <data name="Mode_CloudRedirect_Toast_Enabled" xml:space="preserve"><value>Diaktifkan — mulai ulang Steam untuk menerapkan.</value></data>
   <data name="Mode_CloudRedirect_Toast_Disabled" xml:space="preserve"><value>Dinonaktifkan — mulai ulang Steam untuk menerapkan.</value></data>
   <data name="Mode_CloudRedirect_Toast_Updated" xml:space="preserve"><value>Diperbarui — mulai ulang Steam untuk menerapkan.</value></data>
-  <data name="Onboarding_Title" xml:space="preserve"><value>Selamat datang di aplikasi LuaTools!</value></data>
+  <data name="Onboarding_Title" xml:space="preserve"><value>Selamat datang di aplikasi Sweet Tools!</value></data>
   <data name="Onboarding_SignIn_Blurb" xml:space="preserve"><value>Masuk untuk membuka fitur menambahkan game dan perbaikan.</value></data>
   <data name="Onboarding_SignedIn" xml:space="preserve"><value>Sudah masuk ✓</value></data>
   <data name="Onboarding_Recommended_Title" xml:space="preserve"><value>Terapkan pengaturan yang disarankan</value></data>
   <data name="Onboarding_Recommended_Detail" xml:space="preserve"><value>Mode: BetterSteamTools · FastFetch aktif</value></data>
   <data name="Onboarding_Plugin_Title" xml:space="preserve"><value>Pasang plugin terkenal kami</value></data>
-  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Menambahkan tombol "Add via LuaTools" ke halaman toko Steam.</value></data>
+  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Menambahkan tombol "Add via Sweet Tools" ke halaman toko Steam.</value></data>
   <data name="Onboarding_Yes" xml:space="preserve"><value>Ya, silakan</value></data>
   <data name="Onboarding_No" xml:space="preserve"><value>Tidak, terima kasih</value></data>
   <data name="Onboarding_Go" xml:space="preserve"><value>Ayo mulai!</value></data>
@@ -360,25 +360,25 @@ Ini menghapus berkas .lua dari Steam\config\stplug-in.</value></data>
   <data name="Confirm_Replace" xml:space="preserve"><value>Ganti</value></data>
   <data name="Settings_Section_Startup" xml:space="preserve"><value>MULAI</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Mulai bersama Windows</value></data>
-  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>Jalankan LuaTools secara otomatis saat Windows dimulai.</value></data>
+  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>Jalankan Sweet Tools secara otomatis saat Windows dimulai.</value></data>
   <data name="Settings_MinimizeToTray" xml:space="preserve"><value>Kecilkan ke System Tray</value></data>
-  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>Saat Anda menutup jendela, biarkan LuaTools tetap berjalan di system tray alih-alih keluar. Klik dua kali ikon tray untuk memulihkan.</value></data>
-  <data name="Tray_Open" xml:space="preserve"><value>Buka LuaTools</value></data>
+  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>Saat Anda menutup jendela, biarkan Sweet Tools tetap berjalan di system tray alih-alih keluar. Klik dua kali ikon tray untuk memulihkan.</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>Buka Sweet Tools</value></data>
   <data name="Tray_Exit" xml:space="preserve"><value>Keluar</value></data>
 
   <data name="Add_FastFetch" xml:space="preserve"><value>FastFetch™️</value></data>
   <data name="Add_FastFetch_Hint" xml:space="preserve"><value>Unduh otomatis dari sumber pertama yang tersedia</value></data>
   <data name="Add_FastFetch_NoSource" xml:space="preserve"><value>Tidak ada sumber tersedia yang ditemukan untuk game ini</value></data>
   <data name="Add_FastFetch_Via" xml:space="preserve"><value>· melalui {0}</value></data>
-  <data name="Plugin_Title" xml:space="preserve"><value>Plugin LuaTools</value></data>
-  <data name="Plugin_Subtitle" xml:space="preserve"><value>Plugin LuaTools untuk Steam! — Kini memakai LuaLoader alih-alih Shittenium</value></data>
+  <data name="Plugin_Title" xml:space="preserve"><value>Plugin Sweet Tools</value></data>
+  <data name="Plugin_Subtitle" xml:space="preserve"><value>Plugin Sweet Tools untuk Steam! — Kini memakai LuaLoader alih-alih Shittenium</value></data>
   <data name="Plugin_CardTitle" xml:space="preserve"><value>Status</value></data>
   <data name="Plugin_Badge_UpdateAvailable" xml:space="preserve"><value>Pembaruan tersedia</value></data>
   <data name="Plugin_Row_InstalledVersion" xml:space="preserve"><value>Versi terpasang</value></data>
   <data name="Plugin_Row_LatestVersion" xml:space="preserve"><value>Versi terbaru</value></data>
   <data name="Plugin_Row_Frontend" xml:space="preserve"><value>Frontend</value></data>
   <data name="Plugin_Row_Loader" xml:space="preserve"><value>Pemuat (winmm.dll)</value></data>
-  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Millennium terdeteksi — LuaTools berjalan berdampingan dengannya. Pemasangan menonaktifkan salinan plugin ini milik Millennium sehingga hanya LuaLoader yang menyuntikkan.</value></data>
+  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Millennium terdeteksi — Sweet Tools berjalan berdampingan dengannya. Pemasangan menonaktifkan salinan plugin ini milik Millennium sehingga hanya LuaLoader yang menyuntikkan.</value></data>
   <data name="Plugin_Footer" xml:space="preserve"><value>LuaLoader dipasang ke folder Steam Anda. Aplikasi ini berfungsi sebagai backend — jika Anda menutupnya dari tray, plugin tidak akan berfungsi lagi!</value></data>
   <data name="Plugin_Btn_Install" xml:space="preserve"><value>Pasang</value></data>
   <data name="Plugin_Btn_Update" xml:space="preserve"><value>Perbarui</value></data>
@@ -409,7 +409,7 @@ Ini menghapus berkas .lua dari Steam\config\stplug-in.</value></data>
   <data name="Plugin_Err_VerifyFailed" xml:space="preserve"><value>Verifikasi hash {0} gagal.</value></data>
   <data name="Plugin_Err_NoLuatoolsJs" xml:space="preserve"><value>plugin.zip tidak berisi public/luatools.js.</value></data>
   <data name="Plugin_About_Header" xml:space="preserve"><value>Fitur penting</value></data>
-  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>Menambahkan tombol “Add via LuaTools” ke halaman toko Steam</value></data>
+  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>Menambahkan tombol “Add via Sweet Tools” ke halaman toko Steam</value></data>
   <data name="Plugin_Feature_AutoUpdate" xml:space="preserve"><value>Memperbarui diri secara otomatis</value></data>
   <data name="Plugin_Feature_Millennium" xml:space="preserve"><value>Berfungsi dengan atau tanpa Millennium</value></data>
   <data name="Drop_LinkHint" xml:space="preserve"><value>…atau seret tautan SteamDB / toko Steam untuk menambahkan game itu.</value></data>
@@ -465,7 +465,7 @@ Ini menghapus berkas .lua dari Steam\config\stplug-in.</value></data>
   <data name="Launch_Title" xml:space="preserve"><value>Opsi peluncuran</value></data>
   <data name="Launch_Loading" xml:space="preserve"><value>Membaca cache aplikasi Steam…</value></data>
   <data name="Launch_NotFound" xml:space="preserve"><value>Steam belum punya informasi cache untuk game ini. Jalankan Steam sekali, lalu coba lagi.</value></data>
-  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>Cache aplikasi Steam dalam format yang tidak dipahami versi ini ({0}). Perbarui LuaTools.</value></data>
+  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>Cache aplikasi Steam dalam format yang tidak dipahami versi ini ({0}). Perbarui Sweet Tools.</value></data>
   <data name="Launch_ReadFailed" xml:space="preserve"><value>Tidak bisa membaca cache aplikasi Steam. {0}</value></data>
   <data name="Launch_ExecutableRequired" xml:space="preserve"><value>Setiap opsi peluncuran membutuhkan berkas yang dapat dieksekusi.</value></data>
   <data name="Launch_Add" xml:space="preserve"><value>Tambah</value></data>
@@ -482,7 +482,7 @@ Ini menghapus berkas .lua dari Steam\config\stplug-in.</value></data>
   <data name="Launch_InstallPath" xml:space="preserve"><value>Jalur instalasi: {0}</value></data>
   <data name="Launch_SteamRestartNote" xml:space="preserve"><value>Menerapkan perubahan akan menutup dan membuka Steam kembali.</value></data>
   <data name="Launch_Restore" xml:space="preserve"><value>Pulihkan asli</value></data>
-  <data name="Launch_Restore_Tip" xml:space="preserve"><value>Mengembalikan opsi peluncuran bawaan Steam, sebelum diubah oleh LuaTools.</value></data>
+  <data name="Launch_Restore_Tip" xml:space="preserve"><value>Mengembalikan opsi peluncuran bawaan Steam, sebelum diubah oleh Sweet Tools.</value></data>
   <data name="Launch_Restore_Title" xml:space="preserve"><value>Pulihkan opsi peluncuran asli?</value></data>
   <data name="Launch_Restore_Body" xml:space="preserve"><value>Ini mengembalikan opsi peluncuran seperti yang dimiliki Steam dan membuang perubahan Anda. Steam akan ditutup dan dibuka kembali. Lanjutkan?</value></data>
   <data name="Launch_NothingToRestore" xml:space="preserve"><value>Game ini belum pernah diubah, jadi tidak ada yang bisa dipulihkan.</value></data>

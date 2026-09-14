@@ -303,16 +303,16 @@ public partial class SettingsViewModel : ObservableObject
             var (ok, err) = await _pluginInstaller.RestoreAllSteamModificationsAsync(restartSteam: true);
             if (ok)
             {
-                _toast.Show("LuaTools", $"Plugins enabled and locked to account {id}. Steam refreshed.");
+                _toast.Show("Sweet Tools", $"Plugins enabled and locked to account {id}. Steam refreshed.");
             }
             else
             {
-                _toast.Show("LuaTools", $"Account locked to {id}, but restore encountered an issue: {err}", error: true);
+                _toast.Show("Sweet Tools", $"Account locked to {id}, but restore encountered an issue: {err}", error: true);
             }
         }
         else
         {
-            _toast.Show("LuaTools", "No active Steam account detected. Please launch and log in to Steam first.", error: true);
+            _toast.Show("Sweet Tools", "No active Steam account detected. Please launch and log in to Steam first.", error: true);
         }
     }
 
@@ -322,7 +322,7 @@ public partial class SettingsViewModel : ObservableObject
     {
         _settings.AllowedSteamId = "";
         RefreshCurrentSteamId();
-        _toast.Show("LuaTools", "Account configuration cleared. Plugins disabled until an account is locked.");
+        _toast.Show("Sweet Tools", "Account configuration cleared. Plugins disabled until an account is locked.");
         if (_pluginInstaller.HasSteamPluginFiles())
         {
             await _pluginInstaller.PurgeAllSteamModificationsAsync(restartSteam: true);
@@ -349,11 +349,11 @@ public partial class SettingsViewModel : ObservableObject
             var (ok, error) = await _pluginInstaller.PurgeAllSteamModificationsAsync(restartSteam: true);
             if (ok)
             {
-                _toast.Show("LuaTools", "Steam restored to 100% pure vanilla state.");
+                _toast.Show("Sweet Tools", "Steam restored to 100% pure vanilla state.");
             }
             else
             {
-                _toast.Show("LuaTools", $"Purge failed: {error}", error: true);
+                _toast.Show("Sweet Tools", $"Purge failed: {error}", error: true);
             }
         }
         finally

@@ -126,7 +126,7 @@
   <data name="Lang_Changed_Title" xml:space="preserve"><value>Språk ändrat</value></data>
   <data name="Lang_Changed_Body" xml:space="preserve"><value>Starta om appen för att tillämpa det nya språket.</value></data>
   <data name="Lang_Changed_Restart" xml:space="preserve"><value>Starta om nu</value></data>
-  <data name="Home_Welcome" xml:space="preserve"><value>Välkommen till LuaTools</value></data>
+  <data name="Home_Welcome" xml:space="preserve"><value>Välkommen till Sweet Tools</value></data>
   <data name="Home_LuasOnBoard" xml:space="preserve"><value>Lua-filer ombord</value></data>
   <data name="Home_LastAdded" xml:space="preserve"><value>SENAST TILLAGD</value></data>
   <data name="Home_PluginStatus" xml:space="preserve"><value>Tilläggsstatus</value></data>
@@ -141,14 +141,14 @@
   <data name="Home_NoModeSelected" xml:space="preserve"><value>Inget läge valt</value></data>
   <data name="Home_ModeIs" xml:space="preserve"><value>Läge · {0}</value></data>
   <data name="Mode_Title" xml:space="preserve"><value>Läge</value></data>
-  <data name="Mode_Subtitle" xml:space="preserve"><value>Byt den backend som används för att låsa upp spel som lagts till med LuaTools — bara ett aktivt åt gången.</value></data>
+  <data name="Mode_Subtitle" xml:space="preserve"><value>Byt den backend som används för att låsa upp spel som lagts till med Sweet Tools — bara ett aktivt åt gången.</value></data>
   <data name="Mode_CheckForUpdates" xml:space="preserve"><value>Sök efter uppdateringar</value></data>
   <data name="Mode_Active" xml:space="preserve"><value>AKTIV</value></data>
   <data name="Mode_Recommended" xml:space="preserve"><value>REKOMMENDERAS</value></data>
   <data name="Mode_Confirm_Body" xml:space="preserve"><value>Steam stängs så att dess filer kan ändras och startas sedan om automatiskt. Alla spel eller nedladdningar som körs stoppas.</value></data>
   <data name="Mode_Cancel" xml:space="preserve"><value>Avbryt</value></data>
   <data name="Mode_CloseSteamContinue" xml:space="preserve"><value>Stäng Steam och fortsätt</value></data>
-  <data name="Mode_Desc_Bst" xml:space="preserve"><value>En fork med öppen källkod av OpenSteamTools som underhålls aktivt av LuaTools-teamet. Med fixar och nya funktioner!</value></data>
+  <data name="Mode_Desc_Bst" xml:space="preserve"><value>En fork med öppen källkod av OpenSteamTools som underhålls aktivt av Sweet Tools-teamet. Med fixar och nya funktioner!</value></data>
   <data name="Mode_CloudRedirect_Manage" xml:space="preserve"><value>Hantera</value></data>
   <data name="Mode_CloudRedirect_LaunchFailed" xml:space="preserve"><value>Det gick inte att ladda ner eller starta CloudRedirect.</value></data>
   <data name="Mode_Desc_Ost" xml:space="preserve"><value>Nightly-bygge av OpenSteamTools från den senaste källkoden. De senaste fixarna, men kan vara mindre stabil.</value></data>
@@ -168,13 +168,13 @@
   <data name="Mode_CloudRedirect_Toast_Enabled" xml:space="preserve"><value>Aktiverat — starta om Steam för att tillämpa.</value></data>
   <data name="Mode_CloudRedirect_Toast_Disabled" xml:space="preserve"><value>Inaktiverat — starta om Steam för att tillämpa.</value></data>
   <data name="Mode_CloudRedirect_Toast_Updated" xml:space="preserve"><value>Uppdaterat — starta om Steam för att tillämpa.</value></data>
-  <data name="Onboarding_Title" xml:space="preserve"><value>Välkommen till LuaTools-appen!</value></data>
+  <data name="Onboarding_Title" xml:space="preserve"><value>Välkommen till Sweet Tools-appen!</value></data>
   <data name="Onboarding_SignIn_Blurb" xml:space="preserve"><value>Logga in för att låsa upp att lägga till spel och fixar.</value></data>
   <data name="Onboarding_SignedIn" xml:space="preserve"><value>Inloggad ✓</value></data>
   <data name="Onboarding_Recommended_Title" xml:space="preserve"><value>Tillämpa rekommenderade inställningar</value></data>
   <data name="Onboarding_Recommended_Detail" xml:space="preserve"><value>Läge: BetterSteamTools · FastFetch på</value></data>
   <data name="Onboarding_Plugin_Title" xml:space="preserve"><value>Installera vårt berömda plugin</value></data>
-  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Lägger till knappen "Add via LuaTools" på Steams butikssidor.</value></data>
+  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Lägger till knappen "Add via Sweet Tools" på Steams butikssidor.</value></data>
   <data name="Onboarding_Yes" xml:space="preserve"><value>Ja tack</value></data>
   <data name="Onboarding_No" xml:space="preserve"><value>Nej tack</value></data>
   <data name="Onboarding_Go" xml:space="preserve"><value>Nu kör vi!</value></data>
@@ -360,25 +360,25 @@ Detta raderar .lua-filerna från Steam\config\stplug-in.</value></data>
   <data name="Confirm_Replace" xml:space="preserve"><value>Ersätt</value></data>
   <data name="Settings_Section_Startup" xml:space="preserve"><value>UPPSTART</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Starta med Windows</value></data>
-  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>Starta LuaTools automatiskt när Windows startar.</value></data>
+  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>Starta Sweet Tools automatiskt när Windows startar.</value></data>
   <data name="Settings_MinimizeToTray" xml:space="preserve"><value>Minimera till systemfältet</value></data>
-  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>När du stänger fönstret, låt LuaTools fortsätta köras i systemfältet i stället för att avsluta. Dubbelklicka på ikonen för att återställa.</value></data>
-  <data name="Tray_Open" xml:space="preserve"><value>Öppna LuaTools</value></data>
+  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>När du stänger fönstret, låt Sweet Tools fortsätta köras i systemfältet i stället för att avsluta. Dubbelklicka på ikonen för att återställa.</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>Öppna Sweet Tools</value></data>
   <data name="Tray_Exit" xml:space="preserve"><value>Avsluta</value></data>
 
   <data name="Add_FastFetch" xml:space="preserve"><value>FastFetch™️</value></data>
   <data name="Add_FastFetch_Hint" xml:space="preserve"><value>Automatisk nedladdning från första tillgängliga källan</value></data>
   <data name="Add_FastFetch_NoSource" xml:space="preserve"><value>Inga tillgängliga källor hittades för detta spel</value></data>
   <data name="Add_FastFetch_Via" xml:space="preserve"><value>· via {0}</value></data>
-  <data name="Plugin_Title" xml:space="preserve"><value>LuaTools-tillägg</value></data>
-  <data name="Plugin_Subtitle" xml:space="preserve"><value>LuaTools Steam-tillägget! — Använder nu LuaLoader istället för Shittenium</value></data>
+  <data name="Plugin_Title" xml:space="preserve"><value>Sweet Tools-tillägg</value></data>
+  <data name="Plugin_Subtitle" xml:space="preserve"><value>Sweet Tools Steam-tillägget! — Använder nu LuaLoader istället för Shittenium</value></data>
   <data name="Plugin_CardTitle" xml:space="preserve"><value>Status</value></data>
   <data name="Plugin_Badge_UpdateAvailable" xml:space="preserve"><value>Uppdatering tillgänglig</value></data>
   <data name="Plugin_Row_InstalledVersion" xml:space="preserve"><value>Installerad version</value></data>
   <data name="Plugin_Row_LatestVersion" xml:space="preserve"><value>Senaste version</value></data>
   <data name="Plugin_Row_Frontend" xml:space="preserve"><value>Frontend</value></data>
   <data name="Plugin_Row_Loader" xml:space="preserve"><value>Laddare (winmm.dll)</value></data>
-  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Millennium upptäcktes — LuaTools körs vid sidan av det. Installationen inaktiverar Milleniums egen kopia av det här tillägget så att bara LuaLoader injicerar.</value></data>
+  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Millennium upptäcktes — Sweet Tools körs vid sidan av det. Installationen inaktiverar Milleniums egen kopia av det här tillägget så att bara LuaLoader injicerar.</value></data>
   <data name="Plugin_Footer" xml:space="preserve"><value>LuaLoader installeras i din Steam-mapp. Den här appen fungerar som backend — om du stänger den från aktivitetsfältet slutar tillägget att fungera!</value></data>
   <data name="Plugin_Btn_Install" xml:space="preserve"><value>Installera</value></data>
   <data name="Plugin_Btn_Update" xml:space="preserve"><value>Uppdatera</value></data>
@@ -409,7 +409,7 @@ Detta raderar .lua-filerna från Steam\config\stplug-in.</value></data>
   <data name="Plugin_Err_VerifyFailed" xml:space="preserve"><value>Hashverifiering av {0} misslyckades.</value></data>
   <data name="Plugin_Err_NoLuatoolsJs" xml:space="preserve"><value>plugin.zip innehöll inte public/luatools.js.</value></data>
   <data name="Plugin_About_Header" xml:space="preserve"><value>Viktiga funktioner</value></data>
-  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>Lägger till en “Add via LuaTools”-knapp på Steams butikssidor</value></data>
+  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>Lägger till en “Add via Sweet Tools”-knapp på Steams butikssidor</value></data>
   <data name="Plugin_Feature_AutoUpdate" xml:space="preserve"><value>Uppdaterar sig själv automatiskt</value></data>
   <data name="Plugin_Feature_Millennium" xml:space="preserve"><value>Fungerar med eller utan Millennium</value></data>
   <data name="Drop_LinkHint" xml:space="preserve"><value>…eller dra hit en SteamDB-/Steam-butikslänk för att lägga till det spelet.</value></data>
@@ -465,7 +465,7 @@ Detta raderar .lua-filerna från Steam\config\stplug-in.</value></data>
   <data name="Launch_Title" xml:space="preserve"><value>Startalternativ</value></data>
   <data name="Launch_Loading" xml:space="preserve"><value>Läser Steams appcache…</value></data>
   <data name="Launch_NotFound" xml:space="preserve"><value>Steam har ännu ingen cachad information om det här spelet. Starta Steam en gång och försök igen.</value></data>
-  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>Steams appcache har ett format som den här versionen inte förstår ({0}). Uppdatera LuaTools.</value></data>
+  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>Steams appcache har ett format som den här versionen inte förstår ({0}). Uppdatera Sweet Tools.</value></data>
   <data name="Launch_ReadFailed" xml:space="preserve"><value>Kunde inte läsa Steams appcache. {0}</value></data>
   <data name="Launch_ExecutableRequired" xml:space="preserve"><value>Varje startalternativ behöver en körbar fil.</value></data>
   <data name="Launch_Add" xml:space="preserve"><value>Lägg till</value></data>
@@ -482,7 +482,7 @@ Detta raderar .lua-filerna från Steam\config\stplug-in.</value></data>
   <data name="Launch_InstallPath" xml:space="preserve"><value>Installationssökväg: {0}</value></data>
   <data name="Launch_SteamRestartNote" xml:space="preserve"><value>När ändringarna tillämpas stängs Steam och öppnas igen.</value></data>
   <data name="Launch_Restore" xml:space="preserve"><value>Återställ original</value></data>
-  <data name="Launch_Restore_Tip" xml:space="preserve"><value>Återställer de startalternativ Steam levererade, innan LuaTools ändrade dem.</value></data>
+  <data name="Launch_Restore_Tip" xml:space="preserve"><value>Återställer de startalternativ Steam levererade, innan Sweet Tools ändrade dem.</value></data>
   <data name="Launch_Restore_Title" xml:space="preserve"><value>Återställa de ursprungliga startalternativen?</value></data>
   <data name="Launch_Restore_Body" xml:space="preserve"><value>Detta återställer startalternativen som Steam hade dem och kastar dina ändringar. Steam stängs och öppnas igen. Fortsätta?</value></data>
   <data name="Launch_NothingToRestore" xml:space="preserve"><value>Det här spelet har inte ändrats, så det finns inget att återställa.</value></data>
