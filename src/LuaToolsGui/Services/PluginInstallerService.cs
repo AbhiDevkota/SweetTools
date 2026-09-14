@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization.Metadata;
 using LuaToolsGui.Models;
+using Microsoft.Extensions.Logging;
 
 namespace LuaToolsGui.Services;
 
@@ -38,7 +39,13 @@ public sealed record PluginStatus(
 /// "launch LuaTools.exe when Steam opens", with no CDP hook, no load-timing race, and no dual-slot
 /// redundancy needed anymore.
 /// </summary>
-public class PluginInstallerService(SteamService steam, GithubProxy gh, CefInjectorService injector)
+public class PluginInstallerService(
+    SteamService steam,
+    GithubProxy gh,
+    CefInjectorService injector,
+    CurrentSteamUserService currentUser,
+    SettingsService settings,
+    ILogger<PluginInstallerService>? log = null)
 {
     private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNameCaseInsensitive = true };
 
@@ -295,9 +302,29 @@ public class PluginInstallerService(SteamService steam, GithubProxy gh, CefInjec
             MillenniumPresent, Offline: false, port8080Busy);
     }
 
+    /// <summary>
+    /// Checks whether plugin operations are allowed for the currently logged-in Steam account.
+    /// Returns true if no restriction is configured or if the current Steam account matches the allowed ID.
+    /// </summary>
+    public bool IsAllowedForCurrentAccount()
+    {
+        string allowed = settings.AllowedSteamId;
+        if (string.IsNullOrWhiteSpace(allowed))
+            return true;
+
+        string? current = currentUser.GetCurrentSteamId();
+        return string.Equals(allowed.Trim(), current?.Trim(), StringComparison.OrdinalIgnoreCase);
+    }
+
     // ── Install / update ──
     public async Task<(bool ok, string? error)> InstallAsync(IProgress<double?>? progress, CancellationToken ct = default)
     {
+        if (!IsAllowedForCurrentAccount())
+        {
+            log?.LogWarning("Plugin install blocked: current Steam account is not allowed.");
+            return (false, "LuaTools is restricted to a different Steam account.");
+        }
+
         if (SteamDir is not { } steamDir) return (false, Resources.Strings.Plugin_Err_SteamNotFound);
 
         var latest = await FetchLatestAsync(force: true, ct);
@@ -427,6 +454,12 @@ public class PluginInstallerService(SteamService steam, GithubProxy gh, CefInjec
     {
         try
         {
+            if (!IsAllowedForCurrentAccount())
+            {
+                log?.LogWarning("Plugin auto-update blocked: current Steam account is not allowed.");
+                return false;
+            }
+
             var st = await GetStatusAsync(force: true, ct);
             if (!st.UpdateAvailable) return false; // not installed, offline, or already current
             var (ok, _) = await InstallAsync(progress: null, ct);
@@ -435,9 +468,18 @@ public class PluginInstallerService(SteamService steam, GithubProxy gh, CefInjec
         catch { return false; }
     }
 
+    /// <summary>Updates the plugin if allowed for the current account.</summary>
+    public Task<bool> UpdateAsync(CancellationToken ct = default) => AutoUpdateAsync(ct);
+
     // ── Uninstall ──
     public Task<(bool ok, string? error)> UninstallAsync(CancellationToken ct = default)
     {
+        if (!IsAllowedForCurrentAccount())
+        {
+            log?.LogWarning("Plugin uninstall blocked: current Steam account is not allowed.");
+            return Task.FromResult<(bool, string?)>((false, "LuaTools is restricted to a different Steam account."));
+        }
+
         return Task.Run(async () =>
         {
             try
