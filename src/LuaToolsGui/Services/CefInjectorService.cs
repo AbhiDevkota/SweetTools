@@ -37,10 +37,26 @@ public class CefInjectorService : IHostedService
 
     private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNameCaseInsensitive = true };
 
-    public CefInjectorService(SteamService steam, ILogger<CefInjectorService> logger)
+    private readonly CurrentSteamUserService _currentUser;
+    private readonly SettingsService _settings;
+
+    public CefInjectorService(
+        SteamService steam,
+        ILogger<CefInjectorService> logger,
+        CurrentSteamUserService currentUser,
+        SettingsService settings)
     {
         _steam = steam;
         _log = logger;
+        _currentUser = currentUser;
+        _settings = settings;
+    }
+
+    private bool IsAccountAllowed()
+    {
+        string allowed = _settings.AllowedSteamId;
+        if (string.IsNullOrWhiteSpace(allowed)) return true;
+        return _currentUser.IsCurrentUser(allowed);
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -62,6 +78,14 @@ public class CefInjectorService : IHostedService
     /// next poll cycle (~1s) just picks up the new content, no page reload needed.</summary>
     public async Task ReloadPluginFilesAsync()
     {
+        if (!IsAccountAllowed())
+        {
+            _luatoolsJs = "";
+            _polyfillJs = "";
+            _log.LogInformation("CEF injector disabled: active Steam account is not allowed");
+            return;
+        }
+
         var ct = _cts?.Token ?? CancellationToken.None;
 
         var jsPath = FindLuaToolsJs();
@@ -112,6 +136,11 @@ public class CefInjectorService : IHostedService
         {
             try
             {
+                if (!IsAccountAllowed())
+                {
+                    await Task.Delay(1000, ct);
+                    continue;
+                }
                 // ── Slow cadence (~1s): discover store tabs, ensure luatools.js is injected ──
                 if (tick % InjectEveryTicks == 0)
                 {

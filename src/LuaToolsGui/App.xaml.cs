@@ -206,6 +206,13 @@ public partial class App : Application
             try
             {
                 var installer = _host.Services.GetRequiredService<PluginInstallerService>();
+                if (!installer.IsAllowedForCurrentAccount())
+                {
+                    if (installer.HasSteamPluginFiles())
+                        await installer.CleanSteamPluginAsync();
+                    return;
+                }
+
                 var st = await installer.GetStatusAsync(force: true);
                 if (st.UpdateAvailable)
                 {
@@ -471,11 +478,22 @@ public partial class App : Application
         var pluginInstaller = _host.Services.GetRequiredService<PluginInstallerService>();
         if (!pluginInstaller.IsAllowedForCurrentAccount())
         {
+            if (pluginInstaller.HasSteamPluginFiles())
+            {
+                await pluginInstaller.CleanSteamPluginAsync();
+            }
+
             MessageBox.Show(
-                "LuaTools is restricted to a different Steam account. Please log in with your configured account.",
+                "LuaTools is restricted to a different Steam account. The plugin has been disabled and Steam has been cleaned. Please log in with your configured account.",
                 "LuaTools",
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
+
+            if (Program.SessionTrayLock || silentStartup)
+            {
+                Shutdown();
+                return;
+            }
             return;
         }
 

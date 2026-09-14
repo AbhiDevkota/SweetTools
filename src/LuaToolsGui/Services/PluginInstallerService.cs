@@ -316,6 +316,18 @@ public class PluginInstallerService(
         return string.Equals(allowed.Trim(), current?.Trim(), StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// Checks whether any Steam plugin loader DLLs, legacy DLLs, CDP markers, or frontend files are present on disk.
+    /// </summary>
+    public bool HasSteamPluginFiles()
+    {
+        bool slotPresent = Slots.Any(s => SlotPath(s) is { } p && File.Exists(p));
+        bool legacyPresent = LegacyDllPaths.Any(File.Exists);
+        bool markerPresent = CdpMarkerPath is { } m && (File.Exists(m) || Directory.Exists(m));
+        bool frontendPresent = File.Exists(LuatoolsJsPath);
+        return slotPresent || legacyPresent || markerPresent || frontendPresent;
+    }
+
     // ── Install / update ──
     public async Task<(bool ok, string? error)> InstallAsync(IProgress<double?>? progress, CancellationToken ct = default)
     {
@@ -471,15 +483,12 @@ public class PluginInstallerService(
     /// <summary>Updates the plugin if allowed for the current account.</summary>
     public Task<bool> UpdateAsync(CancellationToken ct = default) => AutoUpdateAsync(ct);
 
-    // ── Uninstall ──
-    public Task<(bool ok, string? error)> UninstallAsync(CancellationToken ct = default)
+    /// <summary>
+    /// Completely removes the loader DLLs, legacy DLLs, and CDP junction from Steam to ensure
+    /// Steam is 100% clean when an unallowed account is active or when uninstalled.
+    /// </summary>
+    public Task<(bool ok, string? error)> CleanSteamPluginAsync(CancellationToken ct = default)
     {
-        if (!IsAllowedForCurrentAccount())
-        {
-            log?.LogWarning("Plugin uninstall blocked: current Steam account is not allowed.");
-            return Task.FromResult<(bool, string?)>((false, "LuaTools is restricted to a different Steam account."));
-        }
-
         return Task.Run(async () =>
         {
             try
@@ -489,8 +498,11 @@ public class PluginInstallerService(
                 var manifest = ReadManifest();
 
                 bool wasRunning = Process.GetProcessesByName("steam").Length > 0;
-                steam.StopSteam();
-                await Task.Delay(1200, ct);
+                if (wasRunning)
+                {
+                    steam.StopSteam();
+                    await Task.Delay(1200, ct);
+                }
 
                 foreach (var slot in Slots)
                 {
@@ -499,7 +511,11 @@ public class PluginInstallerService(
                 }
                 foreach (var legacy in LegacyDllPaths)
                     if (File.Exists(legacy)) File.Delete(legacy);
-                if (CdpMarkerPath is { } markerPath) RemoveCdpMarkerJunction(markerPath);
+                if (CdpMarkerPath is { } markerPath)
+                {
+                    RemoveCdpMarkerJunction(markerPath);
+                    try { if (File.Exists(markerPath)) File.Delete(markerPath); } catch { }
+                }
                 if (Directory.Exists(FrontendDir)) Directory.Delete(FrontendDir, recursive: true);
 
                 // Give Millennium its luatools plugin back: we're the ones who disabled it. Steam is
@@ -513,9 +529,17 @@ public class PluginInstallerService(
                 if (wasRunning) steam.StartSteam();
                 return (true, (string?)null);
             }
-            catch (Exception ex) { return (false, (string?)ex.Message); }
+            catch (Exception ex)
+            {
+                log?.LogWarning(ex, "Failed to clean Steam plugin files");
+                return (false, (string?)ex.Message);
+            }
         }, ct);
     }
+
+    // ── Uninstall ──
+    public Task<(bool ok, string? error)> UninstallAsync(CancellationToken ct = default) =>
+        CleanSteamPluginAsync(ct);
 
     // ── Millennium coexistence: disable its luatools plugin via config (reversible), not folder-rename ──
 
