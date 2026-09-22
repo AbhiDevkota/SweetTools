@@ -580,8 +580,8 @@ public partial class App : Application
         // Background, non-blocking key donation (runs only when the setting is on; silent + deduped).
         _ = _host.Services.GetRequiredService<DonateKeysService>().SendPendingKeysIfEnabledAsync();
 
-        // Anonymous app-launch ping (Umami). Fire-and-forget; never blocks.
-        _ = _host.Services.GetRequiredService<AnalyticsService>().TrackAppLaunchAsync();
+        // Telemetry ping removed.
+        // _ = _host.Services.GetRequiredService<AnalyticsService>().TrackAppLaunchAsync();
 
         // Warm the hardware-appid blacklist (refreshes from GitHub if the cache is stale). Fire-and-forget.
         _ = _host.Services.GetRequiredService<HardwareAppIdService>().EnsureFreshAsync();
