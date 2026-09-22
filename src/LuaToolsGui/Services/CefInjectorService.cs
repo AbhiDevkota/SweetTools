@@ -714,38 +714,62 @@ if(real&&typeof real.callServerMethod==='function'){
     {
         if (string.IsNullOrEmpty(js)) return js;
 
-        // 1. Replace old purple icon dataUrl in GetIconDataUrl with new SweetTools PNG dataUrl
+        // 1. Direct SweetTools PNG icon injection:
+        // Replace relative icon paths ("LuaTools/luatools-icon.png") with embedded SweetTools PNG data URL
+        // so images load synchronously without making a 404-failing HTTP request in Steam CEF.
+        js = js.Replace("\"LuaTools/luatools-icon.png\"", "\"" + HttpServerService.SweetToolsIconPngDataUrl + "\"");
+        js = js.Replace("'LuaTools/luatools-icon.png'", "\"" + HttpServerService.SweetToolsIconPngDataUrl + "\"");
+
+        // Neutralize cogwheel/star fallback that replaced headerBtn.innerHTML on network error
+        js = Regex.Replace(js, @"img\.onerror\s*=\s*function\s*\(\)\s*\{[\s\S]*?headerBtn\.innerHTML\s*=[\s\S]*?<\/svg>';?\s*\};?", "img.onerror = null;");
+        js = Regex.Replace(js, @"titleIcon\.onerror\s*=\s*function\s*\(\)\s*\{[\s\S]*?\};?", "titleIcon.onerror = null;");
+
+        // Replace old purple icon dataUrl in GetIconDataUrl shim with new SweetTools PNG dataUrl
         js = Regex.Replace(js, @"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0[A-Za-z0-9+/=]+", HttpServerService.SweetToolsIconPngDataUrl);
 
-        // 2. Replace button labels: "Add via LuaTools" -> "Add via SweetTools", "Remove via LuaTools" -> "Remove via SweetTools"
-        js = js.Replace("\"Add via LuaTools\"", "\"Add via SweetTools\"");
-        js = js.Replace("'Add via LuaTools'", "'Add via SweetTools'");
-        js = js.Replace("\"Remove via LuaTools\"", "\"Remove via SweetTools\"");
-        js = js.Replace("'Remove via LuaTools'", "'Remove via SweetTools'");
+        // 2. Replace button and action labels (unescaped and JSON-escaped quotes)
+        js = Regex.Replace(js, @"(?<=\\?[""'])Add via LuaTools(?=\\?[""'])", "Add via SweetTools");
+        js = Regex.Replace(js, @"(?<=\\?[""'])Remove via LuaTools(?=\\?[""'])", "Remove via SweetTools");
+        js = Regex.Replace(js, @"(?<=\\?[""'])Games via LuaTools(?=\\?[""'])", "Games via SweetTools");
 
-        // 3. Replace titles and tooltips: "LuaTools Settings" -> "Steam Tools Settings"
-        js = js.Replace("\"LuaTools Settings\"", "\"Steam Tools Settings\"");
-        js = js.Replace("'LuaTools Settings'", "'Steam Tools Settings'");
-        js = js.Replace("aria-label=\"LuaTools\"", "aria-label=\"Steam Tools\"");
-        js = js.Replace("alt = \"LuaTools\"", "alt = \"Steam Tools\"");
-        js = js.Replace("alt=\"LuaTools\"", "alt=\"Steam Tools\"");
+        // 3. Replace translation titles in JSON dictionaries (covers all locales with escaped quotes)
+        js = Regex.Replace(js, @"(?i)(menu\.title\\?"":\\?"")(?:LuaTools|LooaToolz)\s*[\u00B7\u2022•·A\s-]*", "$1Steam Tools • ");
+        js = Regex.Replace(js, @"(?i)(settings\.title\\?"":\\?"")(?:LuaTools|LooaToolz)\s*[\u00B7\u2022•·A\s-]*", "$1Steam Tools • ");
+        js = Regex.Replace(js, @"(?i)(menu\.removeLuaTools\\?"":\\?"")(?:Remove via LuaTools|Remove LuaTools)", "$1Remove via SweetTools");
+        js = Regex.Replace(js, @"(?i)(\\?""Installed LuaTools\\?"")", "\\\"Installed Steam Tools\\\"");
+        js = Regex.Replace(js, @"common\.appName\\?"":\\?""LuaTools\\?""", "common.appName\\\":\\\"Sweet Tools\\\"");
 
-        // 4. Replace menu titles: "LuaTools • " -> "Steam Tools • "
+        // 4. Replace standalone and title strings in JS code
         js = js.Replace("LuaTools •", "Steam Tools •");
         js = js.Replace("LuaTools \\u2022", "Steam Tools \\u2022");
+        js = js.Replace("LuaTools ·", "Steam Tools •");
+        js = js.Replace("LuaTools \u00B7", "Steam Tools •");
+        js = js.Replace("LuaTools \u2022", "Steam Tools •");
         js = js.Replace("LuaTools A", "Steam Tools •");
+        js = js.Replace("LuaTools Menu", "Steam Tools Menu");
+        js = js.Replace("LuaTools Settings", "Steam Tools Settings");
 
-        // 5. Replace "common.appName":"LuaTools" if present -> "Sweet Tools"
-        js = js.Replace("\"common.appName\":\"LuaTools\"", "\"common.appName\":\"Sweet Tools\"");
+        js = Regex.Replace(js, @"t\(\s*""menu\.title""\s*,\s*""[^""]+""\s*\)", "t(\"menu.title\", \"Steam Tools • Menu\")");
+        js = Regex.Replace(js, @"t\(\s*""settings\.title""\s*,\s*""[^""]+""\s*\)", "t(\"settings.title\", \"Steam Tools Settings\")");
+        js = Regex.Replace(js, @"LuaTools\s*[\u00B7\u2022\u00A0\uFFFD•·A\s-]+\s*Menu\b", "Steam Tools • Menu");
+        js = Regex.Replace(js, @"LuaTools\s*[\u00B7\u2022\u00A0\uFFFD•·A\s-]+\s*Settings\b", "Steam Tools Settings");
+        js = Regex.Replace(js, @"LuaTools\s*[\u00B7\u2022\u00A0\uFFFD•·A\s-]+\s*Fixes Menu\b", "Steam Tools • Fixes Menu");
+        js = Regex.Replace(js, @"LuaTools\s*[\u00B7\u2022\u00A0\uFFFD•·A\s-]+\s*AIO Fixes Menu\b", "Steam Tools • AIO Fixes Menu");
+        js = Regex.Replace(js, @"LuaTools\s*[\u00B7\u2022\u00A0\uFFFD•·A\s-]+\s*Added Games\b", "Steam Tools • Added Games");
 
-        // 6. Replace menu/settings titles in translation dictionaries
-        js = js.Replace("\"menu.title\":\"LuaTools", "\"menu.title\":\"Steam Tools");
-        js = js.Replace("\"settings.title\":\"LuaTools", "\"settings.title\":\"Steam Tools");
-        js = js.Replace("\"menu.removeLuaTools\":\"", "\"menu.removeLuaTools\":\"Remove Steam Tools");
+        // 5. Replace alert and confirm dialog titles
+        js = js.Replace("ShowLuaToolsAlert(\"LuaTools\",", "ShowLuaToolsAlert(\"Sweet Tools\",");
+        js = js.Replace("showLuaToolsConfirm(\n      \"LuaTools\",", "showLuaToolsConfirm(\n      \"Sweet Tools\",");
+        js = js.Replace("showLuaToolsConfirm(\"LuaTools\",", "showLuaToolsConfirm(\"Sweet Tools\",");
+        js = js.Replace("ShowLuaToolsAlert('LuaTools',", "ShowLuaToolsAlert('Sweet Tools',");
+        js = js.Replace("showLuaToolsConfirm('LuaTools',", "showLuaToolsConfirm('Sweet Tools',");
 
-        // 7. General user-facing text: "LuaTools" -> "Steam Tools" in UI labels (avoiding code identifiers)
-        js = js.Replace("\"Installed LuaTools", "\"Installed Steam Tools");
-        js = js.Replace("'Installed LuaTools", "'Installed Steam Tools");
+        // 6. Tooltips, attributes, and labels
+        js = js.Replace("aria-label=\"LuaTools\"", "aria-label=\"Steam Tools\"");
+        js = js.Replace("alt=\"LuaTools\"", "alt=\"Steam Tools\"");
+        js = js.Replace("alt = \"LuaTools\"", "alt = \"Steam Tools\"");
+        js = js.Replace("\"LuaTools Settings\"", "\"Steam Tools Settings\"");
+        js = js.Replace("'LuaTools Settings'", "'Steam Tools Settings'");
 
         return js;
     }
