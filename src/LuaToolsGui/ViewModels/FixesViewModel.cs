@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Compression;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -119,11 +119,12 @@ public partial class FixesViewModel : PagedListViewModel<FixGameCardVm>
     private readonly ManifestJobFactory jobs;
     private readonly SteamLibraryService library;
     private readonly SteamService steam;
+    private readonly AccountGuardService _accountGuard;
 
     public FixesViewModel(
         LuaToolsApiClient api, AuthService auth, CoverCache covers, ToastService toast,
         SettingsService settings, DownloadQueue queue, ManifestJobFactory jobs,
-        SteamLibraryService library, SteamService steam)
+        SteamLibraryService library, SteamService steam, AccountGuardService accountGuard)
     {
         this.api = api;
         this.auth = auth;
@@ -134,6 +135,7 @@ public partial class FixesViewModel : PagedListViewModel<FixGameCardVm>
         this.jobs = jobs;
         this.library = library;
         this.steam = steam;
+        _accountGuard = accountGuard;
         InitPageSize(settings.FixesPageSize);
     }
 
@@ -451,6 +453,8 @@ public partial class FixesViewModel : PagedListViewModel<FixGameCardVm>
         if (pending is not (var fix, var game)) return;
         if (!long.TryParse(game.AppId, out long appId)) return;
 
+        if (!_accountGuard.EnsureAllowed("Reverting game fixes")) return;
+
         var result = await Task.Run(() => jobs.RevertDenuvoFix(appId, fix.Id, game.Name));
 
         // RevertDenuvoFix owns every revert toast (done / partial / conflict / not-found / no-record).
@@ -469,6 +473,8 @@ public partial class FixesViewModel : PagedListViewModel<FixGameCardVm>
     /// </summary>
     private async Task RunDownload(FixItemVm fix, string slot)
     {
+        string feature = slot == "manifest" ? "Downloading game manifests" : "Applying game fixes";
+        if (!_accountGuard.EnsureAllowed(feature)) return;
         if (await PromptSignInIfGuestAsync(Resources.Strings.Fixes_SignIn)) return;
         if (SelectedGame is not { } game) return;
         if (!long.TryParse(game.AppId, out long appId)) return;

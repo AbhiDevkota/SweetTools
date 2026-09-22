@@ -190,15 +190,17 @@ public partial class BuildsViewModel : PagedListViewModel<LuaTileViewModel>
     private readonly DepotDownloaderService _depotTool;
     private readonly DownloadQueue _queue;
     private readonly ManifestJobFactory _jobs;
+    private readonly AccountGuardService _accountGuard;
 
     public BuildsViewModel(SteamService steam, LuaVault vault, SteamAppListCache appList,
         SteamAppInfoCache appInfo, CoverCache covers, SteamDepotInfo depotInfo, ToastService toast,
         SettingsService settings, DepotDownloaderService depotTool, DownloadQueue queue,
-        ManifestJobFactory jobs)
+        ManifestJobFactory jobs, AccountGuardService accountGuard)
     {
         _depotTool = depotTool;
         _queue = queue;
         _jobs = jobs;
+        _accountGuard = accountGuard;
         _steam = steam;
         _vault = vault;
         _appList = appList;
@@ -589,6 +591,7 @@ public partial class BuildsViewModel : PagedListViewModel<LuaTileViewModel>
     [RelayCommand]
     private void Apply()
     {
+        if (!_accountGuard.EnsureAllowed("Switching builds")) return;
         if (ActiveGame is not { } game || SelectedVariant?.Variant is not { } variant) return;
 
         if (!_vault.Apply(game.AppId, variant))
@@ -605,6 +608,7 @@ public partial class BuildsViewModel : PagedListViewModel<LuaTileViewModel>
     [RelayCommand]
     private void DeleteVariant()
     {
+        if (!_accountGuard.EnsureAllowed("Deleting build variants")) return;
         if (ActiveGame is not { } game || SelectedVariant?.Variant is not { } variant) return;
 
         var result = MessageBox.Show(
@@ -671,6 +675,7 @@ public partial class BuildsViewModel : PagedListViewModel<LuaTileViewModel>
     [RelayCommand]
     private void SaveEdit()
     {
+        if (!_accountGuard.EnsureAllowed("Saving Lua configs")) return;
         if (ActiveGame is not { } game) return;
 
         RememberEditBase(game.AppId);
@@ -693,6 +698,7 @@ public partial class BuildsViewModel : PagedListViewModel<LuaTileViewModel>
     [RelayCommand]
     private void SaveInPlace()
     {
+        if (!_accountGuard.EnsureAllowed("Saving Lua configs")) return;
         if (ActiveGame is not { } game) return;
 
         string? baseHash = _vault.GetEditBase(game.AppId);
@@ -737,6 +743,7 @@ public partial class BuildsViewModel : PagedListViewModel<LuaTileViewModel>
     [RelayCommand]
     private void SaveAsPreset()
     {
+        if (!_accountGuard.EnsureAllowed("Saving build presets")) return;
         if (ActiveGame is not { } game) return;
 
         string text = IsEditing ? EditorText : _vault.ReadLiveText(game.AppId);
@@ -1104,6 +1111,7 @@ public partial class BuildsViewModel : PagedListViewModel<LuaTileViewModel>
     [RelayCommand]
     private void ConfirmDepotDownload()
     {
+        if (!_accountGuard.EnsureAllowed("Downloading depots")) return;
         if (ActiveGame is not { } game) return;
 
         var selections = DepotPicks

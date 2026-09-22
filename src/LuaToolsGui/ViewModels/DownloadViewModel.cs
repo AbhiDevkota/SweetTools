@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -98,6 +98,9 @@ public partial class DownloadViewModel : ObservableObject
     /// <summary>Set by App so a guest hitting "Download" can be sent through the Discord sign-in flow.</summary>
     public Func<Task>? RequestSignIn { get; set; }
 
+    /// <summary>Set by App so account mismatch prompts can offer direct settings navigation.</summary>
+    public Action? RequestOpenSettings { get; set; }
+
     /// <summary>Set by App: navigate to Manage and open this appid's detail (the install banner's "Reveal").</summary>
     public Action<long>? NavigateToGame { get; set; }
 
@@ -183,6 +186,13 @@ public partial class DownloadViewModel : ObservableObject
     public async Task ProtocolInstall(long appId, Action<string, bool>? onComplete = null)
     {
         _silentInstall = onComplete is not null;
+        if (!_accountGuard.EnsureAllowed("Installing games", RequestOpenSettings, suppressPopup: _silentInstall))
+        {
+            onComplete?.Invoke("Install disabled: active Steam account does not match allowed account.", true);
+            _silentInstall = false;
+            return;
+        }
+
         // Cleared so the completion await below can't latch onto a PREVIOUS protocol install's item and
         // report its stale outcome when this one enqueues nothing (no sources, or the fetch failed).
         _lastEnqueued = null;
@@ -236,6 +246,14 @@ public partial class DownloadViewModel : ObservableObject
     /// does NOT force FastFetch. It respects the user's setting so the plugin popup matches the app.</summary>
     public async Task StartPluginAddAsync(long appId)
     {
+        if (!_accountGuard.IsAllowed())
+        {
+            Error = "Disabled for this Steam account";
+            InstallFailed = true;
+            InstallStatus = "Disabled for this Steam account";
+            return;
+        }
+
         _silentInstall = true; // headless: no surfaced window to confirm an overwrite on
         _suppressSearch = true;
         SearchText = appId.ToString();
@@ -260,6 +278,7 @@ public partial class DownloadViewModel : ObservableObject
     /// <summary>Plugin picked a source by name (FastFetch-off path). Download+install it headlessly.</summary>
     public Task DownloadSourceByNameAsync(string name)
     {
+        if (!_accountGuard.IsAllowed()) return Task.CompletedTask;
         _silentInstall = true;
         var row = Sources.FirstOrDefault(s =>
             string.Equals(s.Name, name, StringComparison.OrdinalIgnoreCase)
@@ -320,11 +339,13 @@ public partial class DownloadViewModel : ObservableObject
     /// page exposes the same toggle, and both VMs are singletons that otherwise only read it at startup.</summary>
     public void SyncFastFetch() => FastFetch = _settings.FastFetch;
 
+    private readonly AccountGuardService _accountGuard;
+
     public DownloadViewModel(LuaToolsApiClient api, HubcapService hubcap, SettingsService settings,
         AuthService auth, ToastService toast, LuaInstaller installer,
         SteamAppListCache appList, SteamAppInfoCache appInfo, SteamDepotInfo depotInfo,
         HardwareAppIdService hardware, DropInstallViewModel drop,
-        DownloadQueue queue, ManifestJobFactory jobs)
+        DownloadQueue queue, ManifestJobFactory jobs, AccountGuardService accountGuard)
     {
         _api = api;
         _hubcap = hubcap;
@@ -339,6 +360,7 @@ public partial class DownloadViewModel : ObservableObject
         _queue = queue;
         _jobs = jobs;
         Drop = drop;
+        _accountGuard = accountGuard;
         _fastFetch = settings.FastFetch;
     }
 
@@ -443,6 +465,8 @@ public partial class DownloadViewModel : ObservableObject
     [RelayCommand]
     private async Task SelectResultAsync(SteamSearchResult result)
     {
+        if (!_accountGuard.EnsureAllowed("Fetching games", RequestOpenSettings)) return;
+
         _suppressSearch = true;
         SearchText = result.Name;
         _suppressSearch = false;
@@ -466,6 +490,8 @@ public partial class DownloadViewModel : ObservableObject
     private async Task SelectFeaturedAsync(FeaturedItem item)
     {
         if (item is null) return;
+        if (!_accountGuard.EnsureAllowed("Fetching games", RequestOpenSettings)) return;
+
         _suppressSearch = true;
         SearchText = item.Name;
         _suppressSearch = false;
@@ -511,6 +537,7 @@ public partial class DownloadViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanFetch))]
     private async Task FetchAsync()
     {
+        if (!_accountGuard.EnsureAllowed("Fetching games", RequestOpenSettings)) return;
         if (Details is null) return;
         // DLC info is login-only; manifest source checking is public (guests allowed).
         if (Details.IsDlc && await PromptSignInIfGuestAsync(Resources.Strings.Add_SignIn_Dlc)) return;
@@ -663,6 +690,7 @@ public partial class DownloadViewModel : ObservableObject
     /// </remarks>
     public async Task<DownloadItem?> DownloadFromSourceAsync(SourceRowViewModel source)
     {
+        if (!_accountGuard.EnsureAllowed("Downloading games", RequestOpenSettings, suppressPopup: _silentInstall)) return null;
         if (Details is null) return null;
 
         // Hubcap downloads use the user's OWN key and never touch lua.tools, so a guest with a key
@@ -697,6 +725,7 @@ public partial class DownloadViewModel : ObservableObject
     [RelayCommand]
     private async Task GenerateDlcAsync()
     {
+        if (!_accountGuard.EnsureAllowed("Adding DLC", RequestOpenSettings)) return;
         if (Details?.BaseAppId is null) return;
         if (await PromptSignInIfGuestAsync(Resources.Strings.Add_SignIn_Download)) return;
 

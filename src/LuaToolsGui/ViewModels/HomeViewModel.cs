@@ -30,6 +30,7 @@ public partial class HomeViewModel : ObservableObject
     private readonly UnlockerService _unlocker;
     private readonly PluginInstallerService _plugin;
     private readonly ToastService _toast;
+    private readonly AccountGuardService _accountGuard;
 
     /// <summary>Drag-and-drop installer shown on the page; refreshes the library after a drop.</summary>
     public DropInstallViewModel Drop { get; }
@@ -71,7 +72,8 @@ public partial class HomeViewModel : ObservableObject
 
     public HomeViewModel(SteamService steam, AuthService auth,
         SteamAppListCache appList, SteamAppInfoCache appInfo, CoverCache covers, DropInstallViewModel drop,
-        UnlockerService unlocker, PluginInstallerService plugin, ToastService toast)
+        UnlockerService unlocker, PluginInstallerService plugin, ToastService toast,
+        AccountGuardService accountGuard)
     {
         _steam = steam;
         _auth = auth;
@@ -81,6 +83,7 @@ public partial class HomeViewModel : ObservableObject
         _unlocker = unlocker;
         _plugin = plugin;
         _toast = toast;
+        _accountGuard = accountGuard;
         Drop = drop;
         _auth.AuthStateChanged += RefreshAccount;
         // Library refresh on any install (drag-drop, plugin, Add page, Fixes) is driven by
@@ -103,6 +106,7 @@ public partial class HomeViewModel : ObservableObject
     private async Task InstallPlugin()
     {
         if (IsInstallingPlugin) return;
+        if (!_accountGuard.EnsureAllowed("Installing Steam plugin")) return;
         var confirm = System.Windows.MessageBox.Show(
             Resources.Strings.Plugin_Confirm_RestartBody,
             Resources.Strings.Plugin_Confirm_RestartCaption,

@@ -46,6 +46,7 @@ public class PluginInstallerService(
     CurrentSteamUserService currentUser,
     SettingsService settings,
     UnlockerService? unlocker = null,
+    AccountGuardService? accountGuard = null,
     ILogger<PluginInstallerService>? log = null)
 {
     private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNameCaseInsensitive = true };
@@ -327,6 +328,9 @@ public class PluginInstallerService(
     /// </summary>
     public bool IsAllowedForCurrentAccount()
     {
+        if (accountGuard is not null)
+            return accountGuard.IsAllowed();
+
         string allowed = settings.AllowedSteamId;
         if (string.IsNullOrWhiteSpace(allowed))
             return false;

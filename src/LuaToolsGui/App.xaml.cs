@@ -48,6 +48,7 @@ public partial class App : Application
                 services.AddSingleton<DepotCacheMigrationService>();
                 services.AddSingleton<AppliedFixIndexService>();
                 services.AddSingleton<UnlockerService>();
+                services.AddSingleton<AccountGuardService>();
                 services.AddSingleton<PluginInstallerService>();
                 services.AddTransient<DropInstallViewModel>(); // one per page (Home, Add)
                 services.AddSingleton<AuthService>();
@@ -401,6 +402,9 @@ public partial class App : Application
         // App updates now apply silently via RunUpdateFlowAsync (restart-on-Steam-open, unconditionally
         // and before any plugin update), so no "Restart" prompt toast.
         var download = _host.Services.GetRequiredService<DownloadViewModel>();
+        var accountGuard = _host.Services.GetRequiredService<AccountGuardService>();
+        accountGuard.RequestOpenSettings = () => Dispatcher.Invoke(window.NavigateToSettings);
+        download.RequestOpenSettings = () => Dispatcher.Invoke(window.NavigateToSettings);
 
         var manage = _host.Services.GetRequiredService<ManageViewModel>();
 

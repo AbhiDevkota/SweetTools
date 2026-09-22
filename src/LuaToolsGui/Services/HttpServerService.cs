@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
@@ -33,14 +33,18 @@ public class HttpServerService : IHostedService
     private static readonly string TempDir = Path.Combine(Path.GetTempPath(), "LuaTools", "downloads");
     private const string ManifestBackendUrl = "http://167.235.229.108/check_apis";
 
+    private readonly AccountGuardService? _accountGuard;
+
     public HttpServerService(LuaInstaller installer, SteamService steam, CacheService cache,
-        IServiceProvider services, ILogger<HttpServerService> logger)
+        IServiceProvider services, ILogger<HttpServerService> logger,
+        AccountGuardService? accountGuard = null)
     {
         _installer = installer;
         _steam = steam;
         _cache = cache;
         _services = services;
         _log = logger;
+        _accountGuard = accountGuard ?? (AccountGuardService?)services.GetService(typeof(AccountGuardService));
         Directory.CreateDirectory(TempDir);
     }
 
@@ -236,6 +240,9 @@ public class HttpServerService : IHostedService
     /// usage, FastFetch auto-download). Uses services only; the app window is never touched.</summary>
     private async Task<(int, string)> HandleAdd(long appId, HttpListenerRequest req)
     {
+        if (_accountGuard?.IsAllowed() == false)
+            return (403, JsonErr("This feature is disabled for this Steam account."));
+
         // The store page passes the game name it already displays, so PluginAddService can skip a
         // lua.tools /details lookup. Best-effort: a missing/blank name just falls back to a fetch.
         string? name = null;
@@ -293,6 +300,9 @@ public class HttpServerService : IHostedService
     /// <summary>Plugin picked a source by name (FastFetch-off path) → download+install it headlessly.</summary>
     private async Task<(int, string)> HandleAddSource(long appId, HttpListenerRequest req)
     {
+        if (_accountGuard?.IsAllowed() == false)
+            return (403, JsonErr("This feature is disabled for this Steam account."));
+
         string body;
         using (var reader = new StreamReader(req.InputStream, req.ContentEncoding))
             body = await reader.ReadToEndAsync();
@@ -333,6 +343,9 @@ public class HttpServerService : IHostedService
 
     private async Task<(int, string)> HandleDownload(long appId, HttpListenerRequest req)
     {
+        if (_accountGuard?.IsAllowed() == false)
+            return (403, JsonErr("This feature is disabled for this Steam account."));
+
         string body;
         using (var reader = new StreamReader(req.InputStream, req.ContentEncoding))
             body = await reader.ReadToEndAsync();
@@ -430,6 +443,9 @@ public class HttpServerService : IHostedService
 
     private (int, string) HandleRemove(long appId)
     {
+        if (_accountGuard?.IsAllowed() == false)
+            return (403, JsonErr("This feature is disabled for this Steam account."));
+
         try
         {
             _cache.RemoveLoadedAppId(appId); // also drop it from the "recently added" popup list

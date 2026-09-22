@@ -15,11 +15,13 @@ public partial class PluginViewModel : ObservableObject
 {
     private readonly PluginInstallerService _installer;
     private readonly ToastService _toast;
+    private readonly AccountGuardService _accountGuard;
 
-    public PluginViewModel(PluginInstallerService installer, ToastService toast)
+    public PluginViewModel(PluginInstallerService installer, ToastService toast, AccountGuardService accountGuard)
     {
         _installer = installer;
         _toast = toast;
+        _accountGuard = accountGuard;
     }
 
     [ObservableProperty] private string _installedVersion = "—";
@@ -120,6 +122,7 @@ public partial class PluginViewModel : ObservableObject
     private async Task Install()
     {
         if (IsBusy) return;
+        if (!_accountGuard.EnsureAllowed("Installing Steam plugin")) return;
         if (!ConfirmSteamRestart()) return;
 
         IsBusy = true;
