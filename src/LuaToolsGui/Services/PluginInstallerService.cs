@@ -53,6 +53,16 @@ public class PluginInstallerService(
 
     private const string PluginZipAsset = "plugin.zip";
 
+    /// <summary>
+    /// Verified SHA-256 digest for winmm.dll (proxy loader). Only this specific build is verified and accepted.
+    /// </summary>
+    public const string VerifiedWinmmSha256 = "dc1594774d3003f7c82fbcdaac4cc9bbc81d7ee2ab82dd5f47c4f04cc3bd8236";
+
+    /// <summary>
+    /// Direct release asset URL for the verified winmm.dll build if the latest release lacks it or differs.
+    /// </summary>
+    public const string VerifiedWinmmDownloadUrl = "https://github.com/madoiscool/LTSP/releases/download/v2.2/winmm.dll";
+
     /// <summary>The one DLL-proxy slot the loader ships as. <c>winmm.dll</c> is loaded dynamically (audio)
     /// by steam.exe, is never a KnownDLL on Win10 or Win11, and isn't claimed by Millennium (wsock32/
     /// version), or OpenSteamTool (dwmapi/xinput). Its old weakness (load timing isn't guaranteed relative
@@ -60,15 +70,20 @@ public class PluginInstallerService(
     /// hook this DLL installs: there's no launch to catch a deadline for anymore, just "eventually load
     /// while Steam is running." Other slots were each dead ends: bcrypt is KnownDLLs-forced on Win10,
     /// and psapi and dbghelp don't load reliably enough.</summary>
-    private sealed record LoaderSlot(string DllAsset, string RealName, string SystemSourceName)
+    internal sealed record LoaderSlot(
+        string DllAsset,
+        string RealName,
+        string SystemSourceName,
+        string? VerifiedSha256 = null,
+        string? FallbackDownloadUrl = null)
     {
         public string SystemSourcePath => Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.System), SystemSourceName);
     }
 
-    private static readonly LoaderSlot[] Slots =
+    internal static readonly LoaderSlot[] Slots =
     {
-        new("winmm.dll", "winmm_real.dll", "winmm.dll"),
+        new("winmm.dll", "winmm_real.dll", "winmm.dll", VerifiedWinmmSha256, VerifiedWinmmDownloadUrl),
     };
 
     // Old slots to clean up on install/update: if left in the Steam root they'd load and run the loader
@@ -308,11 +323,12 @@ public class PluginInstallerService(
             return new PluginStatus(frontend, loader, false, manifest?.Tag, null, UpdateAvailable: false,
                 MillenniumPresent, Offline: true, port8080Busy);
 
-        // dllMatches = true only when EVERY slot's proxy is present and matches its release asset digest.
+        // dllMatches = true only when EVERY slot's proxy is present and matches its verified digest (or release asset digest).
         bool dllMatches = Slots.All(slot =>
             SlotPath(slot) is { } p && File.Exists(p) &&
-            AssetDigest(latest, slot.DllAsset) is { } digest &&
-            AssetHash.OfFile(p) == digest);
+            (slot.VerifiedSha256 is not null
+                ? AssetHash.OfFile(p).Equals(slot.VerifiedSha256, StringComparison.OrdinalIgnoreCase)
+                : AssetDigest(latest, slot.DllAsset) is { } digest && AssetHash.OfFile(p).Equals(digest, StringComparison.OrdinalIgnoreCase)));
         bool installed = frontend && loader;
         // `|| legacy` keeps a leftover/locked legacy dll getting swept on subsequent auto-updates until gone.
         bool updateAvailable = installed && (manifest?.Tag != latest.TagName || !dllMatches || legacy);
@@ -377,12 +393,36 @@ public class PluginInstallerService(
         var zipAsset = FindAsset(latest, PluginZipAsset);
         if (zipAsset is null)
             return (false, string.Format(Resources.Strings.Plugin_Err_MissingAssets, latest.TagName, PluginZipAsset, Slots[0].DllAsset));
-        var slotAssets = new Dictionary<LoaderSlot, GithubAsset>();
+        var slotDlUrls = new Dictionary<LoaderSlot, string>();
         foreach (var slot in Slots)
         {
-            if (FindAsset(latest, slot.DllAsset) is not { } asset)
+            var asset = FindAsset(latest, slot.DllAsset);
+            string? assetDigest = asset is not null ? AssetDigest(latest, slot.DllAsset) : null;
+            string? normalizedVerifiedSha = AssetHash.ParseDigest(slot.VerifiedSha256);
+
+            string? dlUrl = null;
+            if (normalizedVerifiedSha is not null)
+            {
+                // If latest release contains the verified asset matching our SHA, download from it.
+                // Otherwise fall back to the pinned verified release download URL.
+                if (asset is not null && string.Equals(assetDigest, normalizedVerifiedSha, StringComparison.OrdinalIgnoreCase))
+                {
+                    dlUrl = asset.DownloadUrl;
+                }
+                else if (!string.IsNullOrEmpty(slot.FallbackDownloadUrl))
+                {
+                    dlUrl = slot.FallbackDownloadUrl;
+                }
+            }
+            else
+            {
+                dlUrl = asset?.DownloadUrl;
+            }
+
+            if (dlUrl is null)
                 return (false, string.Format(Resources.Strings.Plugin_Err_MissingAssets, latest.TagName, PluginZipAsset, slot.DllAsset));
-            slotAssets[slot] = asset;
+
+            slotDlUrls[slot] = dlUrl;
         }
 
         string tmp = Path.Combine(Path.GetTempPath(), "luatools-plugin-" + Guid.NewGuid().ToString("N"));
@@ -393,23 +433,24 @@ public class PluginInstallerService(
             string zipPath = Path.Combine(tmp, PluginZipAsset);
             await gh.DownloadAsync(zipAsset.DownloadUrl, zipPath, progress, ct);
             var slotDlPaths = new Dictionary<LoaderSlot, string>();
-            foreach (var (slot, asset) in slotAssets)
+            foreach (var (slot, url) in slotDlUrls)
             {
                 string p = Path.Combine(tmp, slot.DllAsset);
-                await gh.DownloadAsync(asset.DownloadUrl, p, progress, ct);
+                await gh.DownloadAsync(url, p, progress, ct);
                 slotDlPaths[slot] = p;
             }
 
-            // Verify each against its release asset digest before touching anything on disk.
+            // Verify each against its expected digest (verified SHA or release asset digest) before touching anything on disk.
             string zipSha = AssetHash.OfFile(zipPath);
-            if (AssetDigest(latest, PluginZipAsset) is { } zd && zipSha != zd)
+            if (AssetDigest(latest, PluginZipAsset) is { } zd && !zipSha.Equals(zd, StringComparison.OrdinalIgnoreCase))
                 return (false, string.Format(Resources.Strings.Plugin_Err_VerifyFailed, PluginZipAsset));
             var slotShas = new Dictionary<LoaderSlot, string>();
             foreach (var (slot, p) in slotDlPaths)
             {
                 string sha = AssetHash.OfFile(p);
                 slotShas[slot] = sha;
-                if (AssetDigest(latest, slot.DllAsset) is { } dd && sha != dd)
+                string? expectedDigest = AssetHash.ParseDigest(slot.VerifiedSha256) ?? AssetDigest(latest, slot.DllAsset);
+                if (expectedDigest is not null && !sha.Equals(expectedDigest, StringComparison.OrdinalIgnoreCase))
                     return (false, string.Format(Resources.Strings.Plugin_Err_VerifyFailed, slot.DllAsset));
             }
 
@@ -436,7 +477,7 @@ public class PluginInstallerService(
             // (so hand-placed test builds aren't clobbered), and thus never stop/restart Steam for it either.
             bool legacyPresent = LegacyDllPaths.Any(File.Exists);
             bool anySlotNeedsUpdate = Slots.Any(slot =>
-                SlotPath(slot) is not { } cur || !File.Exists(cur) || AssetHash.OfFile(cur) != slotShas[slot]);
+                SlotPath(slot) is not { } cur || !File.Exists(cur) || !AssetHash.OfFile(cur).Equals(slotShas[slot], StringComparison.OrdinalIgnoreCase));
             bool dllNeedsUpdate = !DllUpdateDisabled && (anySlotNeedsUpdate || legacyPresent);
             if (dllNeedsUpdate)
             {
@@ -771,8 +812,10 @@ public class PluginInstallerService(
                     CreateCdpMarkerJunction(markerPath);
                 }
 
-                // 4. If loader DLLs or frontend are missing, install them
-                bool needsFullInstall = !File.Exists(LuatoolsJsPath) || Slots.Any(s => SlotPath(s) is { } p && !File.Exists(p));
+                // 4. If loader DLLs or frontend are missing (or loader DLL does not match verified SHA), install them
+                bool needsFullInstall = !File.Exists(LuatoolsJsPath) || Slots.Any(s =>
+                    SlotPath(s) is not { } p || !File.Exists(p) ||
+                    (s.VerifiedSha256 is not null && !AssetHash.OfFile(p).Equals(s.VerifiedSha256, StringComparison.OrdinalIgnoreCase)));
                 if (needsFullInstall)
                 {
                     var (installOk, installErr) = await InstallAsync(progress: null, ct);
