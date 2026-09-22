@@ -35,11 +35,21 @@
             CornerRadius="14">
             <StackPanel>
                 <!-- Title -->
-                <TextBlock
-                    FontSize="21"
-                    FontWeight="Bold"
-                    Text="{x:Static res:Strings.Onboarding_Title}"
-                    TextWrapping="Wrap" />
+                <StackPanel Margin="0,0,0,4" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image
+                        Width="32"
+                        Height="32"
+                        Margin="0,0,12,0"
+                        VerticalAlignment="Center"
+                        RenderOptions.BitmapScalingMode="HighQuality"
+                        Source="pack://application:,,,/icon.ico" />
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontSize="21"
+                        FontWeight="Bold"
+                        Text="{x:Static res:Strings.Onboarding_Title}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
 
                 <!-- Sign in (guest only) -->
                 <StackPanel Visibility="{Binding IsGuest, Converter={StaticResource BoolToVis}}">
