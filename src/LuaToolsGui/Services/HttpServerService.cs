@@ -589,28 +589,14 @@ public class HttpServerService : IHostedService
         return (200, Json(new { success = true, apis }));
     }
 
+    public const string SweetToolsIconPngBase64 =
+        "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";
+
+    public const string SweetToolsIconPngDataUrl = "data:image/png;base64," + SweetToolsIconPngBase64;
+
     private (int, string) HandleIcon()
     {
-        try
-        {
-            var iconPath = Path.Combine(AppContext.BaseDirectory, "luatools-icon.png");
-            if (!File.Exists(iconPath))
-            {
-                var alt = Path.Combine(AppContext.BaseDirectory, "icon.ico");
-                if (File.Exists(alt))
-                    iconPath = alt;
-                else
-                    return (200, Json(new { success = false, dataUrl = "" }));
-            }
-            var bytes = File.ReadAllBytes(iconPath);
-            var b64 = Convert.ToBase64String(bytes);
-            var mime = iconPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ? "image/png" : "image/x-icon";
-            return (200, Json(new { success = true, dataUrl = $"data:{mime};base64,{b64}" }));
-        }
-        catch
-        {
-            return (200, Json(new { success = false, dataUrl = "" }));
-        }
+        return (200, Json(new { success = true, dataUrl = SweetToolsIconPngDataUrl }));
     }
 
     // ── Download worker ───────────────────────────────────────────────

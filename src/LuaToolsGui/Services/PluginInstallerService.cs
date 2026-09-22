@@ -462,6 +462,9 @@ public class PluginInstallerService(
             if (!File.Exists(LuatoolsJsPath))
                 return (false, Resources.Strings.Plugin_Err_NoLuatoolsJs);
 
+            // Ensure SweetTools branding and icon are applied
+            ApplyBrandingToFrontend();
+
             // Get the frontend live in THIS running process immediately. Don't wait on the Steam restart
             // below. A relaunched LuaTools.exe would hit the single-instance mutex against this very
             // process (the one the user is using right now to click Install) and exit quietly without ever
@@ -826,6 +829,9 @@ public class PluginInstallerService(
                 }
                 else
                 {
+                    // Ensure SweetTools branding and icon are applied
+                    ApplyBrandingToFrontend();
+
                     // Reload in-memory injector
                     await injector.ReloadPluginFilesAsync();
                 }
@@ -1020,4 +1026,41 @@ public class PluginInstallerService(
     private static GithubAsset? FindAsset(GithubRelease r, string name) =>
         r.Assets.FirstOrDefault(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
+    public static void ApplyBrandingToFrontend()
+    {
+        try
+        {
+            // 1. Write the new SweetTools logo PNG into public/luatools-icon.png
+            byte[] iconBytes = Convert.FromBase64String(HttpServerService.SweetToolsIconPngBase64);
+            string[] iconPaths =
+            {
+                Path.Combine(FrontendDir, "public", "luatools-icon.png"),
+                Path.Combine(FrontendDir, "luatools-icon.png")
+            };
+            foreach (var p in iconPaths)
+            {
+                if (Directory.Exists(Path.GetDirectoryName(p)))
+                {
+                    File.WriteAllBytes(p, iconBytes);
+                }
+            }
+
+            // 2. Transform on-disk luatools.js
+            string[] jsPaths =
+            {
+                Path.Combine(FrontendDir, "public", "luatools.js"),
+                Path.Combine(FrontendDir, "luatools.js")
+            };
+            foreach (var p in jsPaths)
+            {
+                if (File.Exists(p))
+                {
+                    string js = File.ReadAllText(p);
+                    string transformed = CefInjectorService.BrandTransformScript(js);
+                    File.WriteAllText(p, transformed);
+                }
+            }
+        }
+        catch { /* best effort */ }
+    }
 }

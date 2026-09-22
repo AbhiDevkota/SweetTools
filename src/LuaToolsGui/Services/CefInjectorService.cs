@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -91,10 +92,13 @@ public class CefInjectorService : IHostedService
 
         var ct = _cts?.Token ?? CancellationToken.None;
 
+        PluginInstallerService.ApplyBrandingToFrontend();
+
         var jsPath = FindLuaToolsJs();
         if (jsPath is not null && File.Exists(jsPath))
         {
             _luatoolsJs = await File.ReadAllTextAsync(jsPath, ct);
+            _luatoolsJs = BrandTransformScript(_luatoolsJs);
             _log.LogInformation("Loaded luatools.js ({Length} bytes)", _luatoolsJs.Length);
         }
         else
@@ -478,7 +482,7 @@ function ltCall(p,m,a){
 }
 if(real&&typeof real.callServerMethod==='function'){
   var realCall=real.callServerMethod.bind(real);
-  real.callServerMethod=function(p,m,a){return p==='luatools'?ltCall(p,m,a):realCall(p,m,a)};
+  real.callServerMethod=function(p,m,a){return (p==='luatools'||p==='sweettools'||p==='steam tools')?ltCall(p,m,a):realCall(p,m,a)};
   real._pending=pending;
   real._readyResponses=ready;
   window.Millennium=real;
@@ -576,7 +580,7 @@ if(real&&typeof real.callServerMethod==='function'){
     h1.style.lineHeight = '28px';
 
     var titleText = document.createElement('span');
-    titleText.textContent = 'Add ' + gameName + ' to Library';
+    titleText.textContent = 'Add ' + gameName + ' via SweetTools';
     h1.appendChild(titleText);
     block.appendChild(h1);
 
@@ -604,6 +608,7 @@ if(real&&typeof real.callServerMethod==='function'){
     var addBtn = document.createElement('a');
     addBtn.href = '#';
     addBtn.className = 'btn_green_steamui btn_medium luatools-button luatools-direct-add-btn Focusable';
+    addBtn.title = 'Add via SweetTools';
     addBtn.style.padding = '0 18px';
     addBtn.style.lineHeight = '32px';
     addBtn.style.height = '32px';
@@ -613,7 +618,7 @@ if(real&&typeof real.callServerMethod==='function'){
     addBtn.style.textDecoration = 'none';
 
     var btnSpan = document.createElement('span');
-    btnSpan.textContent = 'Add to Library';
+    btnSpan.textContent = 'Add via SweetTools';
     addBtn.appendChild(btnSpan);
     btnContainer.appendChild(addBtn);
     actionBg.appendChild(btnContainer);
@@ -699,6 +704,50 @@ if(real&&typeof real.callServerMethod==='function'){
   }, 1000);
 })();
 ";
+    }
+
+    /// <summary>
+    /// Transforms the injected store-page script to use SweetTools branding, the new icon,
+    /// and replaces "LuaTools" references with "Steam Tools" and "Add via SweetTools".
+    /// </summary>
+    public static string BrandTransformScript(string js)
+    {
+        if (string.IsNullOrEmpty(js)) return js;
+
+        // 1. Replace old purple icon dataUrl in GetIconDataUrl with new SweetTools PNG dataUrl
+        js = Regex.Replace(js, @"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0[A-Za-z0-9+/=]+", HttpServerService.SweetToolsIconPngDataUrl);
+
+        // 2. Replace button labels: "Add via LuaTools" -> "Add via SweetTools", "Remove via LuaTools" -> "Remove via SweetTools"
+        js = js.Replace("\"Add via LuaTools\"", "\"Add via SweetTools\"");
+        js = js.Replace("'Add via LuaTools'", "'Add via SweetTools'");
+        js = js.Replace("\"Remove via LuaTools\"", "\"Remove via SweetTools\"");
+        js = js.Replace("'Remove via LuaTools'", "'Remove via SweetTools'");
+
+        // 3. Replace titles and tooltips: "LuaTools Settings" -> "Steam Tools Settings"
+        js = js.Replace("\"LuaTools Settings\"", "\"Steam Tools Settings\"");
+        js = js.Replace("'LuaTools Settings'", "'Steam Tools Settings'");
+        js = js.Replace("aria-label=\"LuaTools\"", "aria-label=\"Steam Tools\"");
+        js = js.Replace("alt = \"LuaTools\"", "alt = \"Steam Tools\"");
+        js = js.Replace("alt=\"LuaTools\"", "alt=\"Steam Tools\"");
+
+        // 4. Replace menu titles: "LuaTools • " -> "Steam Tools • "
+        js = js.Replace("LuaTools •", "Steam Tools •");
+        js = js.Replace("LuaTools \\u2022", "Steam Tools \\u2022");
+        js = js.Replace("LuaTools A", "Steam Tools •");
+
+        // 5. Replace "common.appName":"LuaTools" if present -> "Sweet Tools"
+        js = js.Replace("\"common.appName\":\"LuaTools\"", "\"common.appName\":\"Sweet Tools\"");
+
+        // 6. Replace menu/settings titles in translation dictionaries
+        js = js.Replace("\"menu.title\":\"LuaTools", "\"menu.title\":\"Steam Tools");
+        js = js.Replace("\"settings.title\":\"LuaTools", "\"settings.title\":\"Steam Tools");
+        js = js.Replace("\"menu.removeLuaTools\":\"", "\"menu.removeLuaTools\":\"Remove Steam Tools");
+
+        // 7. General user-facing text: "LuaTools" -> "Steam Tools" in UI labels (avoiding code identifiers)
+        js = js.Replace("\"Installed LuaTools", "\"Installed Steam Tools");
+        js = js.Replace("'Installed LuaTools", "'Installed Steam Tools");
+
+        return js;
     }
 }
 
