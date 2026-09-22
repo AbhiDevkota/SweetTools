@@ -42,6 +42,9 @@ public class CurrentSteamUserService : IDisposable
 
     private readonly object _accountLock = new();
     private string? _lastKnownSteamId;
+    private DateTime _lastVdfWriteTime = DateTime.MinValue;
+    private string? _lastRegAutoLoginUser;
+    private string? _cachedVdfSteamId;
     private FileSystemWatcher? _watcher;
 
     /// <summary>
@@ -74,8 +77,8 @@ public class CurrentSteamUserService : IDisposable
         _lastKnownSteamId = GetCurrentSteamId();
         InitWatcher();
 
-        // 1-second active polling monitor ensures account changes are detected promptly even if filesystem events lag
-        _pollTimer = new System.Timers.Timer(1000) { AutoReset = true };
+        // Active polling monitor ensures account changes are detected even if filesystem events lag
+        _pollTimer = new System.Timers.Timer(2500) { AutoReset = true };
         _pollTimer.Elapsed += (_, _) => CheckForAccountChange();
         _pollTimer.Start();
     }
@@ -243,6 +246,14 @@ public class CurrentSteamUserService : IDisposable
 
         string? regAutoLoginUser = GetRegistryAutoLoginUser();
 
+        DateTime lastWrite = File.GetLastWriteTimeUtc(path);
+        if (lastWrite == _lastVdfWriteTime &&
+            string.Equals(regAutoLoginUser, _lastRegAutoLoginUser, StringComparison.OrdinalIgnoreCase) &&
+            _cachedVdfSteamId is not null)
+        {
+            return _cachedVdfSteamId;
+        }
+
         for (int attempt = 0; attempt < 3; attempt++)
         {
             try
@@ -253,7 +264,12 @@ public class CurrentSteamUserService : IDisposable
 
                 string? steamId = ParseCurrentSteamId(content, regAutoLoginUser);
                 if (steamId is not null)
+                {
+                    _lastVdfWriteTime = lastWrite;
+                    _lastRegAutoLoginUser = regAutoLoginUser;
+                    _cachedVdfSteamId = steamId;
                     return steamId;
+                }
 
                 _log?.LogWarning("Failed to extract current Steam account ID from {Path}", path);
             }

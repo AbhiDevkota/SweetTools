@@ -16,6 +16,7 @@ public class CefInjectorService : IHostedService
     private string _luatoolsJs = "";
     private string _polyfillJs = "";
     private string _directAddJs = "";
+    private string _combinedScript = "";
     private readonly HttpClient _http = new() { Timeout = TimeSpan.FromSeconds(30) };
 
     // Persistent CDP WebSocket per tab (keyed by tab id), reused across calls so the fast RPC-drain
@@ -113,6 +114,7 @@ public class CefInjectorService : IHostedService
         }
 
         _directAddJs = BuildDirectAddJs();
+        _combinedScript = _polyfillJs + "\n" + _luatoolsJs + "\n" + _directAddJs;
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
@@ -145,6 +147,19 @@ public class CefInjectorService : IHostedService
                     await Task.Delay(1000, ct);
                     continue;
                 }
+
+                if (!SteamService.IsSteamRunning())
+                {
+                    if (storeTabs.Count > 0)
+                    {
+                        foreach (var ws in _sockets.Values) try { ws.Dispose(); } catch { }
+                        _sockets.Clear();
+                        storeTabs.Clear();
+                    }
+                    await Task.Delay(2000, ct);
+                    continue;
+                }
+
                 // ── Slow cadence (~1s): discover store tabs, ensure luatools.js is injected ──
                 if (tick % InjectEveryTicks == 0)
                 {
@@ -163,7 +178,9 @@ public class CefInjectorService : IHostedService
                         // injected by tab ID" is the wrong signal. Check liveness in the CURRENT context every
                         // cycle instead (window.__LuaToolsReady, set as the last statement of luatools.js's
                         // main IIFE) and re-inject whenever it's gone.
-                        var script = _polyfillJs + "\n" + _luatoolsJs + "\n" + _directAddJs;
+                        var script = string.IsNullOrEmpty(_combinedScript)
+                            ? (_polyfillJs + "\n" + _luatoolsJs + "\n" + _directAddJs)
+                            : _combinedScript;
                         var live = new List<(string, string)>();
                         var seen = new HashSet<string>();
                         foreach (var tab in tabs)
@@ -202,7 +219,8 @@ public class CefInjectorService : IHostedService
                     await ProcessSingleTab(id, ws, ct);
 
                 tick++;
-                await Task.Delay(TickMs, ct);
+                int delay = storeTabs.Count > 0 ? TickMs : 500;
+                await Task.Delay(delay, ct);
             }
             catch (OperationCanceledException) { break; }
             catch (Exception ex)
