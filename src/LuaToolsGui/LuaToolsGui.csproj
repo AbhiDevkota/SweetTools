@@ -14,6 +14,10 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <!-- Velopack needs a custom Main (Program.Main) that runs before WPF -->
     <StartupObject>LuaToolsGui.Program</StartupObject>
+    <!-- GC & Resource Optimization -->
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+    <RetainVM>false</RetainVM>
   </PropertyGroup>
 
   <!-- UseWindowsForms (for the tray NotifyIcon) injects WinForms into the implicit global usings, which

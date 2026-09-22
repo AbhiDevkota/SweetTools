@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Threading;
 using LuaToolsGui.Services;
 using LuaToolsGui.ViewModels;
 using LuaToolsGui.Views;
@@ -23,12 +24,27 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         InitializeTrayIcon();
         Closing += OnWindowClosing;
 
+        StateChanged += (_, _) =>
+        {
+            if (WindowState == WindowState.Minimized)
+                Task.Run(() => MemoryOptimizer.TrimMemory(force: true));
+        };
+
         Loaded += async (_, _) =>
         {
             RootNavigation.Navigate(typeof(HomeView));
             try { await viewModel.InitializeAsync(); }
             catch { /* auth restore failed (e.g. offline). UI still loads as guest */ }
+            _ = Task.Delay(4000).ContinueWith(_ => MemoryOptimizer.TrimMemory());
         };
+
+        var trimTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(2) };
+        trimTimer.Tick += (_, _) =>
+        {
+            if (!IsVisible || WindowState == WindowState.Minimized)
+                Task.Run(() => MemoryOptimizer.TrimMemory());
+        };
+        trimTimer.Start();
     }
 
     // ── System tray ─────────────────────────────────────────────────
@@ -62,6 +78,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
             e.Cancel = true;
             Hide();
             if (_trayIcon is not null) _trayIcon.Visible = true;
+            Task.Run(() => MemoryOptimizer.TrimMemory(force: true));
             return;
         }
         _trayIcon?.Dispose();

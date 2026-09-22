@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
@@ -629,7 +629,10 @@ public partial class ManageViewModel : PagedListViewModel<LuaTileViewModel>
                 // Final refresh once backfill completes (dropdowns + counts + re-apply current filters).
                 // resetPage:false so a user who's paged away isn't yanked back to page 1.
                 if (!cts.Token.IsCancellationRequested)
+                {
                     OnUi(() => { PopulateFilterOptions(); ApplyFilter(resetPage: false); });
+                    _ = Task.Run(() => MemoryOptimizer.TrimMemory());
+                }
             }
             catch (OperationCanceledException) { /* superseded by a newer load */ }
         });
