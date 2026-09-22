@@ -22,9 +22,8 @@ public class IconGeneratorTests
         public int Offset;
     }
 
-    public static byte[] BuildIco(string sourcePngPath, int[] sizes)
+    public static byte[] BuildIco(Bitmap original, int[] sizes)
     {
-        using var original = new Bitmap(sourcePngPath);
         using var ms = new MemoryStream();
         using var bw = new BinaryWriter(ms);
 
@@ -184,38 +183,53 @@ public class IconGeneratorTests
     }
 
     [Fact]
-    public void GenerateAndValidateAppIcon()
+    public void AppIcon_ExistsAndHasAllStandardResolutions()
     {
         string projectDir = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "src", "LuaToolsGui"));
-        string sourcePng = Path.Combine(projectDir, "logo ST.png");
         string targetIco = Path.Combine(projectDir, "icon.ico");
 
-        Assert.True(File.Exists(sourcePng), $"Source PNG must exist at {sourcePng}");
+        Assert.True(File.Exists(targetIco), $"Target icon.ico must exist at {targetIco}");
 
-        int[] sizes = [16, 20, 24, 32, 40, 48, 64, 96, 128, 256];
-        byte[] icoBytes = BuildIco(sourcePng, sizes);
+        byte[] icoBytes = File.ReadAllBytes(targetIco);
 
         // Validate with System.Drawing.Icon
         using (var ms = new MemoryStream(icoBytes))
         using (var icon = new Icon(ms))
         {
             Assert.NotNull(icon);
+            Assert.True(icon.Width > 0);
+            Assert.True(icon.Height > 0);
         }
 
         // Validate with WPF IconBitmapDecoder
         using (var ms = new MemoryStream(icoBytes))
         {
             var decoder = new IconBitmapDecoder(ms, BitmapCreateOptions.None, BitmapCacheOption.Default);
-            Assert.Equal(sizes.Length, decoder.Frames.Count);
-            foreach (var frame in decoder.Frames)
-            {
-                Assert.True(frame.PixelWidth > 0);
-                Assert.True(frame.PixelHeight > 0);
-            }
+            int[] expectedSizes = [16, 20, 24, 32, 40, 48, 64, 96, 128, 256];
+            Assert.Equal(expectedSizes.Length, decoder.Frames.Count);
+
+            var actualSizes = decoder.Frames.Select(f => f.PixelWidth).OrderBy(w => w).ToArray();
+            Assert.Equal(expectedSizes, actualSizes);
+        }
+    }
+
+    [Fact]
+    public void BuildIco_GeneratesValidIconFromBitmap()
+    {
+        using var testBmp = new Bitmap(64, 64, PixelFormat.Format32bppArgb);
+        using (var g = Graphics.FromImage(testBmp))
+        {
+            g.Clear(Color.Red);
         }
 
-        // Write to destination
-        File.WriteAllBytes(targetIco, icoBytes);
-        Assert.True(File.Exists(targetIco));
+        int[] sizes = [16, 32, 64];
+        byte[] icoBytes = BuildIco(testBmp, sizes);
+
+        using var ms = new MemoryStream(icoBytes);
+        var decoder = new IconBitmapDecoder(ms, BitmapCreateOptions.None, BitmapCacheOption.Default);
+        Assert.Equal(3, decoder.Frames.Count);
+
+        var actualSizes = decoder.Frames.Select(f => f.PixelWidth).OrderBy(w => w).ToArray();
+        Assert.Equal([16, 32, 64], actualSizes);
     }
 }

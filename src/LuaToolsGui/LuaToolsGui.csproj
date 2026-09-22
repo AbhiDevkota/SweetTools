@@ -39,10 +39,9 @@
     <Page Include="App.xaml" />
   </ItemGroup>
 
-  <!-- Embed icon.ico and logo ST.png as resources so Window Icon and views can resolve them at runtime -->
+  <!-- Embed icon.ico as a resource so the Window Icon="icon.ico" can resolve it at runtime -->
   <ItemGroup>
     <Resource Include="icon.ico" />
-    <Resource Include="logo ST.png" />
   </ItemGroup>
 
   <!-- Nothing in public/ is bundled anymore. The frontend (luatools.js) is fetched from GitHub releases
