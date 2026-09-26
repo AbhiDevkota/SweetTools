@@ -323,7 +323,7 @@ public partial class SettingsViewModel : ObservableObject
         _settings.AllowedSteamId = "";
         RefreshCurrentSteamId();
         _toast.Show("Sweet Tools", "Account configuration cleared. Plugins disabled until an account is locked.");
-        if (_pluginInstaller.HasSteamPluginFiles(includeLauncher: true))
+        if (_pluginInstaller.HasSteamPluginFiles())
         {
             await _pluginInstaller.PurgeAllSteamModificationsAsync(restartSteam: true);
         }

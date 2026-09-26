@@ -24,9 +24,10 @@ public sealed record PluginStatus(
 
 /// <summary>
 /// Installs / updates / removes the LuaTools store-page plugin from GitHub releases (the app is the plugin
-/// MANAGER: it doesn't bundle the frontend). LTSP supplies <c>plugin.zip</c>, extracted to
-/// %AppData%\LuaToolsGui\plugin. The account-aware SweetTools loader is built from our native source
-/// and embedded in this app, then placed in the Steam root. Modeled on <see cref="UnlockerService"/>: fetch release JSON, download assets
+/// MANAGER: it doesn't bundle the frontend). Each release of <c>madoiscool/LTSP</c> carries
+/// <c>plugin.zip</c> (the frontend, extracted to %AppData%\LuaToolsGui\plugin, where CefInjectorService
+/// reads it) plus one loader DLL per <see cref="Slots"/> entry, dropped into the Steam install root
+/// (steam.exe loads it). Modeled on <see cref="UnlockerService"/>: fetch release JSON, download assets
 /// via <see cref="GithubProxy"/> (mirror fallback), verify each by its sha256 digest, then place. The DLL
 /// is locked while Steam runs, so DLL install/uninstall stops Steam first (via <see cref="SteamService"/>)
 /// and relaunches it if it was up.
@@ -55,7 +56,12 @@ public class PluginInstallerService(
     /// <summary>
     /// Verified SHA-256 digest for winmm.dll (proxy loader). Only this specific build is verified and accepted.
     /// </summary>
-    public static string VerifiedWinmmSha256 => SteamLauncherService.PayloadHash;
+    public const string VerifiedWinmmSha256 = "dc1594774d3003f7c82fbcdaac4cc9bbc81d7ee2ab82dd5f47c4f04cc3bd8236";
+
+    /// <summary>
+    /// Direct release asset URL for the verified winmm.dll build if the latest release lacks it or differs.
+    /// </summary>
+    public const string VerifiedWinmmDownloadUrl = "https://github.com/madoiscool/LTSP/releases/download/v2.2/winmm.dll";
 
     /// <summary>The one DLL-proxy slot the loader ships as. <c>winmm.dll</c> is loaded dynamically (audio)
     /// by steam.exe, is never a KnownDLL on Win10 or Win11, and isn't claimed by Millennium (wsock32/
@@ -77,7 +83,7 @@ public class PluginInstallerService(
 
     internal static readonly LoaderSlot[] Slots =
     {
-        new("winmm.dll", "winmm_real.dll", "winmm.dll", VerifiedWinmmSha256),
+        new("winmm.dll", "winmm_real.dll", "winmm.dll", VerifiedWinmmSha256, VerifiedWinmmDownloadUrl),
     };
 
     // Old slots to clean up on install/update: if left in the Steam root they'd load and run the loader
@@ -306,7 +312,7 @@ public class PluginInstallerService(
         // been reporting. GetStatusAsync runs on every Steam-open poke, so checking here closes that gap
         // continuously instead of only at version-bump time. Cheap when already correct (single attribute
         // check, no shellout) and only touches the loader DLL is actually installed.
-        if (loader && IsAllowedForCurrentAccount() && CdpMarkerPath is { } liveMarkerPath)
+        if (loader && CdpMarkerPath is { } liveMarkerPath)
             CreateCdpMarkerJunction(liveMarkerPath);
 
         bool port8080Busy = await IsPort8080BusyAsync();
@@ -352,15 +358,11 @@ public class PluginInstallerService(
     /// <summary>
     /// Checks whether any Steam plugin loader DLLs, unlocker DLLs, legacy DLLs, CDP markers, or plugin files are present on disk.
     /// </summary>
-    public bool HasSteamPluginFiles(bool includeLauncher = false)
+    public bool HasSteamPluginFiles()
     {
         if (SteamDir is not { } s) return false;
 
-        if (includeLauncher && Slots.Any(slot => SlotPath(slot) is { } p && File.Exists(p))) return true;
-        // A verified launcher alone is not an active plugin installation. Old/unknown loaders still
-        // count so account cleanup removes their unconditional launch behavior.
-        if (SlotPath(Slots[0]) is { } loader && File.Exists(loader) && !SteamLauncherService.IsBundledLoader(loader)) return true;
-        string[] dlls = ["dwmapi.dll", "xinput1_4.dll", "OpenSteamTool.dll"];
+        string[] dlls = ["winmm.dll", "winmm_real.dll", "dwmapi.dll", "xinput1_4.dll", "OpenSteamTool.dll"];
         if (dlls.Any(d => File.Exists(Path.Combine(s, d)))) return true;
         if (LegacyDllPaths.Any(File.Exists)) return true;
         if (CdpMarkerPath is { } m && (File.Exists(m) || Directory.Exists(m))) return true;
@@ -384,8 +386,6 @@ public class PluginInstallerService(
         }
 
         if (SteamDir is not { } steamDir) return (false, Resources.Strings.Plugin_Err_SteamNotFound);
-        if (!SteamLauncherService.SupportsSteamExecutable(Path.Combine(steamDir, "steam.exe")))
-            return (false, string.Format(Resources.Strings.Plugin_Err_VerifyFailed, "steam.exe (x64)"));
 
         var latest = await FetchLatestAsync(force: true, ct);
         if (latest is null) return (false, Resources.Strings.Plugin_Err_GithubUnreachable);
@@ -393,7 +393,37 @@ public class PluginInstallerService(
         var zipAsset = FindAsset(latest, PluginZipAsset);
         if (zipAsset is null)
             return (false, string.Format(Resources.Strings.Plugin_Err_MissingAssets, latest.TagName, PluginZipAsset, Slots[0].DllAsset));
-        SteamLauncherService.Configure(settings);
+        var slotDlUrls = new Dictionary<LoaderSlot, string>();
+        foreach (var slot in Slots)
+        {
+            var asset = FindAsset(latest, slot.DllAsset);
+            string? assetDigest = asset is not null ? AssetDigest(latest, slot.DllAsset) : null;
+            string? normalizedVerifiedSha = AssetHash.ParseDigest(slot.VerifiedSha256);
+
+            string? dlUrl = null;
+            if (normalizedVerifiedSha is not null)
+            {
+                // If latest release contains the verified asset matching our SHA, download from it.
+                // Otherwise fall back to the pinned verified release download URL.
+                if (asset is not null && string.Equals(assetDigest, normalizedVerifiedSha, StringComparison.OrdinalIgnoreCase))
+                {
+                    dlUrl = asset.DownloadUrl;
+                }
+                else if (!string.IsNullOrEmpty(slot.FallbackDownloadUrl))
+                {
+                    dlUrl = slot.FallbackDownloadUrl;
+                }
+            }
+            else
+            {
+                dlUrl = asset?.DownloadUrl;
+            }
+
+            if (dlUrl is null)
+                return (false, string.Format(Resources.Strings.Plugin_Err_MissingAssets, latest.TagName, PluginZipAsset, slot.DllAsset));
+
+            slotDlUrls[slot] = dlUrl;
+        }
 
         string tmp = Path.Combine(Path.GetTempPath(), "luatools-plugin-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(tmp);
@@ -403,11 +433,10 @@ public class PluginInstallerService(
             string zipPath = Path.Combine(tmp, PluginZipAsset);
             await gh.DownloadAsync(zipAsset.DownloadUrl, zipPath, progress, ct);
             var slotDlPaths = new Dictionary<LoaderSlot, string>();
-            foreach (var slot in Slots)
+            foreach (var (slot, url) in slotDlUrls)
             {
                 string p = Path.Combine(tmp, slot.DllAsset);
-                // Always use our account-aware build; never download the unconditional upstream loader.
-                SteamLauncherService.Extract(p);
+                await gh.DownloadAsync(url, p, progress, ct);
                 slotDlPaths[slot] = p;
             }
 
@@ -451,8 +480,7 @@ public class PluginInstallerService(
             // (so hand-placed test builds aren't clobbered), and thus never stop/restart Steam for it either.
             bool legacyPresent = LegacyDllPaths.Any(File.Exists);
             bool anySlotNeedsUpdate = Slots.Any(slot =>
-                SlotPath(slot) is not { } cur || !File.Exists(cur) || !AssetHash.OfFile(cur).Equals(slotShas[slot], StringComparison.OrdinalIgnoreCase) ||
-                SlotRealPath(slot) is not { } real || !File.Exists(real));
+                SlotPath(slot) is not { } cur || !File.Exists(cur) || !AssetHash.OfFile(cur).Equals(slotShas[slot], StringComparison.OrdinalIgnoreCase));
             bool dllNeedsUpdate = !DllUpdateDisabled && (anySlotNeedsUpdate || legacyPresent);
             if (dllNeedsUpdate)
             {
@@ -565,9 +593,9 @@ public class PluginInstallerService(
     /// Purges all LuaTools modifications from Steam: loader DLLs (winmm, dwmapi, xinput, OpenSteamTool),
     /// legacy DLLs, the CDP remote-debugging junction, opensteamtool folder, and disables stplug-in luas.
     /// Safely backs up active mods before removal so they can be restored when the account is re-selected.
-    /// Account cleanup can retain the verified account-aware launcher; explicit purge removes it.
+    /// Restores Steam to a 100% pure vanilla state.
     /// </summary>
-    public Task<(bool ok, string? error)> PurgeAllSteamModificationsAsync(bool restartSteam = true, CancellationToken ct = default, bool preserveLauncher = false)
+    public Task<(bool ok, string? error)> PurgeAllSteamModificationsAsync(bool restartSteam = true, CancellationToken ct = default)
     {
         return Task.Run(async () =>
         {
@@ -597,8 +625,6 @@ public class PluginInstallerService(
                 // 1. Backup & Delete LuaTools loader DLLs
                 foreach (var slot in Slots)
                 {
-                    if (preserveLauncher && !string.IsNullOrWhiteSpace(settings.AllowedSteamId) &&
-                        SlotPath(slot) is { } retained && SteamLauncherService.IsBundledLoader(retained)) continue;
                     if (SlotPath(slot) is { } bp)
                     {
                         if (File.Exists(bp))
@@ -756,9 +782,6 @@ public class PluginInstallerService(
                 {
                     foreach (var file in Directory.GetFiles(BackupDir))
                     {
-                        // Never resurrect an older unconditional launcher from the backup.
-                        if (Slots.Any(slot => string.Equals(Path.GetFileName(file), slot.DllAsset, StringComparison.OrdinalIgnoreCase) ||
-                            string.Equals(Path.GetFileName(file), slot.RealName, StringComparison.OrdinalIgnoreCase))) continue;
                         try
                         {
                             string dest = Path.Combine(steamDir, Path.GetFileName(file));
@@ -795,8 +818,7 @@ public class PluginInstallerService(
                 // 4. If loader DLLs or frontend are missing (or loader DLL does not match verified SHA), install them
                 bool needsFullInstall = !File.Exists(LuatoolsJsPath) || Slots.Any(s =>
                     SlotPath(s) is not { } p || !File.Exists(p) ||
-                    (s.VerifiedSha256 is not null && !AssetHash.OfFile(p).Equals(s.VerifiedSha256, StringComparison.OrdinalIgnoreCase)) ||
-                    SlotRealPath(s) is not { } real || !File.Exists(real));
+                    (s.VerifiedSha256 is not null && !AssetHash.OfFile(p).Equals(s.VerifiedSha256, StringComparison.OrdinalIgnoreCase)));
                 if (needsFullInstall)
                 {
                     var (installOk, installErr) = await InstallAsync(progress: null, ct);
@@ -842,10 +864,11 @@ public class PluginInstallerService(
     }
 
     /// <summary>
-    /// Removes plugin modifications on account mismatch, retaining only the verified account-aware launcher.
+    /// Completely removes the loader DLLs, legacy DLLs, and CDP junction from Steam to ensure
+    /// Steam is 100% clean when an unallowed account is active or when uninstalled.
     /// </summary>
     public Task<(bool ok, string? error)> CleanSteamPluginAsync(CancellationToken ct = default) =>
-        PurgeAllSteamModificationsAsync(restartSteam: true, ct, preserveLauncher: true);
+        PurgeAllSteamModificationsAsync(restartSteam: true, ct);
 
     // ── Uninstall ──
     public Task<(bool ok, string? error)> UninstallAsync(CancellationToken ct = default) =>

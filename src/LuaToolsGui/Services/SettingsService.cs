@@ -92,7 +92,6 @@ public class AppSettings
 
 public class SettingsService
 {
-    public event Action? Saved;
     private static readonly string DefaultDir =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "LuaToolsGui");
     private static readonly string DefaultFilePath = Path.Combine(DefaultDir, "settings.json");
@@ -309,7 +308,6 @@ public class SettingsService
         {
             foreach (var p in new[] { _filePath, _bakPath, _tmpPath })
                 try { if (File.Exists(p)) File.Delete(p); } catch { /* best effort */ }
-            Saved?.Invoke();
             return;
         }
 
@@ -323,6 +321,5 @@ public class SettingsService
         File.WriteAllText(_tmpPath, json);
         try { if (File.Exists(_filePath)) File.Copy(_filePath, _bakPath, overwrite: true); } catch { /* best effort */ }
         File.Move(_tmpPath, _filePath, overwrite: true);
-        Saved?.Invoke();
     }
 }

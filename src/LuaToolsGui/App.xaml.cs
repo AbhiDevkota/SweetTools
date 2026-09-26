@@ -253,9 +253,6 @@ public partial class App : Application
         });
 
         await _host.StartAsync();
-        var launcherSettings = _host.Services.GetRequiredService<SettingsService>();
-        launcherSettings.Saved += () => SteamLauncherService.Configure(launcherSettings);
-        SteamLauncherService.Configure(launcherSettings);
 
         // Rewrite any pre-3-mode SelectedMode BEFORE anything reads it. UnlockerService.SelectedMode
         // would otherwise parse a legacy value to null and quietly present an unconfigured app. Users
@@ -352,7 +349,7 @@ public partial class App : Application
                 {
                     if (installer.HasSteamPluginFiles())
                     {
-                        await installer.CleanSteamPluginAsync();
+                        await installer.PurgeAllSteamModificationsAsync(restartSteam: true);
                     }
 
                     bool hasAllowed = !string.IsNullOrWhiteSpace(settings.AllowedSteamId);
@@ -575,12 +572,6 @@ public partial class App : Application
                     () => window.NavigateToSettings(),
                     error: false);
             }
-        }
-
-        if (e.Args.Contains(SteamLauncherService.LaunchArgument, StringComparer.OrdinalIgnoreCase) &&
-            pluginInstaller.IsAllowedForCurrentAccount() && !pluginInstaller.HasSteamPluginFiles())
-        {
-            await pluginInstaller.RestoreAllSteamModificationsAsync(restartSteam: true);
         }
 
         // Background, non-blocking Steam-open update flow (app + plugin), but ONLY in the loader context
