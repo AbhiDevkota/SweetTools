@@ -25,18 +25,6 @@ Desktop Runtime on a clean machine; the app then self-updates through Velopack.
 
 To produce a local build for testing, `dotnet publish -c Release` is enough.
 
-### SweetTools Steam auto-launch
-
-Open your published build once to register the Steam watcher for an existing allowed account.
-Locking an account in Settings also enables it; clearing that account disables it.
-The UI-free `--watch-steam` process starts at Windows sign-in through the current user's
-`SweetToolsSteamWatcher` Run entry and checks Steam every two seconds. It opens SweetTools
-once when the running Steam process has the allowed active account, including after an
-account switch. Saved login history alone does not trigger a launch. Closing SweetTools
-does not stop the watcher or repeatedly reopen the UI during the same Steam session.
-Keep the published folder in a stable location and open the app again after moving it.
-This registration is separate from the existing Start with Windows setting for the full UI.
-
 ### Layout
 
 | Path | Contents |

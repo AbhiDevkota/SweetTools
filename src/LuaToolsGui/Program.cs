@@ -17,13 +17,6 @@ public static class Program
         // then no-ops on a normal launch.
         VelopackApp.Build().Run();
 
-        // The watcher has its own lifetime and must not initialize WPF or acquire the UI mutex.
-        if (args.Contains(Services.SteamAutoLaunchService.WatchArgument, StringComparer.OrdinalIgnoreCase))
-        {
-            Services.SteamAutoLaunchService.Run();
-            return;
-        }
-
         // Set the UI culture before any WPF element is created, so x:Static resource lookups (which
         // resolve once at parse time) pick up the right language from the first frame.
         ApplyUiCulture();

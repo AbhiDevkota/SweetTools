@@ -253,7 +253,6 @@ public partial class App : Application
         });
 
         await _host.StartAsync();
-        SteamAutoLaunchService.Configure(_host.Services.GetRequiredService<SettingsService>());
 
         // Rewrite any pre-3-mode SelectedMode BEFORE anything reads it. UnlockerService.SelectedMode
         // would otherwise parse a legacy value to null and quietly present an unconfigured app. Users

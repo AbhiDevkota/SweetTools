@@ -298,7 +298,6 @@ public partial class SettingsViewModel : ObservableObject
         if (!string.IsNullOrWhiteSpace(id))
         {
             _settings.AllowedSteamId = id;
-            SteamAutoLaunchService.Configure(_settings);
             RefreshCurrentSteamId();
 
             var (ok, err) = await _pluginInstaller.RestoreAllSteamModificationsAsync(restartSteam: true);
@@ -322,7 +321,6 @@ public partial class SettingsViewModel : ObservableObject
     private async Task ClearRestriction()
     {
         _settings.AllowedSteamId = "";
-        SteamAutoLaunchService.Configure(_settings);
         RefreshCurrentSteamId();
         _toast.Show("Sweet Tools", "Account configuration cleared. Plugins disabled until an account is locked.");
         if (_pluginInstaller.HasSteamPluginFiles())
