@@ -21,6 +21,16 @@ public class CefInjectorBrandingTests
         Assert.Equal(0x50, bytes[1]);
         Assert.Equal(0x4E, bytes[2]);
         Assert.Equal(0x47, bytes[3]);
+
+        // Validate that System.Drawing / GDI+ decodes it as a valid image
+        using var ms = new MemoryStream(bytes);
+        using var img = System.Drawing.Image.FromStream(ms);
+        Assert.Equal(48, img.Width);
+        Assert.Equal(48, img.Height);
+
+        // Standard PNG IEND chunk trailer
+        byte[] iendBytes = [0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82];
+        Assert.True(bytes.AsSpan(bytes.Length - 8).SequenceEqual(iendBytes), "PNG must end with valid IEND chunk");
     }
 
     [Fact]
@@ -54,6 +64,17 @@ public class CefInjectorBrandingTests
     {
         const string oldIconUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACdklEQVRYR+2Wv0t";
         string input = $"var fallback = '{oldIconUrl}';";
+        string output = CefInjectorService.BrandTransformScript(input);
+
+        Assert.Contains(HttpServerService.SweetToolsIconPngDataUrl, output);
+        Assert.DoesNotContain(oldIconUrl, output);
+    }
+
+    [Fact]
+    public void BrandTransformScript_ReplacesAnyExistingIconDataUrl()
+    {
+        const string oldIconUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmH_OLD_BROKEN_DATA_1234567890==";
+        string input = $"titleIcon.src = '{oldIconUrl}'; img.src = '{oldIconUrl}';";
         string output = CefInjectorService.BrandTransformScript(input);
 
         Assert.Contains(HttpServerService.SweetToolsIconPngDataUrl, output);

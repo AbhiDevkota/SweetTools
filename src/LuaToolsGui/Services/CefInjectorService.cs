@@ -724,8 +724,8 @@ if(real&&typeof real.callServerMethod==='function'){
         js = Regex.Replace(js, @"img\.onerror\s*=\s*function\s*\(\)\s*\{[\s\S]*?headerBtn\.innerHTML\s*=[\s\S]*?<\/svg>';?\s*\};?", "img.onerror = null;");
         js = Regex.Replace(js, @"titleIcon\.onerror\s*=\s*function\s*\(\)\s*\{[\s\S]*?\};?", "titleIcon.onerror = null;");
 
-        // Replace old purple icon dataUrl in GetIconDataUrl shim with new SweetTools PNG dataUrl
-        js = Regex.Replace(js, @"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0[A-Za-z0-9+/=]+", HttpServerService.SweetToolsIconPngDataUrl);
+        // Replace old purple icon or any previously injected icon dataUrl with the valid SweetTools PNG dataUrl
+        js = Regex.Replace(js, @"data:image/png;base64,[A-Za-z0-9+/=]+", HttpServerService.SweetToolsIconPngDataUrl);
 
         // 2. Replace button and action labels (unescaped and JSON-escaped quotes)
         js = Regex.Replace(js, @"(?<=\\?[""'])Add via LuaTools(?=\\?[""'])", "Add via SweetTools");

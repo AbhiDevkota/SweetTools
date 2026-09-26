@@ -232,4 +232,57 @@ public class IconGeneratorTests
         var actualSizes = decoder.Frames.Select(f => f.PixelWidth).OrderBy(w => w).ToArray();
         Assert.Equal([16, 32, 64], actualSizes);
     }
+
+    [Fact]
+    public void SweetToolsIconPngBase64_MatchesIconIcoDerivedPng()
+    {
+        string projectDir = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "src", "LuaToolsGui"));
+        string targetIco = Path.Combine(projectDir, "icon.ico");
+        byte[] icoBytes = File.ReadAllBytes(targetIco);
+
+        // Find PNG chunk in ICO (starts with standard 8-byte PNG header)
+        byte[] pngHeader = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
+        int pngOffset = -1;
+        for (int i = 0; i < icoBytes.Length - 8; i++)
+        {
+            if (icoBytes.AsSpan(i, 8).SequenceEqual(pngHeader))
+            {
+                pngOffset = i;
+                break;
+            }
+        }
+        Assert.True(pngOffset >= 0, "PNG frame must exist in icon.ico");
+        byte[] png256Bytes = icoBytes[pngOffset..];
+
+        using var ms256 = new MemoryStream(png256Bytes);
+        using var bmp256 = new Bitmap(ms256);
+        Assert.Equal(256, bmp256.Width);
+        Assert.Equal(256, bmp256.Height);
+
+        // Generate 48x48 crisp PNG at standard 96 DPI
+        using var resized48 = new Bitmap(48, 48, PixelFormat.Format32bppArgb);
+        resized48.SetResolution(96f, 96f);
+        using (var g = Graphics.FromImage(resized48))
+        {
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.SmoothingMode = SmoothingMode.HighQuality;
+            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            g.CompositingQuality = CompositingQuality.HighQuality;
+            g.Clear(Color.Transparent);
+            g.DrawImage(bmp256, 0, 0, 48, 48);
+        }
+
+        using var ms48 = new MemoryStream();
+        resized48.Save(ms48, ImageFormat.Png);
+        byte[] png48Bytes = ms48.ToArray();
+
+        // Validate that Image.FromStream can load it
+        using var checkMs = new MemoryStream(png48Bytes);
+        using var loaded = Image.FromStream(checkMs);
+        Assert.Equal(48, loaded.Width);
+        Assert.Equal(48, loaded.Height);
+
+        string actualB64 = Convert.ToBase64String(png48Bytes);
+        Assert.Equal(LuaToolsGui.Services.HttpServerService.SweetToolsIconPngBase64, actualB64);
+    }
 }
