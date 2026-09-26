@@ -126,7 +126,7 @@
   <data name="Lang_Changed_Title" xml:space="preserve"><value>Kieli vaihdettu</value></data>
   <data name="Lang_Changed_Body" xml:space="preserve"><value>Käynnistä sovellus uudelleen ottaaksesi uuden kielen käyttöön.</value></data>
   <data name="Lang_Changed_Restart" xml:space="preserve"><value>Käynnistä nyt uudelleen</value></data>
-  <data name="Home_Welcome" xml:space="preserve"><value>Tervetuloa LuaToolsiin</value></data>
+  <data name="Home_Welcome" xml:space="preserve"><value>Tervetuloa Sweet Toolsiin</value></data>
   <data name="Home_LuasOnBoard" xml:space="preserve"><value>Lua-tiedostoja</value></data>
   <data name="Home_LastAdded" xml:space="preserve"><value>VIIMEKSI LISÄTTY</value></data>
   <data name="Home_PluginStatus" xml:space="preserve"><value>Laajennuksen tila</value></data>
@@ -141,14 +141,14 @@
   <data name="Home_NoModeSelected" xml:space="preserve"><value>Tilaa ei ole valittu</value></data>
   <data name="Home_ModeIs" xml:space="preserve"><value>Tila · {0}</value></data>
   <data name="Mode_Title" xml:space="preserve"><value>Tila</value></data>
-  <data name="Mode_Subtitle" xml:space="preserve"><value>Vaihda taustajärjestelmää, jota käytetään LuaToolsilla lisättyjen pelien avaamiseen — vain yksi aktiivinen kerrallaan.</value></data>
+  <data name="Mode_Subtitle" xml:space="preserve"><value>Vaihda taustajärjestelmää, jota käytetään Sweet Toolsilla lisättyjen pelien avaamiseen — vain yksi aktiivinen kerrallaan.</value></data>
   <data name="Mode_CheckForUpdates" xml:space="preserve"><value>Tarkista päivitykset</value></data>
   <data name="Mode_Active" xml:space="preserve"><value>AKTIIVINEN</value></data>
   <data name="Mode_Recommended" xml:space="preserve"><value>SUOSITELTU</value></data>
   <data name="Mode_Confirm_Body" xml:space="preserve"><value>Steam suljetaan, jotta sen tiedostoja voidaan muuttaa, ja käynnistetään sitten automaattisesti uudelleen. Kaikki käynnissä olevat pelit tai lataukset pysähtyvät.</value></data>
   <data name="Mode_Cancel" xml:space="preserve"><value>Peruuta</value></data>
   <data name="Mode_CloseSteamContinue" xml:space="preserve"><value>Sulje Steam ja jatka</value></data>
-  <data name="Mode_Desc_Bst" xml:space="preserve"><value>Avoimen lähdekoodin fork OpenSteamToolsista, jota LuaTools-tiimi ylläpitää aktiivisesti. Korjauksia ja uusia ominaisuuksia!</value></data>
+  <data name="Mode_Desc_Bst" xml:space="preserve"><value>Avoimen lähdekoodin fork OpenSteamToolsista, jota Sweet Tools-tiimi ylläpitää aktiivisesti. Korjauksia ja uusia ominaisuuksia!</value></data>
   <data name="Mode_CloudRedirect_Manage" xml:space="preserve"><value>Hallinta</value></data>
   <data name="Mode_CloudRedirect_LaunchFailed" xml:space="preserve"><value>CloudRedirectin lataaminen tai käynnistäminen epäonnistui.</value></data>
   <data name="Mode_Desc_Ost" xml:space="preserve"><value>OpenSteamToolsin yöllinen koontiversio uusimmasta lähdekoodista. Uusimmat korjaukset, mutta voi olla epävakaampi.</value></data>
@@ -168,13 +168,13 @@
   <data name="Mode_CloudRedirect_Toast_Enabled" xml:space="preserve"><value>Otettu käyttöön — käynnistä Steam uudelleen ottaaksesi käyttöön.</value></data>
   <data name="Mode_CloudRedirect_Toast_Disabled" xml:space="preserve"><value>Poistettu käytöstä — käynnistä Steam uudelleen ottaaksesi käyttöön.</value></data>
   <data name="Mode_CloudRedirect_Toast_Updated" xml:space="preserve"><value>Päivitetty — käynnistä Steam uudelleen ottaaksesi käyttöön.</value></data>
-  <data name="Onboarding_Title" xml:space="preserve"><value>Tervetuloa LuaTools-sovellukseen!</value></data>
+  <data name="Onboarding_Title" xml:space="preserve"><value>Tervetuloa Sweet Tools-sovellukseen!</value></data>
   <data name="Onboarding_SignIn_Blurb" xml:space="preserve"><value>Kirjaudu sisään avataksesi pelien ja korjausten lisäämisen.</value></data>
   <data name="Onboarding_SignedIn" xml:space="preserve"><value>Kirjauduttu sisään ✓</value></data>
   <data name="Onboarding_Recommended_Title" xml:space="preserve"><value>Ota suositellut asetukset käyttöön</value></data>
   <data name="Onboarding_Recommended_Detail" xml:space="preserve"><value>Tila: BetterSteamTools · FastFetch päällä</value></data>
   <data name="Onboarding_Plugin_Title" xml:space="preserve"><value>Asenna kuuluisa lisäosamme</value></data>
-  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Lisää "Add via LuaTools" -painikkeen Steamin kauppasivuille.</value></data>
+  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Lisää "Add via Sweet Tools" -painikkeen Steamin kauppasivuille.</value></data>
   <data name="Onboarding_Yes" xml:space="preserve"><value>Kyllä kiitos</value></data>
   <data name="Onboarding_No" xml:space="preserve"><value>Ei kiitos</value></data>
   <data name="Onboarding_Go" xml:space="preserve"><value>Aloitetaan!</value></data>
@@ -360,25 +360,25 @@ Tämä poistaa .lua-tiedostot kansiosta Steam\config\stplug-in.</value></data>
   <data name="Confirm_Replace" xml:space="preserve"><value>Korvaa</value></data>
   <data name="Settings_Section_Startup" xml:space="preserve"><value>KÄYNNISTYS</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Käynnistä Windowsin mukana</value></data>
-  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>Käynnistä LuaTools automaattisesti, kun Windows käynnistyy.</value></data>
+  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>Käynnistä Sweet Tools automaattisesti, kun Windows käynnistyy.</value></data>
   <data name="Settings_MinimizeToTray" xml:space="preserve"><value>Pienennä ilmaisinalueelle</value></data>
-  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>Kun suljet ikkunan, pidä LuaTools käynnissä ilmaisinalueella sen sijaan, että ohjelma suljetaan. Palauta kaksoisnapsauttamalla kuvaketta.</value></data>
-  <data name="Tray_Open" xml:space="preserve"><value>Avaa LuaTools</value></data>
+  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>Kun suljet ikkunan, pidä Sweet Tools käynnissä ilmaisinalueella sen sijaan, että ohjelma suljetaan. Palauta kaksoisnapsauttamalla kuvaketta.</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>Avaa Sweet Tools</value></data>
   <data name="Tray_Exit" xml:space="preserve"><value>Lopeta</value></data>
 
   <data name="Add_FastFetch" xml:space="preserve"><value>FastFetch™️</value></data>
   <data name="Add_FastFetch_Hint" xml:space="preserve"><value>Automaattinen lataus ensimmäisestä saatavilla olevasta lähteestä</value></data>
   <data name="Add_FastFetch_NoSource" xml:space="preserve"><value>Tälle pelille ei löytynyt saatavilla olevia lähteitä</value></data>
   <data name="Add_FastFetch_Via" xml:space="preserve"><value>· kautta {0}</value></data>
-  <data name="Plugin_Title" xml:space="preserve"><value>LuaTools-laajennus</value></data>
-  <data name="Plugin_Subtitle" xml:space="preserve"><value>LuaTools-Steam-laajennus! — Käyttää nyt LuaLoaderia Shitteniumin sijaan</value></data>
+  <data name="Plugin_Title" xml:space="preserve"><value>Sweet Tools-laajennus</value></data>
+  <data name="Plugin_Subtitle" xml:space="preserve"><value>Sweet Tools-Steam-laajennus! — Käyttää nyt LuaLoaderia Shitteniumin sijaan</value></data>
   <data name="Plugin_CardTitle" xml:space="preserve"><value>Tila</value></data>
   <data name="Plugin_Badge_UpdateAvailable" xml:space="preserve"><value>Päivitys saatavilla</value></data>
   <data name="Plugin_Row_InstalledVersion" xml:space="preserve"><value>Asennettu versio</value></data>
   <data name="Plugin_Row_LatestVersion" xml:space="preserve"><value>Uusin versio</value></data>
   <data name="Plugin_Row_Frontend" xml:space="preserve"><value>Käyttöliittymä</value></data>
   <data name="Plugin_Row_Loader" xml:space="preserve"><value>Lataaja (winmm.dll)</value></data>
-  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Millennium havaittu — LuaTools toimii sen rinnalla. Asennus poistaa käytöstä Millenniumin oman kopion tästä laajennuksesta, jotta vain LuaLoader injektoi.</value></data>
+  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Millennium havaittu — Sweet Tools toimii sen rinnalla. Asennus poistaa käytöstä Millenniumin oman kopion tästä laajennuksesta, jotta vain LuaLoader injektoi.</value></data>
   <data name="Plugin_Footer" xml:space="preserve"><value>LuaLoader asennetaan Steam-kansioosi. Tämä sovellus toimii taustajärjestelmänä — jos suljet sen ilmaisinalueelta, laajennus lakkaa toimimasta!</value></data>
   <data name="Plugin_Btn_Install" xml:space="preserve"><value>Asenna</value></data>
   <data name="Plugin_Btn_Update" xml:space="preserve"><value>Päivitä</value></data>
@@ -409,7 +409,7 @@ Tämä poistaa .lua-tiedostot kansiosta Steam\config\stplug-in.</value></data>
   <data name="Plugin_Err_VerifyFailed" xml:space="preserve"><value>Kohteen {0} tiivisteen tarkistus epäonnistui.</value></data>
   <data name="Plugin_Err_NoLuatoolsJs" xml:space="preserve"><value>plugin.zip ei sisältänyt tiedostoa public/luatools.js.</value></data>
   <data name="Plugin_About_Header" xml:space="preserve"><value>Keskeiset ominaisuudet</value></data>
-  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>Lisää “Add via LuaTools” -painikkeen Steam-kaupan sivuille</value></data>
+  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>Lisää “Add via Sweet Tools” -painikkeen Steam-kaupan sivuille</value></data>
   <data name="Plugin_Feature_AutoUpdate" xml:space="preserve"><value>Päivittää itsensä automaattisesti</value></data>
   <data name="Plugin_Feature_Millennium" xml:space="preserve"><value>Toimii Millenniumin kanssa tai ilman</value></data>
   <data name="Drop_LinkHint" xml:space="preserve"><value>…tai vedä tähän SteamDB- tai Steam-kauppalinkki lisätäksesi kyseisen pelin.</value></data>
@@ -465,7 +465,7 @@ Tämä poistaa .lua-tiedostot kansiosta Steam\config\stplug-in.</value></data>
   <data name="Launch_Title" xml:space="preserve"><value>Käynnistysvalinnat</value></data>
   <data name="Launch_Loading" xml:space="preserve"><value>Luetaan Steamin sovellusvälimuistia…</value></data>
   <data name="Launch_NotFound" xml:space="preserve"><value>Steamilla ei ole vielä välimuistissa tietoja tästä pelistä. Käynnistä Steam kerran ja yritä uudelleen.</value></data>
-  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>Steamin sovellusvälimuisti on muodossa, jota tämä versio ei ymmärrä ({0}). Päivitä LuaTools.</value></data>
+  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>Steamin sovellusvälimuisti on muodossa, jota tämä versio ei ymmärrä ({0}). Päivitä Sweet Tools.</value></data>
   <data name="Launch_ReadFailed" xml:space="preserve"><value>Steamin sovellusvälimuistia ei voitu lukea. {0}</value></data>
   <data name="Launch_ExecutableRequired" xml:space="preserve"><value>Jokainen käynnistysvalinta tarvitsee suoritettavan tiedoston.</value></data>
   <data name="Launch_Add" xml:space="preserve"><value>Lisää</value></data>
@@ -482,7 +482,7 @@ Tämä poistaa .lua-tiedostot kansiosta Steam\config\stplug-in.</value></data>
   <data name="Launch_InstallPath" xml:space="preserve"><value>Asennuspolku: {0}</value></data>
   <data name="Launch_SteamRestartNote" xml:space="preserve"><value>Muutosten käyttöönotto sulkee Steamin ja avaa sen uudelleen.</value></data>
   <data name="Launch_Restore" xml:space="preserve"><value>Palauta alkuperäiset</value></data>
-  <data name="Launch_Restore_Tip" xml:space="preserve"><value>Palauttaa käynnistysvalinnat, jotka Steamissa olivat ennen kuin LuaTools muutti niitä.</value></data>
+  <data name="Launch_Restore_Tip" xml:space="preserve"><value>Palauttaa käynnistysvalinnat, jotka Steamissa olivat ennen kuin Sweet Tools muutti niitä.</value></data>
   <data name="Launch_Restore_Title" xml:space="preserve"><value>Palautetaanko alkuperäiset käynnistysvalinnat?</value></data>
   <data name="Launch_Restore_Body" xml:space="preserve"><value>Tämä palauttaa käynnistysvalinnat sellaisiksi kuin ne Steamissa olivat ja hylkää muutoksesi. Steam suljetaan ja avataan uudelleen. Jatketaanko?</value></data>
   <data name="Launch_NothingToRestore" xml:space="preserve"><value>Tätä peliä ei ole muutettu, joten palautettavaa ei ole.</value></data>

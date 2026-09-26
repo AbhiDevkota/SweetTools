@@ -132,7 +132,7 @@
   <data name="Lang_Changed_Restart" xml:space="preserve"><value>立即重启</value></data>
 
   <!-- ── 主页 ── -->
-  <data name="Home_Welcome" xml:space="preserve"><value>欢迎使用 LuaTools</value></data>
+  <data name="Home_Welcome" xml:space="preserve"><value>欢迎使用 Sweet Tools</value></data>
   <data name="Home_LuasOnBoard" xml:space="preserve"><value>已添加的 Lua</value></data>
   <data name="Home_LastAdded" xml:space="preserve"><value>最近添加</value></data>
   <data name="Home_PluginStatus" xml:space="preserve"><value>插件状态</value></data>
@@ -149,14 +149,14 @@
 
   <!-- ── 模式 ── -->
   <data name="Mode_Title" xml:space="preserve"><value>模式</value></data>
-  <data name="Mode_Subtitle" xml:space="preserve"><value>切换用于解锁通过 LuaTools 添加的游戏的后端——同一时间仅有一个生效。</value></data>
+  <data name="Mode_Subtitle" xml:space="preserve"><value>切换用于解锁通过 Sweet Tools 添加的游戏的后端——同一时间仅有一个生效。</value></data>
   <data name="Mode_CheckForUpdates" xml:space="preserve"><value>检查更新</value></data>
   <data name="Mode_Active" xml:space="preserve"><value>已启用</value></data>
   <data name="Mode_Recommended" xml:space="preserve"><value>推荐</value></data>
   <data name="Mode_Confirm_Body" xml:space="preserve"><value>将关闭 Steam 以便更改其文件，随后自动重启。所有正在运行的游戏或下载都会停止。</value></data>
   <data name="Mode_Cancel" xml:space="preserve"><value>取消</value></data>
   <data name="Mode_CloseSteamContinue" xml:space="preserve"><value>关闭 Steam 并继续</value></data>
-  <data name="Mode_Desc_Bst" xml:space="preserve"><value>OpenSteamTools 的开源分支，由 LuaTools 团队积极维护。带来各种修复和新功能！</value></data>
+  <data name="Mode_Desc_Bst" xml:space="preserve"><value>OpenSteamTools 的开源分支，由 Sweet Tools 团队积极维护。带来各种修复和新功能！</value></data>
   <data name="Mode_CloudRedirect_Manage" xml:space="preserve"><value>管理</value></data>
   <data name="Mode_CloudRedirect_LaunchFailed" xml:space="preserve"><value>无法下载或启动 CloudRedirect。</value></data>
   <data name="Mode_Desc_Ost" xml:space="preserve"><value>从最新源码构建的 OpenSteamTools 每夜版。包含最新修复，但可能不太稳定。</value></data>
@@ -176,13 +176,13 @@
   <data name="Mode_CloudRedirect_Toast_Enabled" xml:space="preserve"><value>已启用 — 重启 Steam 以生效。</value></data>
   <data name="Mode_CloudRedirect_Toast_Disabled" xml:space="preserve"><value>已禁用 — 重启 Steam 以生效。</value></data>
   <data name="Mode_CloudRedirect_Toast_Updated" xml:space="preserve"><value>已更新 — 重启 Steam 以生效。</value></data>
-  <data name="Onboarding_Title" xml:space="preserve"><value>欢迎使用 LuaTools 应用！</value></data>
+  <data name="Onboarding_Title" xml:space="preserve"><value>欢迎使用 Sweet Tools 应用！</value></data>
   <data name="Onboarding_SignIn_Blurb" xml:space="preserve"><value>登录以解锁添加游戏和修复。</value></data>
   <data name="Onboarding_SignedIn" xml:space="preserve"><value>已登录 ✓</value></data>
   <data name="Onboarding_Recommended_Title" xml:space="preserve"><value>应用推荐设置</value></data>
   <data name="Onboarding_Recommended_Detail" xml:space="preserve"><value>模式：BetterSteamTools · 开启 FastFetch</value></data>
   <data name="Onboarding_Plugin_Title" xml:space="preserve"><value>安装我们著名的插件</value></data>
-  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>在 Steam 商店页面添加“Add via LuaTools”按钮。</value></data>
+  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>在 Steam 商店页面添加“Add via Sweet Tools”按钮。</value></data>
   <data name="Onboarding_Yes" xml:space="preserve"><value>好的</value></data>
   <data name="Onboarding_No" xml:space="preserve"><value>不用了</value></data>
   <data name="Onboarding_Go" xml:space="preserve"><value>开始吧！</value></data>
@@ -380,25 +380,25 @@
   <data name="Confirm_Replace" xml:space="preserve"><value>替换</value></data>
   <data name="Settings_Section_Startup" xml:space="preserve"><value>启动</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>开机自动启动</value></data>
-  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>在 Windows 启动时自动运行 LuaTools。</value></data>
+  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>在 Windows 启动时自动运行 Sweet Tools。</value></data>
   <data name="Settings_MinimizeToTray" xml:space="preserve"><value>最小化到系统托盘</value></data>
-  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>关闭窗口时让 LuaTools 保留在系统托盘继续运行，而非退出。双击托盘图标即可还原。</value></data>
-  <data name="Tray_Open" xml:space="preserve"><value>打开 LuaTools</value></data>
+  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>关闭窗口时让 Sweet Tools 保留在系统托盘继续运行，而非退出。双击托盘图标即可还原。</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>打开 Sweet Tools</value></data>
   <data name="Tray_Exit" xml:space="preserve"><value>退出</value></data>
 
   <data name="Add_FastFetch" xml:space="preserve"><value>FastFetch™️</value></data>
   <data name="Add_FastFetch_Hint" xml:space="preserve"><value>自动从首个可用源下载</value></data>
   <data name="Add_FastFetch_NoSource" xml:space="preserve"><value>未找到此游戏的可用源</value></data>
   <data name="Add_FastFetch_Via" xml:space="preserve"><value>· 来源：{0}</value></data>
-  <data name="Plugin_Title" xml:space="preserve"><value>LuaTools 插件</value></data>
-  <data name="Plugin_Subtitle" xml:space="preserve"><value>LuaTools 的 Steam 插件！ — 现已改用 LuaLoader 代替 Shittenium</value></data>
+  <data name="Plugin_Title" xml:space="preserve"><value>Sweet Tools 插件</value></data>
+  <data name="Plugin_Subtitle" xml:space="preserve"><value>Sweet Tools 的 Steam 插件！ — 现已改用 LuaLoader 代替 Shittenium</value></data>
   <data name="Plugin_CardTitle" xml:space="preserve"><value>状态</value></data>
   <data name="Plugin_Badge_UpdateAvailable" xml:space="preserve"><value>有可用更新</value></data>
   <data name="Plugin_Row_InstalledVersion" xml:space="preserve"><value>已安装版本</value></data>
   <data name="Plugin_Row_LatestVersion" xml:space="preserve"><value>最新版本</value></data>
   <data name="Plugin_Row_Frontend" xml:space="preserve"><value>前端</value></data>
   <data name="Plugin_Row_Loader" xml:space="preserve"><value>加载器 (winmm.dll)</value></data>
-  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>检测到 Millennium——LuaTools 与其并行运行。安装会禁用 Millennium 自带的该插件副本，以便仅由 LuaLoader 注入。</value></data>
+  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>检测到 Millennium——Sweet Tools 与其并行运行。安装会禁用 Millennium 自带的该插件副本，以便仅由 LuaLoader 注入。</value></data>
   <data name="Plugin_Footer" xml:space="preserve"><value>LuaLoader 会安装到你的 Steam 文件夹。此应用作为后端运行——如果你从托盘关闭它，插件将无法再工作！</value></data>
   <data name="Plugin_Btn_Install" xml:space="preserve"><value>安装</value></data>
   <data name="Plugin_Btn_Update" xml:space="preserve"><value>更新</value></data>
@@ -429,7 +429,7 @@
   <data name="Plugin_Err_VerifyFailed" xml:space="preserve"><value>{0} 的哈希校验失败。</value></data>
   <data name="Plugin_Err_NoLuatoolsJs" xml:space="preserve"><value>plugin.zip 未包含 public/luatools.js。</value></data>
   <data name="Plugin_About_Header" xml:space="preserve"><value>主要功能</value></data>
-  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>在 Steam 商店页面添加“Add via LuaTools”按钮</value></data>
+  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>在 Steam 商店页面添加“Add via Sweet Tools”按钮</value></data>
   <data name="Plugin_Feature_AutoUpdate" xml:space="preserve"><value>自动保持更新</value></data>
   <data name="Plugin_Feature_Millennium" xml:space="preserve"><value>无论是否安装 Millennium 都能使用</value></data>
   <data name="Drop_LinkHint" xml:space="preserve"><value>…也可以拖入 SteamDB / Steam 商店链接来添加该游戏。</value></data>
@@ -485,7 +485,7 @@
   <data name="Launch_Title" xml:space="preserve"><value>启动选项</value></data>
   <data name="Launch_Loading" xml:space="preserve"><value>正在读取 Steam 的应用缓存…</value></data>
   <data name="Launch_NotFound" xml:space="preserve"><value>Steam 还没有这款游戏的缓存信息。请先启动一次 Steam，然后重试。</value></data>
-  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>Steam 的应用缓存格式当前版本无法识别（{0}）。请更新 LuaTools。</value></data>
+  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>Steam 的应用缓存格式当前版本无法识别（{0}）。请更新 Sweet Tools。</value></data>
   <data name="Launch_ReadFailed" xml:space="preserve"><value>无法读取 Steam 的应用缓存。{0}</value></data>
   <data name="Launch_ExecutableRequired" xml:space="preserve"><value>每个启动选项都必须填写可执行文件。</value></data>
   <data name="Launch_Add" xml:space="preserve"><value>添加</value></data>
@@ -502,7 +502,7 @@
   <data name="Launch_InstallPath" xml:space="preserve"><value>安装路径：{0}</value></data>
   <data name="Launch_SteamRestartNote" xml:space="preserve"><value>应用更改会关闭并重新打开 Steam。</value></data>
   <data name="Launch_Restore" xml:space="preserve"><value>恢复原始设置</value></data>
-  <data name="Launch_Restore_Tip" xml:space="preserve"><value>恢复 LuaTools 修改之前、Steam 自带的启动选项。</value></data>
+  <data name="Launch_Restore_Tip" xml:space="preserve"><value>恢复 Sweet Tools 修改之前、Steam 自带的启动选项。</value></data>
   <data name="Launch_Restore_Title" xml:space="preserve"><value>恢复原始启动选项？</value></data>
   <data name="Launch_Restore_Body" xml:space="preserve"><value>这会把启动选项还原成 Steam 原本的样子，并放弃你的更改。Steam 将被关闭并重新打开。是否继续？</value></data>
   <data name="Launch_NothingToRestore" xml:space="preserve"><value>这款游戏没有被修改过，因此没有可恢复的内容。</value></data>

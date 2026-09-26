@@ -126,7 +126,7 @@
   <data name="Lang_Changed_Title" xml:space="preserve"><value>Idioma alterado</value></data>
   <data name="Lang_Changed_Body" xml:space="preserve"><value>Reinicie o app para aplicar o novo idioma.</value></data>
   <data name="Lang_Changed_Restart" xml:space="preserve"><value>Reiniciar agora</value></data>
-  <data name="Home_Welcome" xml:space="preserve"><value>Bem-vindo ao LuaTools</value></data>
+  <data name="Home_Welcome" xml:space="preserve"><value>Bem-vindo ao Sweet Tools</value></data>
   <data name="Home_LuasOnBoard" xml:space="preserve"><value>Luas a bordo</value></data>
   <data name="Home_LastAdded" xml:space="preserve"><value>ÚLTIMO ADICIONADO</value></data>
   <data name="Home_PluginStatus" xml:space="preserve"><value>Status do plugin</value></data>
@@ -141,14 +141,14 @@
   <data name="Home_NoModeSelected" xml:space="preserve"><value>Nenhum modo selecionado</value></data>
   <data name="Home_ModeIs" xml:space="preserve"><value>Modo · {0}</value></data>
   <data name="Mode_Title" xml:space="preserve"><value>Modo</value></data>
-  <data name="Mode_Subtitle" xml:space="preserve"><value>Troque o backend usado para desbloquear os jogos adicionados com o LuaTools — um ativo por vez.</value></data>
+  <data name="Mode_Subtitle" xml:space="preserve"><value>Troque o backend usado para desbloquear os jogos adicionados com o Sweet Tools — um ativo por vez.</value></data>
   <data name="Mode_CheckForUpdates" xml:space="preserve"><value>Verificar atualizações</value></data>
   <data name="Mode_Active" xml:space="preserve"><value>ATIVO</value></data>
   <data name="Mode_Recommended" xml:space="preserve"><value>RECOMENDADO</value></data>
   <data name="Mode_Confirm_Body" xml:space="preserve"><value>O Steam será fechado para que seus arquivos possam ser alterados e, em seguida, reiniciado automaticamente. Todos os jogos ou downloads em andamento serão interrompidos.</value></data>
   <data name="Mode_Cancel" xml:space="preserve"><value>Cancelar</value></data>
   <data name="Mode_CloseSteamContinue" xml:space="preserve"><value>Fechar Steam e continuar</value></data>
-  <data name="Mode_Desc_Bst" xml:space="preserve"><value>Um fork de código aberto do OpenSteamTools mantido ativamente pela equipe do LuaTools. Trazendo correções e novos recursos!</value></data>
+  <data name="Mode_Desc_Bst" xml:space="preserve"><value>Um fork de código aberto do OpenSteamTools mantido ativamente pela equipe do Sweet Tools. Trazendo correções e novos recursos!</value></data>
   <data name="Mode_CloudRedirect_Manage" xml:space="preserve"><value>Gerenciar</value></data>
   <data name="Mode_CloudRedirect_LaunchFailed" xml:space="preserve"><value>Não foi possível baixar ou iniciar o CloudRedirect.</value></data>
   <data name="Mode_Desc_Ost" xml:space="preserve"><value>Build noturno do OpenSteamTools a partir do código mais recente. As correções mais recentes, mas pode ser menos estável.</value></data>
@@ -168,13 +168,13 @@
   <data name="Mode_CloudRedirect_Toast_Enabled" xml:space="preserve"><value>Ativado — reinicie o Steam para aplicar.</value></data>
   <data name="Mode_CloudRedirect_Toast_Disabled" xml:space="preserve"><value>Desativado — reinicie o Steam para aplicar.</value></data>
   <data name="Mode_CloudRedirect_Toast_Updated" xml:space="preserve"><value>Atualizado — reinicie o Steam para aplicar.</value></data>
-  <data name="Onboarding_Title" xml:space="preserve"><value>Bem-vindo ao app LuaTools!</value></data>
+  <data name="Onboarding_Title" xml:space="preserve"><value>Bem-vindo ao app Sweet Tools!</value></data>
   <data name="Onboarding_SignIn_Blurb" xml:space="preserve"><value>Faça login para desbloquear a adição de jogos e correções.</value></data>
   <data name="Onboarding_SignedIn" xml:space="preserve"><value>Conectado ✓</value></data>
   <data name="Onboarding_Recommended_Title" xml:space="preserve"><value>Aplicar configurações recomendadas</value></data>
   <data name="Onboarding_Recommended_Detail" xml:space="preserve"><value>Modo: BetterSteamTools · FastFetch ativado</value></data>
   <data name="Onboarding_Plugin_Title" xml:space="preserve"><value>Instalar nosso famoso plugin</value></data>
-  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Adiciona o botão "Add via LuaTools" às páginas da loja da Steam.</value></data>
+  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Adiciona o botão "Add via Sweet Tools" às páginas da loja da Steam.</value></data>
   <data name="Onboarding_Yes" xml:space="preserve"><value>Sim, por favor</value></data>
   <data name="Onboarding_No" xml:space="preserve"><value>Não, obrigado</value></data>
   <data name="Onboarding_Go" xml:space="preserve"><value>Vamos lá!</value></data>
@@ -360,25 +360,25 @@ Isso exclui os arquivos .lua de Steam\config\stplug-in.</value></data>
   <data name="Confirm_Replace" xml:space="preserve"><value>Substituir</value></data>
   <data name="Settings_Section_Startup" xml:space="preserve"><value>INICIALIZAÇÃO</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Iniciar com o Windows</value></data>
-  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>Inicia o LuaTools automaticamente quando o Windows é iniciado.</value></data>
+  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>Inicia o Sweet Tools automaticamente quando o Windows é iniciado.</value></data>
   <data name="Settings_MinimizeToTray" xml:space="preserve"><value>Minimizar para a bandeja do sistema</value></data>
-  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>Ao fechar a janela, mantenha o LuaTools em execução na bandeja do sistema em vez de sair. Clique duas vezes no ícone para restaurar.</value></data>
-  <data name="Tray_Open" xml:space="preserve"><value>Abrir o LuaTools</value></data>
+  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>Ao fechar a janela, mantenha o Sweet Tools em execução na bandeja do sistema em vez de sair. Clique duas vezes no ícone para restaurar.</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>Abrir o Sweet Tools</value></data>
   <data name="Tray_Exit" xml:space="preserve"><value>Sair</value></data>
 
   <data name="Add_FastFetch" xml:space="preserve"><value>FastFetch™️</value></data>
   <data name="Add_FastFetch_Hint" xml:space="preserve"><value>Baixar automaticamente da primeira fonte disponível</value></data>
   <data name="Add_FastFetch_NoSource" xml:space="preserve"><value>Nenhuma fonte disponível encontrada para este jogo</value></data>
   <data name="Add_FastFetch_Via" xml:space="preserve"><value>· via {0}</value></data>
-  <data name="Plugin_Title" xml:space="preserve"><value>Plugin LuaTools</value></data>
-  <data name="Plugin_Subtitle" xml:space="preserve"><value>O plugin LuaTools para Steam! — Agora usando LuaLoader em vez de Shittenium</value></data>
+  <data name="Plugin_Title" xml:space="preserve"><value>Plugin Sweet Tools</value></data>
+  <data name="Plugin_Subtitle" xml:space="preserve"><value>O plugin Sweet Tools para Steam! — Agora usando LuaLoader em vez de Shittenium</value></data>
   <data name="Plugin_CardTitle" xml:space="preserve"><value>Status</value></data>
   <data name="Plugin_Badge_UpdateAvailable" xml:space="preserve"><value>Atualização disponível</value></data>
   <data name="Plugin_Row_InstalledVersion" xml:space="preserve"><value>Versão instalada</value></data>
   <data name="Plugin_Row_LatestVersion" xml:space="preserve"><value>Versão mais recente</value></data>
   <data name="Plugin_Row_Frontend" xml:space="preserve"><value>Frontend</value></data>
   <data name="Plugin_Row_Loader" xml:space="preserve"><value>Carregador (winmm.dll)</value></data>
-  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Millennium detectado — o LuaTools é executado ao lado dele. A instalação desativa a cópia própria deste plugin do Millennium para que apenas o LuaLoader injete.</value></data>
+  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Millennium detectado — o Sweet Tools é executado ao lado dele. A instalação desativa a cópia própria deste plugin do Millennium para que apenas o LuaLoader injete.</value></data>
   <data name="Plugin_Footer" xml:space="preserve"><value>O LuaLoader é instalado na sua pasta do Steam. Este app funciona como backend — se você fechá-lo pela bandeja, o plugin deixará de funcionar!</value></data>
   <data name="Plugin_Btn_Install" xml:space="preserve"><value>Instalar</value></data>
   <data name="Plugin_Btn_Update" xml:space="preserve"><value>Atualizar</value></data>
@@ -409,7 +409,7 @@ Isso exclui os arquivos .lua de Steam\config\stplug-in.</value></data>
   <data name="Plugin_Err_VerifyFailed" xml:space="preserve"><value>Falha na verificação de hash de {0}.</value></data>
   <data name="Plugin_Err_NoLuatoolsJs" xml:space="preserve"><value>plugin.zip não continha public/luatools.js.</value></data>
   <data name="Plugin_About_Header" xml:space="preserve"><value>Recursos notáveis</value></data>
-  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>Adiciona um botão “Add via LuaTools” às páginas da loja Steam</value></data>
+  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>Adiciona um botão “Add via Sweet Tools” às páginas da loja Steam</value></data>
   <data name="Plugin_Feature_AutoUpdate" xml:space="preserve"><value>Mantém-se atualizado automaticamente</value></data>
   <data name="Plugin_Feature_Millennium" xml:space="preserve"><value>Funciona com ou sem Millennium</value></data>
   <data name="Drop_LinkHint" xml:space="preserve"><value>…ou arraste um link do SteamDB / da loja Steam para adicionar aquele jogo.</value></data>
@@ -465,7 +465,7 @@ Isso exclui os arquivos .lua de Steam\config\stplug-in.</value></data>
   <data name="Launch_Title" xml:space="preserve"><value>Opções de inicialização</value></data>
   <data name="Launch_Loading" xml:space="preserve"><value>Lendo o cache de aplicativos do Steam…</value></data>
   <data name="Launch_NotFound" xml:space="preserve"><value>O Steam ainda não tem informações em cache deste jogo. Abra o Steam uma vez e tente de novo.</value></data>
-  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>O cache de aplicativos do Steam está num formato que esta versão não entende ({0}). Atualize o LuaTools.</value></data>
+  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>O cache de aplicativos do Steam está num formato que esta versão não entende ({0}). Atualize o Sweet Tools.</value></data>
   <data name="Launch_ReadFailed" xml:space="preserve"><value>Não foi possível ler o cache de aplicativos do Steam. {0}</value></data>
   <data name="Launch_ExecutableRequired" xml:space="preserve"><value>Toda opção de inicialização precisa de um executável.</value></data>
   <data name="Launch_Add" xml:space="preserve"><value>Adicionar</value></data>
@@ -482,7 +482,7 @@ Isso exclui os arquivos .lua de Steam\config\stplug-in.</value></data>
   <data name="Launch_InstallPath" xml:space="preserve"><value>Caminho de instalação: {0}</value></data>
   <data name="Launch_SteamRestartNote" xml:space="preserve"><value>Aplicar as alterações fecha e reabre o Steam.</value></data>
   <data name="Launch_Restore" xml:space="preserve"><value>Restaurar original</value></data>
-  <data name="Launch_Restore_Tip" xml:space="preserve"><value>Devolve as opções de inicialização que vieram do Steam, antes de o LuaTools alterá-las.</value></data>
+  <data name="Launch_Restore_Tip" xml:space="preserve"><value>Devolve as opções de inicialização que vieram do Steam, antes de o Sweet Tools alterá-las.</value></data>
   <data name="Launch_Restore_Title" xml:space="preserve"><value>Restaurar as opções de inicialização originais?</value></data>
   <data name="Launch_Restore_Body" xml:space="preserve"><value>Isso devolve as opções de inicialização como o Steam as tinha e descarta suas alterações. O Steam será fechado e reaberto. Continuar?</value></data>
   <data name="Launch_NothingToRestore" xml:space="preserve"><value>Este jogo não foi alterado, então não há nada para restaurar.</value></data>

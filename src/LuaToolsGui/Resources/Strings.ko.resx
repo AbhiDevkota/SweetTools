@@ -126,7 +126,7 @@
   <data name="Lang_Changed_Title" xml:space="preserve"><value>언어 변경됨</value></data>
   <data name="Lang_Changed_Body" xml:space="preserve"><value>새 언어를 적용하려면 앱을 재시작하세요.</value></data>
   <data name="Lang_Changed_Restart" xml:space="preserve"><value>지금 재시작</value></data>
-  <data name="Home_Welcome" xml:space="preserve"><value>LuaTools에 오신 것을 환영합니다</value></data>
+  <data name="Home_Welcome" xml:space="preserve"><value>Sweet Tools에 오신 것을 환영합니다</value></data>
   <data name="Home_LuasOnBoard" xml:space="preserve"><value>등록된 Lua</value></data>
   <data name="Home_LastAdded" xml:space="preserve"><value>마지막 추가</value></data>
   <data name="Home_PluginStatus" xml:space="preserve"><value>플러그인 상태</value></data>
@@ -141,14 +141,14 @@
   <data name="Home_NoModeSelected" xml:space="preserve"><value>선택된 모드 없음</value></data>
   <data name="Home_ModeIs" xml:space="preserve"><value>모드 · {0}</value></data>
   <data name="Mode_Title" xml:space="preserve"><value>모드</value></data>
-  <data name="Mode_Subtitle" xml:space="preserve"><value>LuaTools로 추가한 게임의 잠금 해제에 사용되는 백엔드를 전환합니다 — 한 번에 하나만 활성화됩니다.</value></data>
+  <data name="Mode_Subtitle" xml:space="preserve"><value>Sweet Tools로 추가한 게임의 잠금 해제에 사용되는 백엔드를 전환합니다 — 한 번에 하나만 활성화됩니다.</value></data>
   <data name="Mode_CheckForUpdates" xml:space="preserve"><value>업데이트 확인</value></data>
   <data name="Mode_Active" xml:space="preserve"><value>활성</value></data>
   <data name="Mode_Recommended" xml:space="preserve"><value>추천</value></data>
   <data name="Mode_Confirm_Body" xml:space="preserve"><value>파일을 변경할 수 있도록 Steam을 종료한 후 자동으로 재시작합니다. 실행 중인 게임이나 다운로드는 모두 중지됩니다.</value></data>
   <data name="Mode_Cancel" xml:space="preserve"><value>취소</value></data>
   <data name="Mode_CloseSteamContinue" xml:space="preserve"><value>Steam 닫고 계속</value></data>
-  <data name="Mode_Desc_Bst" xml:space="preserve"><value>LuaTools 팀이 활발히 관리하는 OpenSteamTools의 오픈 소스 포크입니다. 각종 수정과 새로운 기능을 추가하고 있어요!</value></data>
+  <data name="Mode_Desc_Bst" xml:space="preserve"><value>Sweet Tools 팀이 활발히 관리하는 OpenSteamTools의 오픈 소스 포크입니다. 각종 수정과 새로운 기능을 추가하고 있어요!</value></data>
   <data name="Mode_CloudRedirect_Manage" xml:space="preserve"><value>관리</value></data>
   <data name="Mode_CloudRedirect_LaunchFailed" xml:space="preserve"><value>CloudRedirect를 다운로드하거나 실행할 수 없습니다.</value></data>
   <data name="Mode_Desc_Ost" xml:space="preserve"><value>최신 소스로 빌드한 OpenSteamTools 나이틀리 버전. 최신 수정 사항이 포함되지만 안정성은 낮을 수 있습니다.</value></data>
@@ -168,13 +168,13 @@
   <data name="Mode_CloudRedirect_Toast_Enabled" xml:space="preserve"><value>사용 설정됨 — 적용하려면 Steam을 다시 시작하세요.</value></data>
   <data name="Mode_CloudRedirect_Toast_Disabled" xml:space="preserve"><value>사용 해제됨 — 적용하려면 Steam을 다시 시작하세요.</value></data>
   <data name="Mode_CloudRedirect_Toast_Updated" xml:space="preserve"><value>업데이트됨 — 적용하려면 Steam을 다시 시작하세요.</value></data>
-  <data name="Onboarding_Title" xml:space="preserve"><value>LuaTools 앱에 오신 것을 환영합니다!</value></data>
+  <data name="Onboarding_Title" xml:space="preserve"><value>Sweet Tools 앱에 오신 것을 환영합니다!</value></data>
   <data name="Onboarding_SignIn_Blurb" xml:space="preserve"><value>로그인하여 게임 및 수정 추가 기능을 잠금 해제하세요.</value></data>
   <data name="Onboarding_SignedIn" xml:space="preserve"><value>로그인됨 ✓</value></data>
   <data name="Onboarding_Recommended_Title" xml:space="preserve"><value>권장 설정 적용</value></data>
   <data name="Onboarding_Recommended_Detail" xml:space="preserve"><value>모드: BetterSteamTools · FastFetch 켜짐</value></data>
   <data name="Onboarding_Plugin_Title" xml:space="preserve"><value>우리의 유명한 플러그인 설치</value></data>
-  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Steam 상점 페이지에 "Add via LuaTools" 버튼을 추가합니다.</value></data>
+  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Steam 상점 페이지에 "Add via Sweet Tools" 버튼을 추가합니다.</value></data>
   <data name="Onboarding_Yes" xml:space="preserve"><value>네, 좋아요</value></data>
   <data name="Onboarding_No" xml:space="preserve"><value>아니요, 괜찮아요</value></data>
   <data name="Onboarding_Go" xml:space="preserve"><value>시작할까요!</value></data>
@@ -360,25 +360,25 @@ Steam\config\stplug-in에서 .lua 파일을 삭제합니다.</value></data>
   <data name="Confirm_Replace" xml:space="preserve"><value>교체</value></data>
   <data name="Settings_Section_Startup" xml:space="preserve"><value>시작</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Windows 시작 시 실행</value></data>
-  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>Windows가 시작될 때 LuaTools를 자동으로 실행합니다.</value></data>
+  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>Windows가 시작될 때 Sweet Tools를 자동으로 실행합니다.</value></data>
   <data name="Settings_MinimizeToTray" xml:space="preserve"><value>시스템 트레이로 최소화</value></data>
-  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>창을 닫을 때 종료하지 않고 LuaTools를 시스템 트레이에서 계속 실행합니다. 트레이 아이콘을 두 번 클릭하면 복원됩니다.</value></data>
-  <data name="Tray_Open" xml:space="preserve"><value>LuaTools 열기</value></data>
+  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>창을 닫을 때 종료하지 않고 Sweet Tools를 시스템 트레이에서 계속 실행합니다. 트레이 아이콘을 두 번 클릭하면 복원됩니다.</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>Sweet Tools 열기</value></data>
   <data name="Tray_Exit" xml:space="preserve"><value>종료</value></data>
 
   <data name="Add_FastFetch" xml:space="preserve"><value>FastFetch™️</value></data>
   <data name="Add_FastFetch_Hint" xml:space="preserve"><value>사용 가능한 첫 번째 소스에서 자동 다운로드</value></data>
   <data name="Add_FastFetch_NoSource" xml:space="preserve"><value>이 게임에 사용 가능한 소스를 찾을 수 없습니다</value></data>
   <data name="Add_FastFetch_Via" xml:space="preserve"><value>· 출처: {0}</value></data>
-  <data name="Plugin_Title" xml:space="preserve"><value>LuaTools 플러그인</value></data>
-  <data name="Plugin_Subtitle" xml:space="preserve"><value>LuaTools Steam 플러그인! — 이제 Shittenium 대신 LuaLoader 사용</value></data>
+  <data name="Plugin_Title" xml:space="preserve"><value>Sweet Tools 플러그인</value></data>
+  <data name="Plugin_Subtitle" xml:space="preserve"><value>Sweet Tools Steam 플러그인! — 이제 Shittenium 대신 LuaLoader 사용</value></data>
   <data name="Plugin_CardTitle" xml:space="preserve"><value>상태</value></data>
   <data name="Plugin_Badge_UpdateAvailable" xml:space="preserve"><value>업데이트 있음</value></data>
   <data name="Plugin_Row_InstalledVersion" xml:space="preserve"><value>설치된 버전</value></data>
   <data name="Plugin_Row_LatestVersion" xml:space="preserve"><value>최신 버전</value></data>
   <data name="Plugin_Row_Frontend" xml:space="preserve"><value>프런트엔드</value></data>
   <data name="Plugin_Row_Loader" xml:space="preserve"><value>로더 (winmm.dll)</value></data>
-  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Millennium이 감지되었습니다 — LuaTools가 함께 실행됩니다. 설치하면 Millennium의 이 플러그인 사본이 비활성화되어 LuaLoader만 주입합니다.</value></data>
+  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Millennium이 감지되었습니다 — Sweet Tools가 함께 실행됩니다. 설치하면 Millennium의 이 플러그인 사본이 비활성화되어 LuaLoader만 주입합니다.</value></data>
   <data name="Plugin_Footer" xml:space="preserve"><value>LuaLoader는 Steam 폴더에 설치됩니다. 이 앱은 백엔드로 동작하며, 트레이에서 종료하면 플러그인이 더 이상 작동하지 않습니다!</value></data>
   <data name="Plugin_Btn_Install" xml:space="preserve"><value>설치</value></data>
   <data name="Plugin_Btn_Update" xml:space="preserve"><value>업데이트</value></data>
@@ -409,7 +409,7 @@ Steam\config\stplug-in에서 .lua 파일을 삭제합니다.</value></data>
   <data name="Plugin_Err_VerifyFailed" xml:space="preserve"><value>{0}의 해시 검증에 실패했습니다.</value></data>
   <data name="Plugin_Err_NoLuatoolsJs" xml:space="preserve"><value>plugin.zip에 public/luatools.js가 없습니다.</value></data>
   <data name="Plugin_About_Header" xml:space="preserve"><value>주요 기능</value></data>
-  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>Steam 상점 페이지에 'Add via LuaTools' 버튼을 추가합니다</value></data>
+  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>Steam 상점 페이지에 'Add via Sweet Tools' 버튼을 추가합니다</value></data>
   <data name="Plugin_Feature_AutoUpdate" xml:space="preserve"><value>자동으로 최신 상태를 유지합니다</value></data>
   <data name="Plugin_Feature_Millennium" xml:space="preserve"><value>Millennium 설치 여부와 관계없이 작동합니다</value></data>
   <data name="Drop_LinkHint" xml:space="preserve"><value>…SteamDB / Steam 상점 링크를 끌어다 놓아 게임을 추가할 수도 있습니다.</value></data>
@@ -465,7 +465,7 @@ Steam\config\stplug-in에서 .lua 파일을 삭제합니다.</value></data>
   <data name="Launch_Title" xml:space="preserve"><value>실행 옵션</value></data>
   <data name="Launch_Loading" xml:space="preserve"><value>Steam의 앱 캐시를 읽는 중…</value></data>
   <data name="Launch_NotFound" xml:space="preserve"><value>이 게임에 대한 Steam의 캐시 정보가 아직 없습니다. Steam을 한 번 실행한 뒤 다시 시도하세요.</value></data>
-  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>Steam의 앱 캐시가 이 버전에서 인식할 수 없는 형식입니다({0}). LuaTools를 업데이트하세요.</value></data>
+  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>Steam의 앱 캐시가 이 버전에서 인식할 수 없는 형식입니다({0}). Sweet Tools를 업데이트하세요.</value></data>
   <data name="Launch_ReadFailed" xml:space="preserve"><value>Steam의 앱 캐시를 읽지 못했습니다. {0}</value></data>
   <data name="Launch_ExecutableRequired" xml:space="preserve"><value>모든 실행 옵션에는 실행 파일이 필요합니다.</value></data>
   <data name="Launch_Add" xml:space="preserve"><value>추가</value></data>
@@ -482,7 +482,7 @@ Steam\config\stplug-in에서 .lua 파일을 삭제합니다.</value></data>
   <data name="Launch_InstallPath" xml:space="preserve"><value>설치 경로: {0}</value></data>
   <data name="Launch_SteamRestartNote" xml:space="preserve"><value>변경 사항을 적용하면 Steam이 종료된 뒤 다시 열립니다.</value></data>
   <data name="Launch_Restore" xml:space="preserve"><value>원래대로 복원</value></data>
-  <data name="Launch_Restore_Tip" xml:space="preserve"><value>LuaTools가 변경하기 전, Steam이 제공한 실행 옵션으로 되돌립니다.</value></data>
+  <data name="Launch_Restore_Tip" xml:space="preserve"><value>Sweet Tools가 변경하기 전, Steam이 제공한 실행 옵션으로 되돌립니다.</value></data>
   <data name="Launch_Restore_Title" xml:space="preserve"><value>원래 실행 옵션으로 복원할까요?</value></data>
   <data name="Launch_Restore_Body" xml:space="preserve"><value>실행 옵션을 Steam의 원래 상태로 되돌리고 변경 사항은 삭제됩니다. Steam이 종료된 뒤 다시 열립니다. 계속할까요?</value></data>
   <data name="Launch_NothingToRestore" xml:space="preserve"><value>이 게임은 변경된 적이 없어 복원할 내용이 없습니다.</value></data>

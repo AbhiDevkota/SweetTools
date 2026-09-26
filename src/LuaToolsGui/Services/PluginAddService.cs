@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.IO;
 using LuaToolsGui.Models;
 using LuaToolsGui.Services.Downloads;
@@ -18,7 +18,8 @@ public class PluginAddService(
     SettingsService settings,
     AuthService auth,
     DownloadQueue queue,
-    ManifestJobFactory jobs)
+    ManifestJobFactory jobs,
+    AccountGuardService? accountGuard = null)
 {
     private const string HubcapSourceName = "Sadie (Morrenus)";
 
@@ -59,6 +60,20 @@ public class PluginAddService(
     /// is on, auto-download the best source. FastFetch off leaves the sources for the plugin to pick.</summary>
     public void Start(long appId, string? gameName = null)
     {
+        if (accountGuard?.IsAllowed() == false)
+        {
+            var blockedState = new AddState
+            {
+                AppId = appId,
+                Checking = false,
+                InstallFailed = true,
+                Error = "Disabled for this Steam account."
+            };
+            _states[appId] = blockedState;
+            PluginLog.Log($"PluginAdd.Start appid={appId} blocked: account mismatch or not allowed.");
+            return;
+        }
+
         var state = new AddState
         {
             AppId = appId,
@@ -76,6 +91,12 @@ public class PluginAddService(
     /// <summary>Plugin picked a source (FastFetch-off path) → download+install it.</summary>
     public void Pick(long appId, string sourceName)
     {
+        if (accountGuard?.IsAllowed() == false)
+        {
+            PluginLog.Log($"PluginAdd.Pick appid={appId} blocked: account mismatch or not allowed.");
+            return;
+        }
+
         if (!_states.TryGetValue(appId, out var state))
         {
             PluginLog.Log($"PluginAdd.Pick appid={appId} source='{sourceName}' -> NO STATE (Start not called?)");

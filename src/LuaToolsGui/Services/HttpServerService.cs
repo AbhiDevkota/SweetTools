@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
@@ -33,14 +33,18 @@ public class HttpServerService : IHostedService
     private static readonly string TempDir = Path.Combine(Path.GetTempPath(), "LuaTools", "downloads");
     private const string ManifestBackendUrl = "http://167.235.229.108/check_apis";
 
+    private readonly AccountGuardService? _accountGuard;
+
     public HttpServerService(LuaInstaller installer, SteamService steam, CacheService cache,
-        IServiceProvider services, ILogger<HttpServerService> logger)
+        IServiceProvider services, ILogger<HttpServerService> logger,
+        AccountGuardService? accountGuard = null)
     {
         _installer = installer;
         _steam = steam;
         _cache = cache;
         _services = services;
         _log = logger;
+        _accountGuard = accountGuard ?? (AccountGuardService?)services.GetService(typeof(AccountGuardService));
         Directory.CreateDirectory(TempDir);
     }
 
@@ -236,6 +240,9 @@ public class HttpServerService : IHostedService
     /// usage, FastFetch auto-download). Uses services only; the app window is never touched.</summary>
     private async Task<(int, string)> HandleAdd(long appId, HttpListenerRequest req)
     {
+        if (_accountGuard?.IsAllowed() == false)
+            return (403, JsonErr("This feature is disabled for this Steam account."));
+
         // The store page passes the game name it already displays, so PluginAddService can skip a
         // lua.tools /details lookup. Best-effort: a missing/blank name just falls back to a fetch.
         string? name = null;
@@ -293,6 +300,9 @@ public class HttpServerService : IHostedService
     /// <summary>Plugin picked a source by name (FastFetch-off path) → download+install it headlessly.</summary>
     private async Task<(int, string)> HandleAddSource(long appId, HttpListenerRequest req)
     {
+        if (_accountGuard?.IsAllowed() == false)
+            return (403, JsonErr("This feature is disabled for this Steam account."));
+
         string body;
         using (var reader = new StreamReader(req.InputStream, req.ContentEncoding))
             body = await reader.ReadToEndAsync();
@@ -333,6 +343,9 @@ public class HttpServerService : IHostedService
 
     private async Task<(int, string)> HandleDownload(long appId, HttpListenerRequest req)
     {
+        if (_accountGuard?.IsAllowed() == false)
+            return (403, JsonErr("This feature is disabled for this Steam account."));
+
         string body;
         using (var reader = new StreamReader(req.InputStream, req.ContentEncoding))
             body = await reader.ReadToEndAsync();
@@ -430,6 +443,9 @@ public class HttpServerService : IHostedService
 
     private (int, string) HandleRemove(long appId)
     {
+        if (_accountGuard?.IsAllowed() == false)
+            return (403, JsonErr("This feature is disabled for this Steam account."));
+
         try
         {
             _cache.RemoveLoadedAppId(appId); // also drop it from the "recently added" popup list
@@ -573,28 +589,14 @@ public class HttpServerService : IHostedService
         return (200, Json(new { success = true, apis }));
     }
 
+    public const string SweetToolsIconPngBase64 =
+        "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";
+
+    public const string SweetToolsIconPngDataUrl = "data:image/png;base64," + SweetToolsIconPngBase64;
+
     private (int, string) HandleIcon()
     {
-        try
-        {
-            var iconPath = Path.Combine(AppContext.BaseDirectory, "luatools-icon.png");
-            if (!File.Exists(iconPath))
-            {
-                var alt = Path.Combine(AppContext.BaseDirectory, "icon.ico");
-                if (File.Exists(alt))
-                    iconPath = alt;
-                else
-                    return (200, Json(new { success = false, dataUrl = "" }));
-            }
-            var bytes = File.ReadAllBytes(iconPath);
-            var b64 = Convert.ToBase64String(bytes);
-            var mime = iconPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ? "image/png" : "image/x-icon";
-            return (200, Json(new { success = true, dataUrl = $"data:{mime};base64,{b64}" }));
-        }
-        catch
-        {
-            return (200, Json(new { success = false, dataUrl = "" }));
-        }
+        return (200, Json(new { success = true, dataUrl = SweetToolsIconPngDataUrl }));
     }
 
     // ── Download worker ───────────────────────────────────────────────

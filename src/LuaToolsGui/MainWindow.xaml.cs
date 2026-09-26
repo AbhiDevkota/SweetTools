@@ -1,4 +1,5 @@
-﻿using System.Windows;
+using System.Windows;
+using System.Windows.Threading;
 using LuaToolsGui.Services;
 using LuaToolsGui.ViewModels;
 using LuaToolsGui.Views;
@@ -23,18 +24,33 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         InitializeTrayIcon();
         Closing += OnWindowClosing;
 
+        StateChanged += (_, _) =>
+        {
+            if (WindowState == WindowState.Minimized)
+                Task.Run(() => MemoryOptimizer.TrimMemory(force: true));
+        };
+
         Loaded += async (_, _) =>
         {
             RootNavigation.Navigate(typeof(HomeView));
             try { await viewModel.InitializeAsync(); }
             catch { /* auth restore failed (e.g. offline). UI still loads as guest */ }
+            _ = Task.Delay(4000).ContinueWith(_ => MemoryOptimizer.TrimMemory());
         };
+
+        var trimTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(2) };
+        trimTimer.Tick += (_, _) =>
+        {
+            if (!IsVisible || WindowState == WindowState.Minimized)
+                Task.Run(() => MemoryOptimizer.TrimMemory());
+        };
+        trimTimer.Start();
     }
 
     // ── System tray ─────────────────────────────────────────────────
     private void InitializeTrayIcon()
     {
-        _trayIcon = new System.Windows.Forms.NotifyIcon { Text = "LuaTools", Visible = false };
+        _trayIcon = new System.Windows.Forms.NotifyIcon { Text = "Sweet Tools", Visible = false };
         try
         {
             using var stream = Application.GetResourceStream(new Uri("pack://application:,,,/icon.ico"))?.Stream;
@@ -62,6 +78,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
             e.Cancel = true;
             Hide();
             if (_trayIcon is not null) _trayIcon.Visible = true;
+            Task.Run(() => MemoryOptimizer.TrimMemory(force: true));
             return;
         }
         _trayIcon?.Dispose();
@@ -110,7 +127,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         _trayIcon.Visible = true;
         _trayIcon.ShowBalloonTip(
             5000,
-            "LuaTools",
+            "Sweet Tools",
             message,
             error ? System.Windows.Forms.ToolTipIcon.Error : System.Windows.Forms.ToolTipIcon.Info);
     }

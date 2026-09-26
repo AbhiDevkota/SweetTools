@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -15,6 +16,8 @@ public class CefInjectorService : IHostedService
     private CancellationTokenSource? _cts;
     private string _luatoolsJs = "";
     private string _polyfillJs = "";
+    private string _directAddJs = "";
+    private string _combinedScript = "";
     private readonly HttpClient _http = new() { Timeout = TimeSpan.FromSeconds(30) };
 
     // Persistent CDP WebSocket per tab (keyed by tab id), reused across calls so the fast RPC-drain
@@ -37,10 +40,26 @@ public class CefInjectorService : IHostedService
 
     private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNameCaseInsensitive = true };
 
-    public CefInjectorService(SteamService steam, ILogger<CefInjectorService> logger)
+    private readonly CurrentSteamUserService _currentUser;
+    private readonly SettingsService _settings;
+
+    public CefInjectorService(
+        SteamService steam,
+        ILogger<CefInjectorService> logger,
+        CurrentSteamUserService currentUser,
+        SettingsService settings)
     {
         _steam = steam;
         _log = logger;
+        _currentUser = currentUser;
+        _settings = settings;
+    }
+
+    private bool IsAccountAllowed()
+    {
+        string allowed = _settings.AllowedSteamId;
+        if (string.IsNullOrWhiteSpace(allowed)) return false;
+        return _currentUser.IsCurrentUser(allowed);
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -62,12 +81,24 @@ public class CefInjectorService : IHostedService
     /// next poll cycle (~1s) just picks up the new content, no page reload needed.</summary>
     public async Task ReloadPluginFilesAsync()
     {
+        if (!IsAccountAllowed())
+        {
+            _luatoolsJs = "";
+            _polyfillJs = "";
+            _directAddJs = "";
+            _log.LogInformation("CEF injector disabled: active Steam account is not allowed");
+            return;
+        }
+
         var ct = _cts?.Token ?? CancellationToken.None;
+
+        PluginInstallerService.ApplyBrandingToFrontend();
 
         var jsPath = FindLuaToolsJs();
         if (jsPath is not null && File.Exists(jsPath))
         {
             _luatoolsJs = await File.ReadAllTextAsync(jsPath, ct);
+            _luatoolsJs = BrandTransformScript(_luatoolsJs);
             _log.LogInformation("Loaded luatools.js ({Length} bytes)", _luatoolsJs.Length);
         }
         else
@@ -85,6 +116,9 @@ public class CefInjectorService : IHostedService
         {
             _polyfillJs = BuildInlinePolyfill();
         }
+
+        _directAddJs = BuildDirectAddJs();
+        _combinedScript = _polyfillJs + "\n" + _luatoolsJs + "\n" + _directAddJs;
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
@@ -112,6 +146,24 @@ public class CefInjectorService : IHostedService
         {
             try
             {
+                if (!IsAccountAllowed())
+                {
+                    await Task.Delay(1000, ct);
+                    continue;
+                }
+
+                if (!SteamService.IsSteamRunning())
+                {
+                    if (storeTabs.Count > 0)
+                    {
+                        foreach (var ws in _sockets.Values) try { ws.Dispose(); } catch { }
+                        _sockets.Clear();
+                        storeTabs.Clear();
+                    }
+                    await Task.Delay(2000, ct);
+                    continue;
+                }
+
                 // ── Slow cadence (~1s): discover store tabs, ensure luatools.js is injected ──
                 if (tick % InjectEveryTicks == 0)
                 {
@@ -130,7 +182,9 @@ public class CefInjectorService : IHostedService
                         // injected by tab ID" is the wrong signal. Check liveness in the CURRENT context every
                         // cycle instead (window.__LuaToolsReady, set as the last statement of luatools.js's
                         // main IIFE) and re-inject whenever it's gone.
-                        var script = _polyfillJs + "\n" + _luatoolsJs;
+                        var script = string.IsNullOrEmpty(_combinedScript)
+                            ? (_polyfillJs + "\n" + _luatoolsJs + "\n" + _directAddJs)
+                            : _combinedScript;
                         var live = new List<(string, string)>();
                         var seen = new HashSet<string>();
                         foreach (var tab in tabs)
@@ -169,7 +223,8 @@ public class CefInjectorService : IHostedService
                     await ProcessSingleTab(id, ws, ct);
 
                 tick++;
-                await Task.Delay(TickMs, ct);
+                int delay = storeTabs.Count > 0 ? TickMs : 500;
+                await Task.Delay(delay, ct);
             }
             catch (OperationCanceledException) { break; }
             catch (Exception ex)
@@ -427,7 +482,7 @@ function ltCall(p,m,a){
 }
 if(real&&typeof real.callServerMethod==='function'){
   var realCall=real.callServerMethod.bind(real);
-  real.callServerMethod=function(p,m,a){return p==='luatools'?ltCall(p,m,a):realCall(p,m,a)};
+  real.callServerMethod=function(p,m,a){return (p==='luatools'||p==='sweettools'||p==='steam tools')?ltCall(p,m,a):realCall(p,m,a)};
   real._pending=pending;
   real._readyResponses=ready;
   window.Millennium=real;
@@ -436,6 +491,287 @@ if(real&&typeof real.callServerMethod==='function'){
 }
 })();
 ";
+    }
+
+    /// <summary>
+    /// Generates the direct add injection script. Injects a native Steam-styled purchase block
+    /// directly on top of the "Buy <Game>" area (#game_area_purchase) on Steam game store pages,
+    /// and an inline "+ Add via LuaTools" button next to "Add to Cart".
+    /// </summary>
+    private string BuildDirectAddJs()
+    {
+        return @"
+(function () {
+  if (window.__LuaToolsDirectAddInjected) return;
+  window.__LuaToolsDirectAddInjected = true;
+
+  // Hide any legacy/sidebar 'Add via LuaTools' buttons so only 'Add to Library' appears
+  if (!document.getElementById('luatools-clean-styles')) {
+    var cleanStyle = document.createElement('style');
+    cleanStyle.id = 'luatools-clean-styles';
+    cleanStyle.textContent = '.apphub_OtherSiteInfo .luatools-button, .steamdb-buttons .luatools-button, [data-steamdb-buttons] .luatools-button { display: none !important; }';
+    document.head.appendChild(cleanStyle);
+  }
+
+  var lastCheckTime = 0;
+  function initDirectAdd() {
+    var now = Date.now();
+    if (now - lastCheckTime < 250) return;
+    lastCheckTime = now;
+
+    var url = window.location.href;
+    var match = url.match(/https:\/\/store\.steampowered\.com\/app\/(\d+)/i);
+    if (!match) return;
+
+    var appid = parseInt(match[1], 10);
+    if (isNaN(appid)) return;
+
+    var purchaseArea = document.querySelector('#game_area_purchase') || document.querySelector('.game_area_purchase');
+    if (!purchaseArea) return;
+
+    var existing = document.getElementById('luatools-direct-purchase-block');
+    if (existing && existing.getAttribute('data-appid') === String(appid)) {
+      return;
+    }
+    if (existing) {
+      existing.remove();
+    }
+
+    var gameName = '';
+    var nameEl = document.querySelector('.apphub_AppName, #appHubAppName');
+    if (nameEl && nameEl.textContent) {
+      gameName = nameEl.textContent.trim();
+    }
+    if (!gameName) {
+      gameName = (document.title || '').replace(/\s+on Steam\s*$/i, '').trim();
+    }
+    if (!gameName) gameName = 'this game';
+
+    var wrapper = document.createElement('div');
+    wrapper.id = 'luatools-direct-purchase-block';
+    wrapper.className = 'game_area_purchase_game_wrapper luatools-direct-wrapper';
+    wrapper.setAttribute('data-appid', String(appid));
+    wrapper.style.marginBottom = '16px';
+
+    var block = document.createElement('div');
+    block.className = 'game_area_purchase_game';
+    block.style.position = 'relative';
+    block.style.minHeight = '48px';
+    block.style.padding = '16px 200px 16px 16px';
+    block.style.background = 'linear-gradient(135deg, rgba(24, 40, 56, 0.95) 0%, rgba(16, 26, 38, 0.95) 100%)';
+    block.style.border = '1px solid rgba(102, 192, 244, 0.35)';
+    block.style.borderRadius = '4px';
+    block.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.5)';
+
+    var platform = document.createElement('div');
+    platform.className = 'game_area_purchase_platform';
+    platform.style.marginBottom = '4px';
+    platform.innerHTML = '<span class=""platform_img win""></span>';
+    block.appendChild(platform);
+
+    var h1 = document.createElement('h1');
+    h1.style.display = 'flex';
+    h1.style.alignItems = 'center';
+    h1.style.gap = '8px';
+    h1.style.fontSize = '21px';
+    h1.style.color = '#ffffff';
+    h1.style.fontWeight = 'normal';
+    h1.style.margin = '0';
+    h1.style.lineHeight = '28px';
+
+    var titleText = document.createElement('span');
+    titleText.textContent = 'Add ' + gameName + ' via SweetTools';
+    h1.appendChild(titleText);
+    block.appendChild(h1);
+
+    var action = document.createElement('div');
+    action.className = 'game_purchase_action';
+    action.style.position = 'absolute';
+    action.style.right = '16px';
+    action.style.top = '50%';
+    action.style.transform = 'translateY(-50%)';
+    action.style.zIndex = '5';
+    action.style.margin = '0';
+
+    var actionBg = document.createElement('div');
+    actionBg.className = 'game_purchase_action_bg';
+    actionBg.style.background = '#000000';
+    actionBg.style.borderRadius = '2px';
+    actionBg.style.padding = '0';
+    actionBg.style.display = 'flex';
+    actionBg.style.alignItems = 'center';
+
+    var btnContainer = document.createElement('div');
+    btnContainer.className = 'btn_addtocart';
+    btnContainer.style.margin = '0';
+
+    var addBtn = document.createElement('a');
+    addBtn.href = '#';
+    addBtn.className = 'btn_green_steamui btn_medium luatools-button luatools-direct-add-btn Focusable';
+    addBtn.title = 'Add via SweetTools';
+    addBtn.style.padding = '0 18px';
+    addBtn.style.lineHeight = '32px';
+    addBtn.style.height = '32px';
+    addBtn.style.fontSize = '15px';
+    addBtn.style.cursor = 'pointer';
+    addBtn.style.display = 'inline-block';
+    addBtn.style.textDecoration = 'none';
+
+    var btnSpan = document.createElement('span');
+    btnSpan.textContent = 'Add via SweetTools';
+    addBtn.appendChild(btnSpan);
+    btnContainer.appendChild(addBtn);
+    actionBg.appendChild(btnContainer);
+    action.appendChild(actionBg);
+    block.appendChild(action);
+
+    wrapper.appendChild(block);
+
+    // Insert right at the top of the purchase area (on top of Buy <Game>)
+    purchaseArea.prepend(wrapper);
+
+    function updateInstalledState() {
+      btnSpan.textContent = 'In Library';
+      addBtn.className = 'btn_blue_steamui btn_medium Focusable';
+      addBtn.title = 'In Library (Click to Restart Steam)';
+      addBtn.onclick = function (e) {
+        e.preventDefault();
+        if (window.Millennium && typeof window.Millennium.callServerMethod === 'function') {
+          window.Millennium.callServerMethod('luatools', 'RestartSteam', {});
+        }
+      };
+    }
+
+    addBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (typeof window.startLuaToolsAdd === 'function') {
+        window.startLuaToolsAdd(appid, addBtn);
+      } else if (window.Millennium && typeof window.Millennium.callServerMethod === 'function') {
+        btnSpan.textContent = 'Adding...';
+        window.Millennium.callServerMethod('luatools', 'StartLuaToolsAdd', {
+          appid: appid,
+          name: gameName
+        }).catch(function () {});
+      }
+      var pollCount = 0;
+      var pollInt = setInterval(function () {
+        pollCount++;
+        if (window.Millennium && typeof window.Millennium.callServerMethod === 'function') {
+          window.Millennium.callServerMethod('luatools', 'HasLuaToolsForApp', { appid: appid })
+            .then(function (res) {
+              var p = typeof res === 'string' ? JSON.parse(res) : res;
+              if (p && p.success && p.exists === true) {
+                clearInterval(pollInt);
+                updateInstalledState();
+              }
+            }).catch(function () {});
+        }
+        if (pollCount > 60) clearInterval(pollInt);
+      }, 1000);
+    });
+
+    // Check if already in library
+    if (window.Millennium && typeof window.Millennium.callServerMethod === 'function') {
+      window.Millennium.callServerMethod('luatools', 'HasLuaToolsForApp', { appid: appid })
+        .then(function (res) {
+          var payload = typeof res === 'string' ? JSON.parse(res) : res;
+          if (payload && payload.success && payload.exists === true) {
+            updateInstalledState();
+          }
+        }).catch(function () {});
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDirectAdd);
+  } else {
+    initDirectAdd();
+  }
+
+  try {
+    var observer = new MutationObserver(function () {
+      initDirectAdd();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  } catch (_) {}
+
+  var curUrl = window.location.href;
+  setInterval(function () {
+    if (window.location.href !== curUrl) {
+      curUrl = window.location.href;
+      initDirectAdd();
+    }
+  }, 1000);
+})();
+";
+    }
+
+    /// <summary>
+    /// Transforms the injected store-page script to use SweetTools branding, the new icon,
+    /// and replaces "LuaTools" references with "Steam Tools" and "Add via SweetTools".
+    /// </summary>
+    public static string BrandTransformScript(string js)
+    {
+        if (string.IsNullOrEmpty(js)) return js;
+
+        // 1. Direct SweetTools PNG icon injection:
+        // Replace relative icon paths ("LuaTools/luatools-icon.png") with embedded SweetTools PNG data URL
+        // so images load synchronously without making a 404-failing HTTP request in Steam CEF.
+        js = js.Replace("\"LuaTools/luatools-icon.png\"", "\"" + HttpServerService.SweetToolsIconPngDataUrl + "\"");
+        js = js.Replace("'LuaTools/luatools-icon.png'", "\"" + HttpServerService.SweetToolsIconPngDataUrl + "\"");
+
+        // Neutralize cogwheel/star fallback that replaced headerBtn.innerHTML on network error
+        js = Regex.Replace(js, @"img\.onerror\s*=\s*function\s*\(\)\s*\{[\s\S]*?headerBtn\.innerHTML\s*=[\s\S]*?<\/svg>';?\s*\};?", "img.onerror = null;");
+        js = Regex.Replace(js, @"titleIcon\.onerror\s*=\s*function\s*\(\)\s*\{[\s\S]*?\};?", "titleIcon.onerror = null;");
+
+        // Replace old purple icon or any previously injected icon dataUrl with the valid SweetTools PNG dataUrl
+        js = Regex.Replace(js, @"data:image/png;base64,[A-Za-z0-9+/=]+", HttpServerService.SweetToolsIconPngDataUrl);
+
+        // 2. Replace button and action labels (unescaped and JSON-escaped quotes)
+        js = Regex.Replace(js, @"(?<=\\?[""'])Add via LuaTools(?=\\?[""'])", "Add via SweetTools");
+        js = Regex.Replace(js, @"(?<=\\?[""'])Remove via LuaTools(?=\\?[""'])", "Remove via SweetTools");
+        js = Regex.Replace(js, @"(?<=\\?[""'])Games via LuaTools(?=\\?[""'])", "Games via SweetTools");
+
+        // 3. Replace translation titles in JSON dictionaries (covers all locales with escaped quotes)
+        js = Regex.Replace(js, @"(?i)(menu\.title\\?"":\\?"")(?:LuaTools|LooaToolz)\s*[\u00B7\u2022•·A\s-]*", "$1Steam Tools • ");
+        js = Regex.Replace(js, @"(?i)(settings\.title\\?"":\\?"")(?:LuaTools|LooaToolz)\s*[\u00B7\u2022•·A\s-]*", "$1Steam Tools • ");
+        js = Regex.Replace(js, @"(?i)(menu\.removeLuaTools\\?"":\\?"")(?:Remove via LuaTools|Remove LuaTools)", "$1Remove via SweetTools");
+        js = Regex.Replace(js, @"(?i)(\\?""Installed LuaTools\\?"")", "\\\"Installed Steam Tools\\\"");
+        js = Regex.Replace(js, @"common\.appName\\?"":\\?""LuaTools\\?""", "common.appName\\\":\\\"Sweet Tools\\\"");
+
+        // 4. Replace standalone and title strings in JS code
+        js = js.Replace("LuaTools •", "Steam Tools •");
+        js = js.Replace("LuaTools \\u2022", "Steam Tools \\u2022");
+        js = js.Replace("LuaTools ·", "Steam Tools •");
+        js = js.Replace("LuaTools \u00B7", "Steam Tools •");
+        js = js.Replace("LuaTools \u2022", "Steam Tools •");
+        js = js.Replace("LuaTools A", "Steam Tools •");
+        js = js.Replace("LuaTools Menu", "Steam Tools Menu");
+        js = js.Replace("LuaTools Settings", "Steam Tools Settings");
+
+        js = Regex.Replace(js, @"t\(\s*""menu\.title""\s*,\s*""[^""]+""\s*\)", "t(\"menu.title\", \"Steam Tools • Menu\")");
+        js = Regex.Replace(js, @"t\(\s*""settings\.title""\s*,\s*""[^""]+""\s*\)", "t(\"settings.title\", \"Steam Tools Settings\")");
+        js = Regex.Replace(js, @"LuaTools\s*[\u00B7\u2022\u00A0\uFFFD•·A\s-]+\s*Menu\b", "Steam Tools • Menu");
+        js = Regex.Replace(js, @"LuaTools\s*[\u00B7\u2022\u00A0\uFFFD•·A\s-]+\s*Settings\b", "Steam Tools Settings");
+        js = Regex.Replace(js, @"LuaTools\s*[\u00B7\u2022\u00A0\uFFFD•·A\s-]+\s*Fixes Menu\b", "Steam Tools • Fixes Menu");
+        js = Regex.Replace(js, @"LuaTools\s*[\u00B7\u2022\u00A0\uFFFD•·A\s-]+\s*AIO Fixes Menu\b", "Steam Tools • AIO Fixes Menu");
+        js = Regex.Replace(js, @"LuaTools\s*[\u00B7\u2022\u00A0\uFFFD•·A\s-]+\s*Added Games\b", "Steam Tools • Added Games");
+
+        // 5. Replace alert and confirm dialog titles
+        js = js.Replace("ShowLuaToolsAlert(\"LuaTools\",", "ShowLuaToolsAlert(\"Sweet Tools\",");
+        js = js.Replace("showLuaToolsConfirm(\n      \"LuaTools\",", "showLuaToolsConfirm(\n      \"Sweet Tools\",");
+        js = js.Replace("showLuaToolsConfirm(\"LuaTools\",", "showLuaToolsConfirm(\"Sweet Tools\",");
+        js = js.Replace("ShowLuaToolsAlert('LuaTools',", "ShowLuaToolsAlert('Sweet Tools',");
+        js = js.Replace("showLuaToolsConfirm('LuaTools',", "showLuaToolsConfirm('Sweet Tools',");
+
+        // 6. Tooltips, attributes, and labels
+        js = js.Replace("aria-label=\"LuaTools\"", "aria-label=\"Steam Tools\"");
+        js = js.Replace("alt=\"LuaTools\"", "alt=\"Steam Tools\"");
+        js = js.Replace("alt = \"LuaTools\"", "alt = \"Steam Tools\"");
+        js = js.Replace("\"LuaTools Settings\"", "\"Steam Tools Settings\"");
+        js = js.Replace("'LuaTools Settings'", "'Steam Tools Settings'");
+
+        return js;
     }
 }
 

@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Threading;
 using LuaToolsGui.Models;
 using LuaToolsGui.Services;
@@ -16,6 +16,7 @@ public partial class App : Application
     // True when the app was cold-started solely to run a silent install AND MinimizeToTray is off,
     // which means we auto-exit after the balloon so we don't leave a ghost tray icon behind.
     private bool _exitAfterSilentInstall;
+    private readonly SemaphoreSlim _accountSwitchGate = new(1, 1);
 
     public App()
     {
@@ -25,6 +26,7 @@ public partial class App : Application
                 services.AddSingleton<SettingsService>();
                 services.AddSingleton<CacheService>();
                 services.AddSingleton<SteamService>();
+                services.AddSingleton<CurrentSteamUserService>();
                 services.AddSingleton<SteamAppListCache>();
                 services.AddSingleton<SteamAppInfoCache>();
                 services.AddSingleton<CoverCache>();
@@ -46,6 +48,7 @@ public partial class App : Application
                 services.AddSingleton<DepotCacheMigrationService>();
                 services.AddSingleton<AppliedFixIndexService>();
                 services.AddSingleton<UnlockerService>();
+                services.AddSingleton<AccountGuardService>();
                 services.AddSingleton<PluginInstallerService>();
                 services.AddTransient<DropInstallViewModel>(); // one per page (Home, Add)
                 services.AddSingleton<AuthService>();
@@ -205,13 +208,20 @@ public partial class App : Application
             try
             {
                 var installer = _host.Services.GetRequiredService<PluginInstallerService>();
+                if (!installer.IsAllowedForCurrentAccount())
+                {
+                    if (installer.HasSteamPluginFiles())
+                        await installer.CleanSteamPluginAsync();
+                    return;
+                }
+
                 var st = await installer.GetStatusAsync(force: true);
                 if (st.UpdateAvailable)
                 {
                     if (!st.DllMatches)
                     {
                         var t = _host.Services.GetRequiredService<ToastService>();
-                        Dispatcher.Invoke(() => t.Show("LuaTools", "Updating plugin. Steam will restart."));
+                        Dispatcher.Invoke(() => t.Show("Sweet Tools", "Updating plugin. Steam will restart."));
                     }
                     await installer.InstallAsync(progress: null);
                 }
@@ -325,6 +335,62 @@ public partial class App : Application
         var toast = _host.Services.GetRequiredService<ToastService>();
         toast.Attach(window.RootSnackbar); // wire the presenter before anything can raise a toast
 
+        var currentUser = _host.Services.GetRequiredService<CurrentSteamUserService>();
+        currentUser.ActiveAccountChanged += async newSteamId =>
+        {
+            await _accountSwitchGate.WaitAsync();
+
+            try
+            {
+                var installer = _host.Services.GetRequiredService<PluginInstallerService>();
+                var settings = _host.Services.GetRequiredService<SettingsService>();
+
+                if (!installer.IsAllowedForCurrentAccount())
+                {
+                    if (installer.HasSteamPluginFiles())
+                    {
+                        await installer.PurgeAllSteamModificationsAsync(restartSteam: true);
+                    }
+
+                    bool hasAllowed = !string.IsNullOrWhiteSpace(settings.AllowedSteamId);
+                    if (hasAllowed)
+                    {
+                        toast.ShowAction(
+                            "Account Mismatch",
+                            $"Switched to Steam account {newSteamId}. LuaTools is restricted to account {settings.AllowedSteamId}. Steam modifications have been cleaned for vanilla play.",
+                            "Open Settings",
+                            () => Dispatcher.Invoke(window.NavigateToSettings),
+                            error: true);
+                    }
+                    else
+                    {
+                        toast.ShowAction(
+                            "Account Configuration Required",
+                            "No Steam account is locked. Go to Settings and lock an account to enable plugins.",
+                            "Open Settings",
+                            () => Dispatcher.Invoke(window.NavigateToSettings),
+                            error: false);
+                    }
+                }
+                else
+                {
+                    if (!installer.HasSteamPluginFiles())
+                    {
+                        await installer.RestoreAllSteamModificationsAsync(restartSteam: true);
+                    }
+
+                    toast.Show(
+                        "Allowed Account Active",
+                        $"Switched to allowed Steam account {newSteamId}. Steam modifications have been restored.",
+                        error: false);
+                }
+            }
+            finally
+            {
+                _accountSwitchGate.Release();
+            }
+        };
+
         // Language changed → persistent toast offering an immediate relaunch.
         settingsVm.RequestRestartPrompt = () => Dispatcher.Invoke(() =>
             toast.ShowAction(
@@ -336,6 +402,9 @@ public partial class App : Application
         // App updates now apply silently via RunUpdateFlowAsync (restart-on-Steam-open, unconditionally
         // and before any plugin update), so no "Restart" prompt toast.
         var download = _host.Services.GetRequiredService<DownloadViewModel>();
+        var accountGuard = _host.Services.GetRequiredService<AccountGuardService>();
+        accountGuard.RequestOpenSettings = () => Dispatcher.Invoke(window.NavigateToSettings);
+        download.RequestOpenSettings = () => Dispatcher.Invoke(window.NavigateToSettings);
 
         var manage = _host.Services.GetRequiredService<ManageViewModel>();
 
@@ -467,6 +536,44 @@ public partial class App : Application
         if (url is not null)
             HandleProtocolUrl(url);
 
+        var pluginInstaller = _host.Services.GetRequiredService<PluginInstallerService>();
+        if (!pluginInstaller.IsAllowedForCurrentAccount())
+        {
+            if (pluginInstaller.HasSteamPluginFiles())
+            {
+                await pluginInstaller.CleanSteamPluginAsync();
+            }
+
+            var settings = _host.Services.GetRequiredService<SettingsService>();
+            bool hasAllowedConfigured = !string.IsNullOrWhiteSpace(settings.AllowedSteamId);
+
+            if (Program.SessionTrayLock || silentStartup)
+            {
+                Shutdown();
+                return;
+            }
+
+            if (hasAllowedConfigured)
+            {
+                toast.ShowAction(
+                    "Account Mismatch",
+                    $"Sweet Tools is restricted to Steam account {settings.AllowedSteamId}. Steam modifications have been cleaned for vanilla play.",
+                    "Open Settings",
+                    () => window.NavigateToSettings(),
+                    error: true);
+                return;
+            }
+            else
+            {
+                toast.ShowAction(
+                    "Account Configuration Required",
+                    "No Steam account is locked. Go to Settings and select an account to enable plugins.",
+                    "Open Settings",
+                    () => window.NavigateToSettings(),
+                    error: false);
+            }
+        }
+
         // Background, non-blocking Steam-open update flow (app + plugin), but ONLY in the loader context
         // (--tray-locked). A manual / protocol / silent-install launch skips it, so the app never
         // auto-updates or restarts mid-manual-use. It only happens when Steam launches us. (Velopack only
@@ -477,8 +584,8 @@ public partial class App : Application
         // Background, non-blocking key donation (runs only when the setting is on; silent + deduped).
         _ = _host.Services.GetRequiredService<DonateKeysService>().SendPendingKeysIfEnabledAsync();
 
-        // Anonymous app-launch ping (Umami). Fire-and-forget; never blocks.
-        _ = _host.Services.GetRequiredService<AnalyticsService>().TrackAppLaunchAsync();
+        // Telemetry ping removed.
+        // _ = _host.Services.GetRequiredService<AnalyticsService>().TrackAppLaunchAsync();
 
         // Warm the hardware-appid blacklist (refreshes from GitHub if the cache is stale). Fire-and-forget.
         _ = _host.Services.GetRequiredService<HardwareAppIdService>().EnsureFreshAsync();

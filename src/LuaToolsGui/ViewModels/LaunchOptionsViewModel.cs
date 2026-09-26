@@ -75,6 +75,7 @@ public partial class LaunchOptionsViewModel : ObservableObject
 {
     private readonly LaunchOptionsService _launch;
     private readonly ToastService _toast;
+    private readonly AccountGuardService? _accountGuard;
 
     private LaunchState? _state;
 
@@ -128,10 +129,11 @@ public partial class LaunchOptionsViewModel : ObservableObject
     /// <summary>Set by the view so the dialog can close itself.</summary>
     public Action<bool>? CloseWith { get; set; }
 
-    public LaunchOptionsViewModel(LaunchOptionsService launch, ToastService toast)
+    public LaunchOptionsViewModel(LaunchOptionsService launch, ToastService toast, AccountGuardService? accountGuard = null)
     {
         _launch = launch;
         _toast = toast;
+        _accountGuard = accountGuard;
         Entries.CollectionChanged += OnEntriesChanged;
     }
 
@@ -275,6 +277,7 @@ public partial class LaunchOptionsViewModel : ObservableObject
     [RelayCommand]
     private void Save()
     {
+        if (_accountGuard?.EnsureAllowed("Editing launch options") == false) return;
         if (_state is null) return;
 
         var desired = Entries.Select(e => e.ToOption()).ToList();
@@ -300,6 +303,7 @@ public partial class LaunchOptionsViewModel : ObservableObject
     [RelayCommand]
     private void Restore()
     {
+        if (_accountGuard?.EnsureAllowed("Restoring launch options") == false) return;
         if (_launch.StageRestore((int)AppId) is not { } original)
         {
             _toast.Show(Resources.Strings.Launch_Title, Resources.Strings.Launch_NothingToRestore, error: true);

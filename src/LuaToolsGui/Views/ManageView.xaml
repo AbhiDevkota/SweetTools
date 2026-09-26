@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="LuaToolsGui.Views.ManageView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -155,7 +155,8 @@
             Visibility="{Binding ShowItems, Converter={StaticResource BoolToVis}}"
             VirtualizingPanel.CacheLengthUnit="Page"
             VirtualizingPanel.ScrollUnit="Pixel"
-            VirtualizingPanel.VirtualizationMode="Standard">
+            VirtualizingPanel.VirtualizationMode="Recycling"
+            VirtualizingPanel.IsVirtualizing="True">
             <vwp:VirtualizingItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <vwp:VirtualizingWrapPanel

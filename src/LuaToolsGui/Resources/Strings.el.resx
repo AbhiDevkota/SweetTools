@@ -126,7 +126,7 @@
   <data name="Lang_Changed_Title" xml:space="preserve"><value>Η γλώσσα άλλαξε</value></data>
   <data name="Lang_Changed_Body" xml:space="preserve"><value>Επανεκκινήστε την εφαρμογή για να εφαρμοστεί η νέα γλώσσα.</value></data>
   <data name="Lang_Changed_Restart" xml:space="preserve"><value>Επανεκκίνηση τώρα</value></data>
-  <data name="Home_Welcome" xml:space="preserve"><value>Καλώς ήρθατε στο LuaTools</value></data>
+  <data name="Home_Welcome" xml:space="preserve"><value>Καλώς ήρθατε στο Sweet Tools</value></data>
   <data name="Home_LuasOnBoard" xml:space="preserve"><value>Lua στη συλλογή</value></data>
   <data name="Home_LastAdded" xml:space="preserve"><value>ΤΕΛΕΥΤΑΙΑ ΠΡΟΣΘΗΚΗ</value></data>
   <data name="Home_PluginStatus" xml:space="preserve"><value>Κατάσταση προσθέτου</value></data>
@@ -141,14 +141,14 @@
   <data name="Home_NoModeSelected" xml:space="preserve"><value>Δεν έχει επιλεγεί λειτουργία</value></data>
   <data name="Home_ModeIs" xml:space="preserve"><value>Λειτουργία · {0}</value></data>
   <data name="Mode_Title" xml:space="preserve"><value>Λειτουργία</value></data>
-  <data name="Mode_Subtitle" xml:space="preserve"><value>Αλλάξτε το backend που χρησιμοποιείται για το ξεκλείδωμα παιχνιδιών που προστέθηκαν με το LuaTools — μόνο ένα ενεργό κάθε φορά.</value></data>
+  <data name="Mode_Subtitle" xml:space="preserve"><value>Αλλάξτε το backend που χρησιμοποιείται για το ξεκλείδωμα παιχνιδιών που προστέθηκαν με το Sweet Tools — μόνο ένα ενεργό κάθε φορά.</value></data>
   <data name="Mode_CheckForUpdates" xml:space="preserve"><value>Έλεγχος για ενημερώσεις</value></data>
   <data name="Mode_Active" xml:space="preserve"><value>ΕΝΕΡΓΟ</value></data>
   <data name="Mode_Recommended" xml:space="preserve"><value>ΣΥΝΙΣΤΑΤΑΙ</value></data>
   <data name="Mode_Confirm_Body" xml:space="preserve"><value>Το Steam θα κλείσει ώστε να μπορούν να αλλάξουν τα αρχεία του, και έπειτα θα επανεκκινηθεί αυτόματα. Όλα τα παιχνίδια ή οι λήψεις που εκτελούνται θα σταματήσουν.</value></data>
   <data name="Mode_Cancel" xml:space="preserve"><value>Ακύρωση</value></data>
   <data name="Mode_CloseSteamContinue" xml:space="preserve"><value>Κλείσιμο Steam και συνέχεια</value></data>
-  <data name="Mode_Desc_Bst" xml:space="preserve"><value>Ένα fork ανοιχτού κώδικα του OpenSteamTools που συντηρείται ενεργά από την ομάδα του LuaTools. Με διορθώσεις και νέες λειτουργίες!</value></data>
+  <data name="Mode_Desc_Bst" xml:space="preserve"><value>Ένα fork ανοιχτού κώδικα του OpenSteamTools που συντηρείται ενεργά από την ομάδα του Sweet Tools. Με διορθώσεις και νέες λειτουργίες!</value></data>
   <data name="Mode_CloudRedirect_Manage" xml:space="preserve"><value>Διαχείριση</value></data>
   <data name="Mode_CloudRedirect_LaunchFailed" xml:space="preserve"><value>Δεν ήταν δυνατή η λήψη ή η εκκίνηση του CloudRedirect.</value></data>
   <data name="Mode_Desc_Ost" xml:space="preserve"><value>Νυχτερινή έκδοση του OpenSteamTools από τον πιο πρόσφατο κώδικα. Οι νεότερες διορθώσεις, αλλά ίσως λιγότερο σταθερή.</value></data>
@@ -168,13 +168,13 @@
   <data name="Mode_CloudRedirect_Toast_Enabled" xml:space="preserve"><value>Ενεργοποιήθηκε — επανεκκινήστε το Steam για εφαρμογή.</value></data>
   <data name="Mode_CloudRedirect_Toast_Disabled" xml:space="preserve"><value>Απενεργοποιήθηκε — επανεκκινήστε το Steam για εφαρμογή.</value></data>
   <data name="Mode_CloudRedirect_Toast_Updated" xml:space="preserve"><value>Ενημερώθηκε — επανεκκινήστε το Steam για εφαρμογή.</value></data>
-  <data name="Onboarding_Title" xml:space="preserve"><value>Καλώς ήρθατε στην εφαρμογή LuaTools!</value></data>
+  <data name="Onboarding_Title" xml:space="preserve"><value>Καλώς ήρθατε στην εφαρμογή Sweet Tools!</value></data>
   <data name="Onboarding_SignIn_Blurb" xml:space="preserve"><value>Συνδεθείτε για να ξεκλειδώσετε την προσθήκη παιχνιδιών και διορθώσεων.</value></data>
   <data name="Onboarding_SignedIn" xml:space="preserve"><value>Συνδεθήκατε ✓</value></data>
   <data name="Onboarding_Recommended_Title" xml:space="preserve"><value>Εφαρμογή προτεινόμενων ρυθμίσεων</value></data>
   <data name="Onboarding_Recommended_Detail" xml:space="preserve"><value>Λειτουργία: BetterSteamTools · FastFetch ενεργό</value></data>
   <data name="Onboarding_Plugin_Title" xml:space="preserve"><value>Εγκατάσταση του διάσημου πρόσθετού μας</value></data>
-  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Προσθέτει το κουμπί «Add via LuaTools» στις σελίδες του Steam Store.</value></data>
+  <data name="Onboarding_Plugin_Detail" xml:space="preserve"><value>Προσθέτει το κουμπί «Add via Sweet Tools» στις σελίδες του Steam Store.</value></data>
   <data name="Onboarding_Yes" xml:space="preserve"><value>Ναι, παρακαλώ</value></data>
   <data name="Onboarding_No" xml:space="preserve"><value>Όχι, ευχαριστώ</value></data>
   <data name="Onboarding_Go" xml:space="preserve"><value>Πάμε!</value></data>
@@ -360,25 +360,25 @@
   <data name="Confirm_Replace" xml:space="preserve"><value>Αντικατάσταση</value></data>
   <data name="Settings_Section_Startup" xml:space="preserve"><value>ΕΚΚΊΝΗΣΗ</value></data>
   <data name="Settings_StartWithWindows" xml:space="preserve"><value>Εκκίνηση με τα Windows</value></data>
-  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>Εκκινεί το LuaTools αυτόματα κατά την εκκίνηση των Windows.</value></data>
+  <data name="Settings_StartWithWindows_Hint" xml:space="preserve"><value>Εκκινεί το Sweet Tools αυτόματα κατά την εκκίνηση των Windows.</value></data>
   <data name="Settings_MinimizeToTray" xml:space="preserve"><value>Ελαχιστοποίηση στην περιοχή ειδοποιήσεων</value></data>
-  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>Όταν κλείνετε το παράθυρο, διατηρήστε το LuaTools σε λειτουργία στην περιοχή ειδοποιήσεων αντί να γίνεται έξοδος. Κάντε διπλό κλικ στο εικονίδιο για επαναφορά.</value></data>
-  <data name="Tray_Open" xml:space="preserve"><value>Άνοιγμα του LuaTools</value></data>
+  <data name="Settings_MinimizeToTray_Hint" xml:space="preserve"><value>Όταν κλείνετε το παράθυρο, διατηρήστε το Sweet Tools σε λειτουργία στην περιοχή ειδοποιήσεων αντί να γίνεται έξοδος. Κάντε διπλό κλικ στο εικονίδιο για επαναφορά.</value></data>
+  <data name="Tray_Open" xml:space="preserve"><value>Άνοιγμα του Sweet Tools</value></data>
   <data name="Tray_Exit" xml:space="preserve"><value>Έξοδος</value></data>
 
   <data name="Add_FastFetch" xml:space="preserve"><value>FastFetch™️</value></data>
   <data name="Add_FastFetch_Hint" xml:space="preserve"><value>Αυτόματη λήψη από την πρώτη διαθέσιμη πηγή</value></data>
   <data name="Add_FastFetch_NoSource" xml:space="preserve"><value>Δεν βρέθηκαν διαθέσιμες πηγές για αυτό το παιχνίδι</value></data>
   <data name="Add_FastFetch_Via" xml:space="preserve"><value>· μέσω {0}</value></data>
-  <data name="Plugin_Title" xml:space="preserve"><value>Πρόσθετο LuaTools</value></data>
-  <data name="Plugin_Subtitle" xml:space="preserve"><value>Το πρόσθετο LuaTools για το Steam! — Χρησιμοποιεί πλέον LuaLoader αντί για Shittenium</value></data>
+  <data name="Plugin_Title" xml:space="preserve"><value>Πρόσθετο Sweet Tools</value></data>
+  <data name="Plugin_Subtitle" xml:space="preserve"><value>Το πρόσθετο Sweet Tools για το Steam! — Χρησιμοποιεί πλέον LuaLoader αντί για Shittenium</value></data>
   <data name="Plugin_CardTitle" xml:space="preserve"><value>Κατάσταση</value></data>
   <data name="Plugin_Badge_UpdateAvailable" xml:space="preserve"><value>Διαθέσιμη ενημέρωση</value></data>
   <data name="Plugin_Row_InstalledVersion" xml:space="preserve"><value>Εγκατεστημένη έκδοση</value></data>
   <data name="Plugin_Row_LatestVersion" xml:space="preserve"><value>Τελευταία έκδοση</value></data>
   <data name="Plugin_Row_Frontend" xml:space="preserve"><value>Frontend</value></data>
   <data name="Plugin_Row_Loader" xml:space="preserve"><value>Φορτωτής (winmm.dll)</value></data>
-  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Εντοπίστηκε το Millennium — το LuaTools εκτελείται παράλληλα. Η εγκατάσταση απενεργοποιεί το αντίγραφο αυτού του πρόσθετου του Millennium, ώστε να κάνει ένεση μόνο το LuaLoader.</value></data>
+  <data name="Plugin_Millennium_Coexisting" xml:space="preserve"><value>Εντοπίστηκε το Millennium — το Sweet Tools εκτελείται παράλληλα. Η εγκατάσταση απενεργοποιεί το αντίγραφο αυτού του πρόσθετου του Millennium, ώστε να κάνει ένεση μόνο το LuaLoader.</value></data>
   <data name="Plugin_Footer" xml:space="preserve"><value>Το LuaLoader εγκαθίσταται στον φάκελο του Steam. Αυτή η εφαρμογή λειτουργεί ως backend — αν την κλείσετε από την περιοχή ειδοποιήσεων, το πρόσθετο θα πάψει να λειτουργεί!</value></data>
   <data name="Plugin_Btn_Install" xml:space="preserve"><value>Εγκατάσταση</value></data>
   <data name="Plugin_Btn_Update" xml:space="preserve"><value>Ενημέρωση</value></data>
@@ -409,7 +409,7 @@
   <data name="Plugin_Err_VerifyFailed" xml:space="preserve"><value>Η επαλήθευση hash του {0} απέτυχε.</value></data>
   <data name="Plugin_Err_NoLuatoolsJs" xml:space="preserve"><value>Το plugin.zip δεν περιείχε το public/luatools.js.</value></data>
   <data name="Plugin_About_Header" xml:space="preserve"><value>Αξιοσημείωτα χαρακτηριστικά</value></data>
-  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>Προσθέτει ένα κουμπί «Add via LuaTools» στις σελίδες του καταστήματος Steam</value></data>
+  <data name="Plugin_Feature_StoreButton" xml:space="preserve"><value>Προσθέτει ένα κουμπί «Add via Sweet Tools» στις σελίδες του καταστήματος Steam</value></data>
   <data name="Plugin_Feature_AutoUpdate" xml:space="preserve"><value>Ενημερώνεται αυτόματα</value></data>
   <data name="Plugin_Feature_Millennium" xml:space="preserve"><value>Λειτουργεί με ή χωρίς το Millennium</value></data>
   <data name="Drop_LinkHint" xml:space="preserve"><value>…ή σύρετε έναν σύνδεσμο SteamDB / καταστήματος Steam για να προσθέσετε αυτό το παιχνίδι.</value></data>
@@ -465,7 +465,7 @@
   <data name="Launch_Title" xml:space="preserve"><value>Επιλογές εκκίνησης</value></data>
   <data name="Launch_Loading" xml:space="preserve"><value>Ανάγνωση της προσωρινής μνήμης εφαρμογών του Steam…</value></data>
   <data name="Launch_NotFound" xml:space="preserve"><value>Το Steam δεν έχει ακόμη αποθηκευμένες πληροφορίες για αυτό το παιχνίδι. Ανοίξτε το Steam μία φορά και δοκιμάστε ξανά.</value></data>
-  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>Η προσωρινή μνήμη εφαρμογών του Steam είναι σε μορφή που αυτή η έκδοση δεν κατανοεί ({0}). Ενημερώστε το LuaTools.</value></data>
+  <data name="Launch_UnsupportedFormat" xml:space="preserve"><value>Η προσωρινή μνήμη εφαρμογών του Steam είναι σε μορφή που αυτή η έκδοση δεν κατανοεί ({0}). Ενημερώστε το Sweet Tools.</value></data>
   <data name="Launch_ReadFailed" xml:space="preserve"><value>Δεν ήταν δυνατή η ανάγνωση της προσωρινής μνήμης εφαρμογών του Steam. {0}</value></data>
   <data name="Launch_ExecutableRequired" xml:space="preserve"><value>Κάθε επιλογή εκκίνησης χρειάζεται ένα εκτελέσιμο αρχείο.</value></data>
   <data name="Launch_Add" xml:space="preserve"><value>Προσθήκη</value></data>
@@ -482,7 +482,7 @@
   <data name="Launch_InstallPath" xml:space="preserve"><value>Διαδρομή εγκατάστασης: {0}</value></data>
   <data name="Launch_SteamRestartNote" xml:space="preserve"><value>Η εφαρμογή των αλλαγών κλείνει και ανοίγει ξανά το Steam.</value></data>
   <data name="Launch_Restore" xml:space="preserve"><value>Επαναφορά αρχικών</value></data>
-  <data name="Launch_Restore_Tip" xml:space="preserve"><value>Επαναφέρει τις επιλογές εκκίνησης που είχε το Steam, πριν τις αλλάξει το LuaTools.</value></data>
+  <data name="Launch_Restore_Tip" xml:space="preserve"><value>Επαναφέρει τις επιλογές εκκίνησης που είχε το Steam, πριν τις αλλάξει το Sweet Tools.</value></data>
   <data name="Launch_Restore_Title" xml:space="preserve"><value>Επαναφορά των αρχικών επιλογών εκκίνησης;</value></data>
   <data name="Launch_Restore_Body" xml:space="preserve"><value>Αυτό επαναφέρει τις επιλογές εκκίνησης όπως τις είχε το Steam και απορρίπτει τις αλλαγές σας. Το Steam θα κλείσει και θα ανοίξει ξανά. Συνέχεια;</value></data>
   <data name="Launch_NothingToRestore" xml:space="preserve"><value>Αυτό το παιχνίδι δεν έχει αλλάξει, οπότε δεν υπάρχει τίποτα προς επαναφορά.</value></data>

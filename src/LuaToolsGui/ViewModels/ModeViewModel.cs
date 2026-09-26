@@ -66,13 +66,16 @@ public partial class ModeViewModel : ObservableObject
     [ObservableProperty] private string _confirmTitle = "";
     private ModeCardViewModel? _pendingCard;
 
+    private readonly AccountGuardService _accountGuard;
+
     public ModeViewModel(UnlockerService unlocker, ToastService toast, SteamService steam,
-        CloudRedirectService cloudRedirect)
+        CloudRedirectService cloudRedirect, AccountGuardService accountGuard)
     {
         _unlocker = unlocker;
         _toast = toast;
         _steam = steam;
         _cloudRedirect = cloudRedirect;
+        _accountGuard = accountGuard;
     }
 
     /// <summary>CloudRedirect "Manage" (add-on panel): download (cache) the CloudRedirect GUI and launch it.</summary>
@@ -194,6 +197,7 @@ public partial class ModeViewModel : ObservableObject
     private async Task UpdateCloudRedirect()
     {
         if (IsBusy || !CloudRedirectUnlocked) return;
+        if (!_accountGuard.EnsureAllowed("Updating CloudRedirect")) return;
         IsBusy = true;
         IsProgressIndeterminate = true;
         Progress = 0;
@@ -345,6 +349,7 @@ public partial class ModeViewModel : ObservableObject
     private void Install(ModeCardViewModel card)
     {
         if (IsBusy) return;
+        if (!_accountGuard.EnsureAllowed("Switching unlocker mode")) return;
         _pendingCard = card;
         ConfirmTitle = card.IsActive
             ? string.Format(Resources.Strings.Mode_Confirm_Reinstall, card.Title)

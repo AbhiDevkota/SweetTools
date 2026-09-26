@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="LuaToolsGui.Views.FixesView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -178,7 +178,8 @@
             Visibility="{Binding ShowItems, Converter={StaticResource BoolToVis}}"
             VirtualizingPanel.CacheLengthUnit="Page"
             VirtualizingPanel.ScrollUnit="Pixel"
-            VirtualizingPanel.VirtualizationMode="Standard">
+            VirtualizingPanel.VirtualizationMode="Recycling"
+            VirtualizingPanel.IsVirtualizing="True">
             <vwp:VirtualizingItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <vwp:VirtualizingWrapPanel Orientation="Horizontal" SpacingMode="StartAndEndOnly" StretchItems="False" />
@@ -225,7 +226,7 @@
                                     CornerRadius="10">
                                     <StackPanel>
                                         <Border Height="116" Background="#11FFFFFF" ClipToBounds="True" CornerRadius="10,10,0,0">
-                                            <Image Source="{Binding Cover, Converter={StaticResource ImagePathToSource}}" Stretch="UniformToFill" />
+                                            <Image Source="{Binding Cover, Converter={StaticResource ImagePathToSource}, ConverterParameter=248}" Stretch="UniformToFill" />
                                         </Border>
                                         <StackPanel Margin="12,8,12,10">
                                             <TextBlock
@@ -389,7 +390,7 @@
                     <!-- Game header -->
                     <StackPanel Grid.Row="1" Margin="0,4,0,0">
                         <Border Height="150" Background="#11FFFFFF" ClipToBounds="True" CornerRadius="8">
-                            <Image Source="{Binding Cover, Converter={StaticResource ImagePathToSource}}" Stretch="UniformToFill" />
+                            <Image Source="{Binding Cover, Converter={StaticResource ImagePathToSource}, ConverterParameter=500}" Stretch="UniformToFill" />
                         </Border>
                         <TextBlock Margin="0,10,0,0" FontSize="16" FontWeight="Bold" Text="{Binding Name}" TextWrapping="Wrap" />
                         <TextBlock FontSize="11.5" Foreground="#6b7280" Text="{Binding AppId, StringFormat='App ID: {0}'}" />

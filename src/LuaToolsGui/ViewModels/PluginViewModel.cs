@@ -15,11 +15,13 @@ public partial class PluginViewModel : ObservableObject
 {
     private readonly PluginInstallerService _installer;
     private readonly ToastService _toast;
+    private readonly AccountGuardService _accountGuard;
 
-    public PluginViewModel(PluginInstallerService installer, ToastService toast)
+    public PluginViewModel(PluginInstallerService installer, ToastService toast, AccountGuardService accountGuard)
     {
         _installer = installer;
         _toast = toast;
+        _accountGuard = accountGuard;
     }
 
     [ObservableProperty] private string _installedVersion = "—";
@@ -96,6 +98,7 @@ public partial class PluginViewModel : ObservableObject
         // only worth surfacing once we actually know install state, not on every offline check.
         StatusLine = st.Offline ? Resources.Strings.Plugin_Status_OfflineCheck
             : st.Port8080Busy ? Resources.Strings.Plugin_Status_Port8080Busy
+            : !_installer.IsAllowedForCurrentAccount() ? "Plugin disabled: no Steam account locked. Select an account in Settings."
             : null;
     }
 
@@ -119,6 +122,7 @@ public partial class PluginViewModel : ObservableObject
     private async Task Install()
     {
         if (IsBusy) return;
+        if (!_accountGuard.EnsureAllowed("Installing Steam plugin")) return;
         if (!ConfirmSteamRestart()) return;
 
         IsBusy = true;

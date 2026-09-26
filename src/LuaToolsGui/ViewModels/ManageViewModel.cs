@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
@@ -273,9 +273,11 @@ public partial class ManageViewModel : PagedListViewModel<LuaTileViewModel>
     public bool IsSelecting => SelectedCount > 0;
     public string SelectionLabel => string.Format(Resources.Strings.Manage_SelectionLabel, SelectedCount);
 
+    private readonly AccountGuardService _accountGuard;
+
     public ManageViewModel(SteamService steam, SteamAppListCache appList, SteamAppInfoCache appInfo,
         CoverCache covers, ToastService toast, SettingsService settings,
-        SteamlessService steamless)
+        SteamlessService steamless, AccountGuardService accountGuard)
     {
         _steam = steam;
         _appList = appList;
@@ -284,6 +286,7 @@ public partial class ManageViewModel : PagedListViewModel<LuaTileViewModel>
         _toast = toast;
         _settings = settings;
         _steamless = steamless;
+        _accountGuard = accountGuard;
         InitPageSize(settings.ManagePageSize);
     }
 
@@ -351,7 +354,11 @@ public partial class ManageViewModel : PagedListViewModel<LuaTileViewModel>
 
     /// <summary>Edit this game's Steam launch options (the entries behind the Play button).</summary>
     [RelayCommand]
-    private void EditLaunchOptions(LuaTileViewModel tile) => OpenLaunchOptions?.Invoke(tile.AppId, tile.Name);
+    private void EditLaunchOptions(LuaTileViewModel tile)
+    {
+        if (!_accountGuard.EnsureAllowed("Editing launch options")) return;
+        OpenLaunchOptions?.Invoke(tile.AppId, tile.Name);
+    }
 
     [RelayCommand]
     private static void OpenStorePage(LuaTileViewModel tile) =>
@@ -389,6 +396,7 @@ public partial class ManageViewModel : PagedListViewModel<LuaTileViewModel>
     private async Task RemoveDrm(LuaTileViewModel? tile)
     {
         if (tile is null || IsBusy) return;
+        if (!_accountGuard.EnsureAllowed("Removing DRM")) return;
 
         var confirm = MessageBox.Show(
             Resources.Strings.Manage_Steamless_Confirm_Body,
@@ -440,6 +448,8 @@ public partial class ManageViewModel : PagedListViewModel<LuaTileViewModel>
     [RelayCommand]
     private void Delete(LuaTileViewModel tile)
     {
+        if (!_accountGuard.EnsureAllowed("Deleting games")) return;
+
         var result = MessageBox.Show(
             string.Format(Resources.Strings.Manage_Delete_Body, tile.Name, tile.AppId),
             Resources.Strings.Manage_Delete_Title,
@@ -477,6 +487,7 @@ public partial class ManageViewModel : PagedListViewModel<LuaTileViewModel>
     {
         var targets = _all.Where(t => t.IsSelected).ToList();
         if (targets.Count == 0) return;
+        if (!_accountGuard.EnsureAllowed("Deleting games")) return;
 
         var result = MessageBox.Show(
             string.Format(Resources.Strings.Manage_DeleteMany_Body, targets.Count),
@@ -629,7 +640,10 @@ public partial class ManageViewModel : PagedListViewModel<LuaTileViewModel>
                 // Final refresh once backfill completes (dropdowns + counts + re-apply current filters).
                 // resetPage:false so a user who's paged away isn't yanked back to page 1.
                 if (!cts.Token.IsCancellationRequested)
+                {
                     OnUi(() => { PopulateFilterOptions(); ApplyFilter(resetPage: false); });
+                    _ = Task.Run(() => MemoryOptimizer.TrimMemory());
+                }
             }
             catch (OperationCanceledException) { /* superseded by a newer load */ }
         });

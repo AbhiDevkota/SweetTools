@@ -8,6 +8,7 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:vm="clr-namespace:LuaToolsGui.ViewModels"
     Title="{x:Static res:Strings.Launch_Title}"
+    Icon="icon.ico"
     Width="820"
     Height="600"
     d:DataContext="{d:DesignInstance Type=vm:LaunchOptionsViewModel}"
@@ -24,7 +25,11 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <ui:TitleBar Grid.Row="0" Title="{x:Static res:Strings.Launch_Title}" />
+        <ui:TitleBar Grid.Row="0" Title="{x:Static res:Strings.Launch_Title}">
+            <ui:TitleBar.Icon>
+                <ui:ImageIcon Source="pack://application:,,,/icon.ico" />
+            </ui:TitleBar.Icon>
+        </ui:TitleBar>
 
         <Grid x:Name="Root" Grid.Row="1" Margin="16,4,16,16">
             <Grid.RowDefinitions>

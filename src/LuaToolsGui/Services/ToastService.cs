@@ -22,7 +22,7 @@ public class ToastService
     }
 
     /// <summary>Show a transient toast (auto-dismiss). Marshals to the UI thread; no-ops if unattached.</summary>
-    public void Show(string title, string message, bool error = false)
+    public void Show(string title, string message, bool error = false, SymbolRegular? icon = null)
     {
         var dispatcher = Application.Current?.Dispatcher;
         if (dispatcher is null) return;
@@ -30,8 +30,8 @@ public class ToastService
         void Post() => _snackbar.Show(
             title, message,
             error ? ControlAppearance.Caution : ControlAppearance.Secondary,
-            null,
-            TimeSpan.FromSeconds(3));
+            icon.HasValue ? new SymbolIcon(icon.Value) : (error ? new SymbolIcon(SymbolRegular.Warning24) : null),
+            TimeSpan.FromSeconds(5));
 
         if (dispatcher.CheckAccess()) Post();
         else dispatcher.Invoke(Post);
@@ -41,7 +41,7 @@ public class ToastService
     /// Show a PERSISTENT toast with an action button (no auto-dismiss; user-closable). Used for the
     /// "update ready" prompt: the action runs <paramref name="onAction"/> (e.g. restart).
     /// </summary>
-    public void ShowAction(string title, string message, string actionLabel, Action onAction, bool error = false)
+    public void ShowAction(string title, string message, string actionLabel, Action onAction, bool error = false, SymbolRegular? icon = null)
     {
         var dispatcher = Application.Current?.Dispatcher;
         if (dispatcher is null) return;
@@ -49,11 +49,12 @@ public class ToastService
         void Post()
         {
             if (_presenter is null) return;
+            var symbol = icon ?? (error ? SymbolRegular.Warning24 : SymbolRegular.ArrowSync24);
             var bar = new Snackbar(_presenter)
             {
                 Title = title,
                 Appearance = error ? ControlAppearance.Caution : ControlAppearance.Secondary,
-                Icon = new SymbolIcon(SymbolRegular.ArrowSync24),
+                Icon = new SymbolIcon(symbol),
                 // No "infinite" sentinel exists: Timeout is how long it's VISIBLE (Zero = dismiss
                 // instantly), so use a very large value to effectively persist until acted on / closed.
                 Timeout = TimeSpan.FromDays(1),

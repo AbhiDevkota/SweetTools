@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -18,6 +18,18 @@ public partial class SettingsViewModel : ObservableObject
     private readonly AuthService _auth;
     private readonly SteamService _steam;
     private readonly HubcapService _hubcap;
+    private readonly CurrentSteamUserService _currentSteamUser;
+    private readonly PluginInstallerService _pluginInstaller;
+    private readonly ToastService _toast;
+
+    [ObservableProperty] private string _currentSteamId = "Not detected";
+    [ObservableProperty] private string _allowedSteamIdDisplay = "None (Plugins disabled — lock an account to enable)";
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanPurge))]
+    private bool _isPurging;
+
+    public bool CanPurge => !IsPurging;
 
     [ObservableProperty] private string? _displayName;
     [ObservableProperty] private string? _email;
@@ -222,15 +234,30 @@ public partial class SettingsViewModel : ObservableObject
     public Action? RequestRestartPrompt { get; set; }
 
     public SettingsViewModel(SettingsService settings, AuthService auth, SteamService steam,
-        HubcapService hubcap)
+        HubcapService hubcap, CurrentSteamUserService currentSteamUser, PluginInstallerService pluginInstaller, ToastService toast)
     {
         _settings = settings;
         _auth = auth;
         _steam = steam;
         _hubcap = hubcap;
+        _currentSteamUser = currentSteamUser;
+        _pluginInstaller = pluginInstaller;
+        _toast = toast;
         _auth.AuthStateChanged += RefreshAccount;
         RefreshAccount();
         RefreshSteam();
+        RefreshCurrentSteamId();
+        _currentSteamUser.ActiveAccountChanged += _ =>
+        {
+            if (System.Windows.Application.Current?.Dispatcher is { } dispatcher)
+            {
+                dispatcher.Invoke(RefreshCurrentSteamId);
+            }
+            else
+            {
+                RefreshCurrentSteamId();
+            }
+        };
         _autoUpdateApps = settings.AutoUpdateApps; // init from saved value (default ON) without triggering Save
         _fastFetch = settings.FastFetch;
         _donateKeys = settings.DonateKeys;
@@ -253,6 +280,86 @@ public partial class SettingsViewModel : ObservableObject
             : path is null ? Resources.Strings.Settings_SteamSource_NotFound
             : Resources.Strings.Settings_SteamSource_Auto;
         SteamWarning = path is not null && !_steam.IsValid ? Resources.Strings.Settings_SteamWarning_NoExe : null;
+    }
+
+    private void RefreshCurrentSteamId()
+    {
+        string? id = _currentSteamUser.GetCurrentSteamId();
+        CurrentSteamId = string.IsNullOrWhiteSpace(id) ? "Not detected" : id;
+        string? allowed = _settings.AllowedSteamId;
+        AllowedSteamIdDisplay = string.IsNullOrWhiteSpace(allowed) ? "None (Plugins disabled — lock an account to enable)" : allowed;
+    }
+
+    /// <summary>Locks plugin execution to the currently active Steam account and restores plugin modifications.</summary>
+    [RelayCommand]
+    private async Task SetCurrentAccount()
+    {
+        string? id = _currentSteamUser.GetCurrentSteamId();
+        if (!string.IsNullOrWhiteSpace(id))
+        {
+            _settings.AllowedSteamId = id;
+            RefreshCurrentSteamId();
+
+            var (ok, err) = await _pluginInstaller.RestoreAllSteamModificationsAsync(restartSteam: true);
+            if (ok)
+            {
+                _toast.Show("Sweet Tools", $"Plugins enabled and locked to account {id}. Steam refreshed.");
+            }
+            else
+            {
+                _toast.Show("Sweet Tools", $"Account locked to {id}, but restore encountered an issue: {err}", error: true);
+            }
+        }
+        else
+        {
+            _toast.Show("Sweet Tools", "No active Steam account detected. Please launch and log in to Steam first.", error: true);
+        }
+    }
+
+    /// <summary>Clears the Steam account configuration, disabling plugins until an account is locked.</summary>
+    [RelayCommand]
+    private async Task ClearRestriction()
+    {
+        _settings.AllowedSteamId = "";
+        RefreshCurrentSteamId();
+        _toast.Show("Sweet Tools", "Account configuration cleared. Plugins disabled until an account is locked.");
+        if (_pluginInstaller.HasSteamPluginFiles())
+        {
+            await _pluginInstaller.PurgeAllSteamModificationsAsync(restartSteam: true);
+        }
+    }
+
+    /// <summary>Explicitly refreshes the detected active Steam account from Steam's running process and login files.</summary>
+    [RelayCommand]
+    private void RefreshCurrentAccount()
+    {
+        RefreshCurrentSteamId();
+    }
+
+    /// <summary>
+    /// Completely purges all plugin DLLs, unlockers, and modifications from Steam, restoring Steam to a 100% vanilla pure state.
+    /// </summary>
+    [RelayCommand]
+    private async Task PurgeAllSteamModificationsAsync()
+    {
+        if (IsPurging) return;
+        IsPurging = true;
+        try
+        {
+            var (ok, error) = await _pluginInstaller.PurgeAllSteamModificationsAsync(restartSteam: true);
+            if (ok)
+            {
+                _toast.Show("Sweet Tools", "Steam restored to 100% pure vanilla state.");
+            }
+            else
+            {
+                _toast.Show("Sweet Tools", $"Purge failed: {error}", error: true);
+            }
+        }
+        finally
+        {
+            IsPurging = false;
+        }
     }
 
     public void RefreshAccount()
@@ -360,6 +467,7 @@ public partial class SettingsViewModel : ObservableObject
     /// <summary>Called by the View when loaded. Auto-refreshes stats if a key is saved.</summary>
     public void OnViewLoaded()
     {
+        RefreshCurrentSteamId();
         if (HubcapIsKeyConfigured)
             RefreshHubcapStatsCommand.Execute(null);
         // Re-sync FastFetch in case the Add screen's toggle changed it this session (both are singletons

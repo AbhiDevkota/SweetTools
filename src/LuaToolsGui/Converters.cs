@@ -8,22 +8,37 @@ using System.Windows.Media.Imaging;
 namespace LuaToolsGui;
 
 /// <summary>
-/// Loads an image path/URL into a BitmapImage with CacheOption=OnLoad, so cached cover files on
-/// disk aren't left locked (allowing later refresh/clear). Handles local paths and http(s) URLs.
+/// Loads an image path/URL into a BitmapImage with CacheOption=OnLoad, DecodePixelWidth and Freeze(),
+/// so cached cover files on disk aren't left locked and RAM usage is minimized. Deduplicates identical sources.
 /// </summary>
 public class ImagePathToSourceConverter : IValueConverter
 {
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, WeakReference<BitmapSource>> Cache = new(StringComparer.OrdinalIgnoreCase);
+
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is not string s || string.IsNullOrWhiteSpace(s)) return null;
         try
         {
+            int decodeWidth = 300;
+            if (parameter is int w && w > 0) decodeWidth = w;
+            else if (parameter is string ps && int.TryParse(ps, out int parsedW) && parsedW > 0) decodeWidth = parsedW;
+
+            string key = $"{s}#{decodeWidth}";
+            if (Cache.TryGetValue(key, out var wr) && wr.TryGetTarget(out var cached) && cached is not null)
+            {
+                return cached;
+            }
+
             var bmp = new BitmapImage();
             bmp.BeginInit();
             bmp.CacheOption = BitmapCacheOption.OnLoad;
-            bmp.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+            bmp.DecodePixelWidth = decodeWidth;
             bmp.UriSource = new Uri(s, UriKind.Absolute);
             bmp.EndInit();
+            bmp.Freeze();
+
+            Cache[key] = new WeakReference<BitmapSource>(bmp);
             return bmp;
         }
         catch
