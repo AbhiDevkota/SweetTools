@@ -17,6 +17,11 @@ public static class Program
         // then no-ops on a normal launch.
         VelopackApp.Build().Run();
 
+        // Recheck before WPF, protocol registration or signalling an already-open instance.
+        // The account may have changed between the DLL's check and this process starting.
+        if (args.Contains(Services.SteamLauncherService.LaunchArgument, StringComparer.OrdinalIgnoreCase) &&
+            !Services.SteamLauncherService.IsAllowedLaunch(new Services.SettingsService())) return;
+
         // Set the UI culture before any WPF element is created, so x:Static resource lookups (which
         // resolve once at parse time) pick up the right language from the first frame.
         ApplyUiCulture();

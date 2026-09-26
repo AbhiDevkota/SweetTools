@@ -20,6 +20,15 @@
     <RetainVM>false</RetainVM>
   </PropertyGroup>
 
+  <Target Name="BuildSteamLauncher" BeforeTargets="PrepareForBuild"
+          Inputs="$(MSBuildProjectDirectory)/../SweetTools.Loader/Loader.cpp;$(MSBuildProjectDirectory)/../SweetTools.Loader/LaunchPolicy.h;$(MSBuildProjectDirectory)/../SweetTools.Loader/winmm.def;$(MSBuildProjectDirectory)/../../scripts/build-loader.ps1"
+          Outputs="$(MSBuildProjectDirectory)/../SweetTools.Loader/bin/Release/winmm.dll">
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)/../../scripts/build-loader.ps1&quot;" />
+  </Target>
+  <ItemGroup>
+    <EmbeddedResource Include="../SweetTools.Loader/bin/Release/winmm.dll" LogicalName="SweetTools.Loader.winmm.dll" />
+  </ItemGroup>
+
   <!-- UseWindowsForms (for the tray NotifyIcon) injects WinForms into the implicit global usings, which
        collides with WPF types (Application, UserControl, DragEventArgs…). We reference WinForms fully
        qualified, so strip those implicit usings to keep WPF unambiguous. -->

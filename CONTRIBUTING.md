@@ -25,6 +25,34 @@ Desktop Runtime on a clean machine; the app then self-updates through Velopack.
 
 To produce a local build for testing, `dotnet publish -c Release` is enough.
 
+### SweetTools account-aware Steam launcher
+
+Building now also requires Visual Studio C++ desktop build tools (x64) and a Windows SDK.
+MSBuild compiles `src/SweetTools.Loader` and embeds its `winmm.dll` in the application.
+The loader targets 64-bit Steam. No upstream loader binary is downloaded or restored from backups.
+Run `powershell -File scripts/build-loader.ps1 -Test` for native account-policy, isolated registry
+notification/launch, and audio-export forwarding tests. Native outputs are ignored by Git.
+
+To enable it, open the published app while signed into the allowed Steam account and use
+Settings to lock that account again (or reinstall the store plugin). The existing installer replaces
+the old DLL and restarts Steam. Keep the published app in a stable folder; reopen it after moving it.
+The DLL launches the app visibly once per allowed login and the app rechecks the account before WPF starts.
+
+The DLL has one sleeping thread inside Steam, waiting indefinitely for Windows registry notifications;
+there is no timer, extra process, or Windows startup entry. It watches Steam's `ActiveProcess` registry
+values and a single atomic configuration value under `HKCU\Software\SweetTools\SteamLauncher`.
+That value contains the app path, Steam executable path, and allowed SteamID. Saving settings refreshes it.
+Missing or invalid configuration fails closed. Unrelated registry changes do not repeatedly launch the app.
+The DLL forwards Windows audio exports through `winmm_real.dll`, copied from the local operating system.
+
+Account-mismatch cleanup retains only the current verified account-aware launcher and its audio companion;
+it still removes other plugin modifications. Explicit purge/uninstall and clearing the allowed account
+remove the launcher too. A launcher by itself does not count as active plugin modifications.
+Registry notifications are tested with simulated login changes; real Steam login/account-switch behavior
+still needs manual validation. No claim of zero CPU or memory use is made.
+The launcher only starts the app; the existing app account guard still performs modification cleanup.
+That cleanup requires the app to remain running when switching accounts.
+
 ### Layout
 
 | Path | Contents |
